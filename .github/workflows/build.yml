@@ -23,8 +23,56 @@ jobs:
       with:
         gradle-version: 8.2
 
-    - name: Accept Android SDK licenses
-      run: yes | sdkmanager --licenses || true
+    - name: Magic Fix (Auto-Create Gradle Files)
+      run: |
+        echo 'rootProject.name = "PersianKeyboard"' > settings.gradle
+        echo "include ':app'" >> settings.gradle
+        
+        mkdir -p app
+        cat << 'EOF' > app/build.gradle
+        apply plugin: 'com.android.application'
+        apply plugin: 'org.jetbrains.kotlin.android'
+        android {
+            namespace 'com.example.persiankeyboard'
+            compileSdk 34
+            defaultConfig {
+                applicationId "com.example.persiankeyboard"
+                minSdk 31
+                targetSdk 34
+                versionCode 1
+                versionName "1.0"
+            }
+            buildTypes {
+                release {
+                    minifyEnabled false
+                }
+            }
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_1_8
+                targetCompatibility JavaVersion.VERSION_1_8
+            }
+            kotlinOptions {
+                jvmTarget = '1.8'
+            }
+        }
+        dependencies {
+            implementation 'androidx.core:core-ktx:1.10.1'
+            implementation 'androidx.appcompat:appcompat:1.6.1'
+        }
+        EOF
+
+        cat << 'EOF' > build.gradle
+        buildscript {
+            repositories {
+                google()
+                mavenCentral()
+            }
+            dependencies {
+                classpath 'com.android.tools.build:gradle:8.1.0'
+                classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0'
+            }
+        }
+        EOF
 
     - name: Build with Gradle
       run: gradle :app:assembleDebug
@@ -33,5 +81,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/outputs/apk/debug/*.apk
         if-no-files-found: error
