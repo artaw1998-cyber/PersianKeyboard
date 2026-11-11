@@ -32,10 +32,8 @@ class PersianKeyboardService : InputMethodService() {
     private lateinit var sharedPrefs: android.content.SharedPreferences
     private val learnedWords = mutableSetOf<String>()
 
-    // کشیده (Tatweel)
-    private val kashida = "ـ"
+    private val kashida = "ـ" // کشیده
 
-    // دیکشنری پایه
     private val baseDictionary = listOf(
         "من", "تو", "او", "ما", "شما", "آنها", "خودم", "خودت", "خودش", "چه", "چی", "کجا", "کی", "چرا", "چطور", "چگونه", "کدام", "آیا", "چند", "سلام", "درود", "خداحافظ", "صبح", "بخیر", "ظهر", "عصر", "شب", "روز", "خوش", "آمدی", "سلامت", "باشی", "حال", "احوال", "خوبی", "ممنون", "مرسی", "سپاس", "لطفا", "ببخشید", "معذرت", "خواهش", "بله", "خیر", "نه", "آره", "باشه", "چشم", "حتما", "شاید", "مطمئن", "واقعا", "البته", "هستم", "هستی", "هست", "هستیم", "هستید", "هستند", "نیستم", "نیستی", "نیست", "بودم", "بودی", "بود", "دارم", "داری", "دارد", "میروم", "میروی", "میرود", "رفتم", "رفتی", "رفت", "میکنم", "میکنی", "میکند", "کردم", "کردی", "کرد", "میخورم", "میخوری", "میخورد", "خوردم", "خوردی", "خورد", "میگویم", "میگویی", "میگوید", "گفتم", "گفتی", "گفت", "میخواهم", "میخواهی", "میخواهد", "خواستم", "خواستی", "خواست", "میدانم", "میدانی", "میداند", "دانستم", "دانستی", "دانست", "میبینم", "میبینی", "میبیند", "دیدم", "دیدی", "دید", "میشوم", "میشوی", "میشود", "شدم", "شدی", "شد", "برو", "بیا", "بخور", "بگو", "ببین", "بده", "بگیر", "بنویس", "بخوان", "و", "در", "به", "از", "که", "این", "را", "با", "است", "برای", "آن", "یک", "تا", "هم", "یا", "بر", "اما", "اگر", "چون", "پس", "ولی", "زیرا", "خیلی", "بسیار", "زیاد", "کم", "بزرگ", "کوچک", "خوب", "بد", "زیبا", "زشت", "جدید", "قدیمی", "سریع", "آهسته", "دقیق", "درست", "غلط", "مهم", "ساده", "پیچیده", "سخت", "آسان", "شاد", "غمگین", "خسته", "گرسنه", "تشنه", "گرم", "سرد", "نرم", "سفت", "سنگین", "سبک", "پهن", "باریک", "بلند", "کوتاه", "گران", "ارزان", "قوی", "ضعیف", "سالم", "بیمار", "ناراحت", "عصبانی", "آرام", "روشن", "تاریک", "تمیز", "کثیف", "پر", "خالی", "عزیز", "عزیزم", "جان", "دل", "دلم", "قلب", "قلبم", "عشق", "عاشق", "دوست", "دوستت", "دارم", "دوستش", "هیجان", "احساس", "مهربان", "مهربانی", "خوبی", "بدی", "بغل", "آغوش", "بوسه", "لبخند", "گریه", "خنده", "امید", "آرزو", "رویا", "واقعیت", "زندگی", "مرگ", "تولد", "جشن", "عروسی", "کار", "پول", "خرید", "فروش", "بازار", "شهر", "روستا", "کشور", "دنیا", "جهان", "ماشین", "اتوبوس", "قطار", "هواپیما", "تاکسی", "خیابان", "کوچه", "پارک", "ترافیک", "خانه", "مدرسه", "دانشگاه", "اداره", "بیمارستان", "فروشگاه", "رستوران", "هتل", "فرودگاه", "ایستگاه", "بانک", "پست", "پلیس", "کتابخانه", "موزه", "سینما", "ورزشگاه", "استخر", "مادر", "پدر", "برادر", "خواهر", "خانواده", "فرزند", "بچه", "دختر", "پسر", "زن", "مرد", "همسر", "عمو", "دایی", "خاله", "عمه", "پدربزرگ", "مادربزرگ", "رفیق", "همکار", "همکلاسی", "همسایه", "استاد", "معلم", "شاگرد", "دانشجو", "رئیس", "کارمند", "دکتر", "مهندس", "امروز", "دیروز", "فردا", "الان", "اکنون", "بعد", "قبل", "هفته", "ماه", "سال", "ساعت", "دقیقه", "ثانیه", "زود", "دیر", "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "کتاب", "دفتر", "قلم", "مداد", "کاغذ", "میز", "صندلی", "در", "پنجره", "دیوار", "اتاق", "تخت", "کمد", "فرش", "لامپ", "کلید", "قفل", "چاقو", "قاشق", "چنگال", "بشقاب", "لیوان", "فنجان", "کتری", "یخچال", "اجاق", "تلویزیون", "رادیو", "بلندگو", "هدفون", "دوربین", "عینک", "کیف", "کفش", "لباس", "پیراهن", "شلوار", "کاپشن", "کلاه", "دستکش", "جوراب", "حوله", "صابون", "شامپو", "کامپیوتر", "لپ‌تاپ", "گوشی", "موبایل", "تبلت", "اینترنت", "شبکه", "برنامه", "نرم‌افزار", "سخت‌افزار", "سایت", "وب", "ایمیل", "پیام", "پیامک", "تلگرام", "واتساپ", "اینستاگرام", "فیسبوک", "گوگل", "اندروید", "آیفون", "ویندوز", "هوش مصنوعی", "ربات", "داده", "اطلاعات", "دیتابیس", "سرور", "کاربر", "پسورد", "رمز", "امنیت", "پروژه", "کدنویسی", "برنامه‌نویسی", "طراحی", "گرافیک", "عکس", "فیلم", "ویدیو", "صدا", "موسیقی", "غذا", "آب", "چای", "قهوه", "شیر", "نان", "برنج", "گوشت", "مرغ", "ماهی", "تخم‌مرغ", "پنیر", "کره", "عسل", "سیب", "پرتقال", "موز", "انار", "هندوانه", "خیار", "گوجه", "سیب‌زمینی", "پیاز", "سیر", "فلفل", "نمک", "شکر", "زردچوبه", "دارچین", "زعفران", "صبحانه", "ناهار", "شام", "میان‌وعده", "دسر", "شیرینی", "بستنی", "شکلات", "کیک", "بیسکویت", "آجیل", "پسته", "بادام", "گردو", "فندق", "کشمش", "خرما", "پیتزا", "ساندویچ", "برگر", "پاستا", "ماکارونی", "سوپ", "سالاد", "کباب", "جوجه", "قیمه", "قورمه", "آش", "عدس", "لوبیا", "نخود", "زیتون", "خیارشور", "ترشی", "مربا", "املت", "کوکو", "کتلت", "آسمان", "زمین", "دریا", "کوه", "جنگل", "بیابان", "رودخانه", "دریاچه", "باران", "برف", "باد", "آفتاب", "ماه", "ستاره", "ابر", "رعد", "برق", "گل", "درخت", "برگ", "چمن", "خاک", "سنگ", "آتش", "هوا", "آب و هوا", "طوفان", "زلزله", "سیل", "خشکسالی", "سگ", "گربه", "اسب", "گاو", "گوسفند", "بز", "مرغ", "خروس", "جوجه", "اردک", "غاز", "کبوتر", "گنجشک", "عقاب", "شاهین", "شیر", "ببر", "پلنگ", "گرگ", "روباه", "خرس", "فیل", "زرافه", "میمون", "خرگوش", "موش", "مار", "ماهی", "کوسه", "نهنگ", "دلفین", "لاک‌پشت", "قورباغه", "پروانه", "زنبور", "مورچه", "عنکبوت", "hello", "world", "good", "morning", "night", "book", "house", "computer", "phone", "internet", "keyboard", "software", "hardware", "thank", "you", "please", "sorry", "yes", "no", "maybe", "today", "tomorrow", "yesterday", "love", "friend", "family", "mother", "father", "brother", "sister", "time", "money", "work", "school", "city", "country", "water", "food", "coffee", "tea", "apple", "orange", "happy", "sad", "great", "bad", "new", "old"
     )
@@ -79,31 +77,33 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // تابع جادویی برای نمایش کادر بازشو (Popup)
+    // تابع اصلاح شده برای نمایش کادر بازشو بدون بسته شدن کیبورد
     private fun showPopup(anchorView: View, items: List<String>) {
+        val context = anchorView.context
         val popupView = layoutInflater.inflate(R.layout.key_popup, null)
         val container = popupView.findViewById<LinearLayout>(R.id.popup_container)
         
+        // مهم‌ترین تغییر: فوکوس را false کردیم تا کیبورد غیب نشود
         val popupWindow = PopupWindow(
             popupView,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
+            false 
         )
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.parseColor("#212121")))
         popupWindow.isOutsideTouchable = true
 
         for (item in items) {
-            val tv = TextView(this)
+            val tv = TextView(context)
             tv.text = item
-            tv.textSize = 24f
+            tv.textSize = 22f
             tv.setTextColor(Color.WHITE)
             tv.gravity = Gravity.CENTER
             val params = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            params.setMargins(16, 16, 16, 16)
+            params.setMargins(8, 8, 8, 8)
             tv.layoutParams = params
             tv.setPadding(24, 16, 24, 16)
             tv.setBackgroundColor(Color.parseColor("#37474F"))
@@ -115,18 +115,32 @@ class PersianKeyboardService : InputMethodService() {
             container.addView(tv)
         }
 
-        // یک دکمه ضربدر برای بستن
-        val closeTv = TextView(this)
+        val closeTv = TextView(context)
         closeTv.text = "✖"
         closeTv.textSize = 20f
         closeTv.setTextColor(Color.WHITE)
         closeTv.gravity = Gravity.CENTER
         closeTv.setPadding(24, 16, 24, 16)
+        closeTv.setBackgroundColor(Color.parseColor("#37474F"))
         closeTv.setOnClickListener { popupWindow.dismiss() }
         container.addView(closeTv)
 
-        // نمایش کادر دقیقاً بالای دکمه‌ای که لمس شده
-        popupWindow.showAsDropDown(anchorView, 0, -anchorView.height - 150)
+        // محاسبه دقیق موقعیت برای باز شدن کادر بالای دکمه
+        anchorView.post {
+            val location = IntArray(2)
+            anchorView.getLocationOnScreen(location)
+            val x = location[0]
+            val y = location[1]
+            
+            val popupHeight = if (popupWindow.contentView.measuredHeight > 0) popupWindow.contentView.measuredHeight else 150
+            val yPos = y - popupHeight - 10 
+            
+            if (yPos > 0) {
+                popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, x, yPos)
+            } else {
+                popupWindow.showAsDropDown(anchorView)
+            }
+        }
     }
 
     override fun onCreateInputView(): View {
@@ -247,29 +261,23 @@ class PersianKeyboardService : InputMethodService() {
                 } 
             }
             
-            // ======== 🌟 اضافه کردن قابلیت نگه داشتن (Long Press) برای حروف خاص ========
             if (isPersian) {
-                // الف (ا) - انواع همزه و کشیده
                 view.findViewById<TextView>(R.id.btn_alef)?.setOnLongClickListener {
                     showPopup(it, listOf("آ", "أ", "إ", "ٱ", "ا", "ا" + kashida.repeat(2), "ا" + kashida.repeat(4)))
                     true
                 }
-                // ت (ت) - کشیده‌ها و اعداد منفی
                 view.findViewById<TextView>(R.id.btn_te)?.setOnLongClickListener {
                     showPopup(it, listOf("ت", "ت" + kashida, "ت" + kashida.repeat(2), "ت" + kashida.repeat(3), "-1-", "-5-", "-10-", "-20-"))
                     true
                 }
-                // ی (ی) - انواع ی و کشیده
                 view.findViewById<TextView>(R.id.btn_ye)?.setOnLongClickListener {
                     showPopup(it, listOf("ي", "ى", "ئ", "ی", "ی" + kashida.repeat(2), "ی" + kashida.repeat(4)))
                     true
                 }
-                // ک (ک) - انواع ک و کشیده
                 view.findViewById<TextView>(R.id.btn_kaf)?.setOnLongClickListener {
                     showPopup(it, listOf("ك", "ک", "ک" + kashida.repeat(2), "ک" + kashida.repeat(4)))
                     true
                 }
-                // ه (ه) - انواع ه و کشیده
                 view.findViewById<TextView>(R.id.btn_he)?.setOnLongClickListener {
                     showPopup(it, listOf("ة", "ه", "ۀ", "ه" + kashida.repeat(2), "ه" + kashida.repeat(4)))
                     true
@@ -392,7 +400,6 @@ class PersianKeyboardService : InputMethodService() {
             updateSuggestions()
         }
 
-        // کشیدن انگشت روی نقطه برای اعراب (قابلیت قبلی)
         view.findViewById<TextView>(R.id.btn_dot)?.setOnLongClickListener {
             lettersContainer.visibility = View.GONE
             diacriticsContainer.visibility = View.VISIBLE
