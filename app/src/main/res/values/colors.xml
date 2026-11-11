@@ -6,7 +6,7 @@
     <color name="suggestion_bg">#1E262B</color>
     <color name="special_key">#1E262B</color>
 
-    <!-- استایل دکمه‌های عادی -->
+    <!-- استایل دکمه‌های عادی (گردی گوشه و فاصله‌ها دقیق‌تر شد) -->
     <style name="KeyStyle">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -14,13 +14,13 @@
         <item name="android:layout_margin">2dp</item>
         <item name="android:background">@drawable/key_bg_normal</item>
         <item name="android:textColor">@color/key_text</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">20sp</item> <!-- فونت بزرگ‌تر -->
         <item name="android:gravity">center</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
 
-    <!-- استایل دکمه‌های خاص (مثل فاصله و اینتر) -->
+    <!-- استایل دکمه‌های خاص -->
     <style name="KeyStyleSpecial">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
@@ -33,15 +33,16 @@
         <item name="android:focusable">true</item>
     </style>
     
-    <!-- استایل دکمه‌های پنجره اعراب -->
+    <!-- استایل اعراب‌ها (سایز بزرگ‌تر شد) -->
     <style name="DiacriticStyle">
-        <item name="android:layout_width">45dp</item>
-        <item name="android:layout_height">45dp</item>
-        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">2dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">22sp</item>
-        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:textSize">28sp</item> <!-- بزرگ و خوانا -->
+        <item name="android:background">@color/key_bg</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
