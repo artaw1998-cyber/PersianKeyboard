@@ -27,21 +27,14 @@ jobs:
       run: yes | sdkmanager --licenses || true
 
     - name: Build with Gradle
-  run: gradle build
+      run: gradle build
 
-- name: Find APK files
-  run: find . -name "*.apk"
-
-- name: Upload APK
-  uses: actions/upload-artifact@v4
-  with:
-    name: app-debug
-    path: "**/*.apk"
-    if-no-files-found: error
+    - name: Find APK files
+      run: find . -name "*.apk"
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/**/*.apk
-        if-no-files-found: warn
+        path: "**/*.apk"
+        if-no-files-found: error
