@@ -81,10 +81,7 @@ class PersianKeyboardService : InputMethodService() {
 
     override fun onCreateInputView(): View {
         val view = layoutInflater.inflate(R.layout.keyboard_view, null)
-        
-        // Setup Core Components
         setupKeyboardUI(view)
-        
         return view
     }
 
@@ -105,16 +102,10 @@ class PersianKeyboardService : InputMethodService() {
             view.findViewById<TextView>(R.id.suggestion_3)
         )
 
-        // Bind Initial State
         bindLetters(view, shiftBtn)
         bindSymbols(view, pageBtn)
         updateSuggestions(suggestions)
 
-        // ==========================================
-        // REGION: EVENT LISTENERS
-        // ==========================================
-        
-        // Language Toggle
         langBtn.setOnClickListener { 
             isPersian = !isPersian 
             isCapsLock = false
@@ -123,11 +114,9 @@ class PersianKeyboardService : InputMethodService() {
             updateSuggestions(suggestions)
         }
 
-        // Shift Logic (Single tap = temporary, Double tap = Caps Lock)
         shiftBtn.setOnClickListener {
             if (!isPersian) {
                 val currentTime = System.currentTimeMillis()
-                // 🌟 افزایش زمان به 400 میلی‌ثانیه برای راحتی کاربر
                 if (currentTime - lastShiftClickTime < 400) {
                     isCapsLock = !isCapsLock
                     isShifted = false 
@@ -144,11 +133,9 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        // Setup Backspace (Long press to delete continuously)
         setupContinuousDeletion(view.findViewById(R.id.btn_backspace), suggestions)
         setupContinuousDeletion(view.findViewById(R.id.btn_backspace_sym), suggestions)
 
-        // Space & Enter (Auto-capitalize after space in English)
         listOf(R.id.btn_space, R.id.btn_space_sym).forEach { 
             view.findViewById<TextView>(it)?.setOnClickListener { 
                 currentInputConnection?.commitText(" ", 1) 
@@ -170,10 +157,8 @@ class PersianKeyboardService : InputMethodService() {
             updateSuggestions(suggestions)
         }
 
-        // Navigation (Symbols / Diacritics)
         setupNavigation(view, lettersContainer, symbolsContainer, diacriticsContainer, pageBtn, suggestions)
 
-        // Placeholders
         view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener { showToast("پنل ایموجی به زودی...") }
         view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener { showToast("تنظیمات کیبورد به زودی...") }
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { showToast("تایپ صوتی به زودی...") }
@@ -199,7 +184,6 @@ class PersianKeyboardService : InputMethodService() {
             if (isCapsLock || isShifted) baseMap.mapValues { it.value.uppercase() } else baseMap
         }
         
-        // Apply texts and click listeners
         for ((id, text) in buttons) { 
             view.findViewById<TextView>(id)?.apply {
                 this.text = text 
@@ -207,13 +191,12 @@ class PersianKeyboardService : InputMethodService() {
                     currentInputConnection?.commitText(text, 1) 
                     if (!isPersian && isShifted && !isCapsLock) {
                         isShifted = false
-                        bindLetters(view, shiftBtn) // Re-bind to lowercase
+                        bindLetters(view, shiftBtn) 
                     }
                 } 
             }
         }
 
-        // Numbers
         val nums = if (isPersian) {
             mapOf(R.id.btn_num_1 to "۱", R.id.btn_num_2 to "۲", R.id.btn_num_3 to "۳", R.id.btn_num_4 to "۴", R.id.btn_num_5 to "۵", R.id.btn_num_6 to "۶", R.id.btn_num_7 to "۷", R.id.btn_num_8 to "۸", R.id.btn_num_9 to "۹", R.id.btn_num_0 to "۰")
         } else {
@@ -226,14 +209,10 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        // ==========================================
-        // REGION: SHIFT BUTTON UI STATE (PROFESSIONAL WAY)
-        // ==========================================
-        // 🌟 استفاده از backgroundTintList برای تغییر رنگ بدون از بین بردن گوشه‌های گرد
         val shiftColor = when {
-            isCapsLock -> Color.parseColor("#4CAF50") // سبز برای Caps Lock
-            isShifted -> Color.parseColor("#29B6F6")  // آبی روشن برای Shift موقت
-            else -> null // بازگشت به رنگ اصلی (تیره)
+            isCapsLock -> Color.parseColor("#4CAF50") 
+            isShifted -> Color.parseColor("#29B6F6")  
+            else -> null 
         }
 
         if (shiftColor != null) {
@@ -242,7 +221,6 @@ class PersianKeyboardService : InputMethodService() {
             shiftBtn.backgroundTintList = null
         }
 
-        // Long Press Listeners (Persian only)
         if (isPersian) {
             setupLongPressPopups(view)
         }
@@ -278,31 +256,38 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     // ==========================================
-    // REGION: ENGINE & LOGIC (PREDICTION)
+    // REGION: ENGINE & LOGIC (PREDICTION) - FIXED!
     // ==========================================
     private fun updateSuggestions(suggestions: List<TextView>) {
-        val text = currentInputConnection?.getTextBeforeCursor(50, 0)?.toString() ?: ""
-        val words = text.split(" ", "\n", ".", "،", "؟", "!")
-        val lastWord = words.lastOrNull() ?: ""
-        val previousWord = if (words.size > 1) words[words.size - 2].trim() else ""
+        // خواندن ۱۰۰ کاراکتر آخر برای اطمینان
+        val text = currentInputConnection?.getTextBeforeCursor(100, 0)?.toString() ?: ""
+        
+        // پیدا کردن دقیق آخرین کلمه در حال تایپ (فارسی، انگلیسی و اعداد)
+        val wordRegex = Regex("[a-zA-Zآ-ی۰-۹0-9]+$")
+        val match = wordRegex.find(text)
+        val lastWord = match?.value ?: ""
 
         val currentSuggestions = mutableListOf<String>()
 
-        if (lastWord.isEmpty()) {
-            if (previousWord.isNotEmpty() && nextWordPredictions.containsKey(previousWord)) {
-                currentSuggestions.addAll(nextWordPredictions[previousWord]!!)
+        if (lastWord.isNotEmpty()) {
+            // ۱. اگر کلمه در دیکشنری نیست، خودش رو در صدر لیست قرار بده (برای ذخیره با رنگ طلایی)
+            if (lastWord.length >= 2 && !learnedWords.contains(lastWord) && !baseDictionary.contains(lastWord)) {
+                currentSuggestions.add(lastWord)
             }
-            if (previousWord.length > 1 && !learnedWords.contains(previousWord) && !baseDictionary.contains(previousWord)) {
-                currentSuggestions.add(previousWord)
-            }
-        } else {
+
+            // ۲. پیدا کردن پیشنهادهای دیگر از حافظه و دیکشنری
             val learnedMatches = learnedWords.filter { it.startsWith(lastWord) && it != lastWord }
             val baseMatches = baseDictionary.filter { it.startsWith(lastWord) && it != lastWord }
+            
             currentSuggestions.addAll(learnedMatches)
             currentSuggestions.addAll(baseMatches)
+        } else {
+            // ۳. حدس کلمه بعدی (وقتی فاصله زده شده)
+            val words = text.trim().split(Regex("\\s+"))
+            val previousWord = if (words.isNotEmpty()) words.last() else ""
             
-            if (lastWord.length >= 2 && !learnedWords.contains(lastWord) && !baseDictionary.contains(lastWord)) {
-                currentSuggestions.add(0, lastWord) // Add unknown word for learning
+            if (previousWord.isNotEmpty() && nextWordPredictions.containsKey(previousWord)) {
+                currentSuggestions.addAll(nextWordPredictions[previousWord]!!)
             }
         }
 
@@ -312,7 +297,13 @@ class PersianKeyboardService : InputMethodService() {
             if (index < distinctSuggestions.size) {
                 val word = distinctSuggestions[index]
                 textView.text = word
-                textView.setTextColor(if (word == lastWord && !learnedWords.contains(word)) Color.parseColor("#FFD54F") else Color.parseColor("#ECEFF1"))
+                
+                // اگر کلمه دقیقاً همون کلمه تایپ شده باشه (و در حافظه نباشه) -> رنگ طلایی
+                if (word == lastWord && !learnedWords.contains(word)) {
+                    textView.setTextColor(Color.parseColor("#FFD54F"))
+                } else {
+                    textView.setTextColor(Color.parseColor("#ECEFF1"))
+                }
                 
                 textView.setOnClickListener {
                     if (word == lastWord) {
@@ -342,7 +333,7 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     // ==========================================
-    // REGION: HELPER FUNCTIONS
+    // REGION: HELPER FUNCTIONS (UNCHANGED)
     // ==========================================
     private fun setupContinuousDeletion(btn: TextView, suggestions: List<TextView>) {
         val handler = Handler(Looper.getMainLooper())
@@ -362,7 +353,7 @@ class PersianKeyboardService : InputMethodService() {
                             handler.postDelayed(this, 50)
                         }
                     }
-                    handler.postDelayed(runnable!!, 400) // Start continuous delete after 400ms
+                    handler.postDelayed(runnable!!, 400) 
                     true
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -413,7 +404,7 @@ class PersianKeyboardService : InputMethodService() {
             popupView,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            false // Important: Do not steal focus
+            false 
         )
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.parseColor("#455A64"))) 
         popupWindow.isOutsideTouchable = true
@@ -470,7 +461,6 @@ class PersianKeyboardService : InputMethodService() {
             bindSymbols(view, pageBtn) 
         }
 
-        // Diacritics
         view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { 
             currentInputConnection?.commitText(".", 1) 
             updateSuggestions(suggestions)
