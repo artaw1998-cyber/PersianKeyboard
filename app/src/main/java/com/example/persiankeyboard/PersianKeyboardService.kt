@@ -77,7 +77,7 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // تابع اصلاح شده برای نمایش کادر بازشو دقیقاً بالای دکمه
+    // تابع اصلاح شده برای نمایش کادر بازشو با رنگ متفاوت
     private fun showPopup(anchorView: View, items: List<Pair<String, String>>) {
         val context = anchorView.context
         val popupView = layoutInflater.inflate(R.layout.key_popup, null)
@@ -87,14 +87,15 @@ class PersianKeyboardService : InputMethodService() {
             popupView,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            false // فوکوس را نمی‌گیریم تا کیبورد بسته نشود
+            false
         )
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.parseColor("#212121")))
+        // 🌟 تغییر رنگ پس‌زمینه کادر به آبی-طوسی روشن برای تفکیک از کیبورد
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.parseColor("#455A64"))) 
         popupWindow.isOutsideTouchable = true
 
         for (item in items) {
             val tv = TextView(context)
-            tv.text = item.first // متن نمایش داده شده
+            tv.text = item.first 
             tv.textSize = 22f
             tv.setTextColor(Color.WHITE)
             tv.gravity = Gravity.CENTER
@@ -105,10 +106,11 @@ class PersianKeyboardService : InputMethodService() {
             params.setMargins(8, 8, 8, 8)
             tv.layoutParams = params
             tv.setPadding(24, 16, 24, 16)
-            tv.setBackgroundColor(Color.parseColor("#37474F"))
+            // 🌟 تغییر رنگ دکمه‌های داخل کادر
+            tv.setBackgroundColor(Color.parseColor("#546E7A")) 
 
             tv.setOnClickListener {
-                currentInputConnection?.commitText(item.second, 1) // متن واقعی (کشیده شده) تایپ میشود
+                currentInputConnection?.commitText(item.second, 1) 
                 popupWindow.dismiss()
             }
             container.addView(tv)
@@ -120,12 +122,10 @@ class PersianKeyboardService : InputMethodService() {
         closeTv.setTextColor(Color.WHITE)
         closeTv.gravity = Gravity.CENTER
         closeTv.setPadding(24, 16, 24, 16)
-        closeTv.setBackgroundColor(Color.parseColor("#37474F"))
+        closeTv.setBackgroundColor(Color.parseColor("#546E7A"))
         closeTv.setOnClickListener { popupWindow.dismiss() }
         container.addView(closeTv)
 
-        // نمایش دقیقاً بالای دکمه با استفاده از showAsDropDown
-        // آفست منفی باعث می‌شود کادر رو به بالا باز شود
         popupWindow.showAsDropDown(anchorView, -100, -220)
     }
 
@@ -247,7 +247,6 @@ class PersianKeyboardService : InputMethodService() {
                 } 
             }
             
-            // ======== باگ‌فیکس: اضافه کردن کلیک برای اعداد ========
             val nums = if (isPersian) {
                 mapOf(R.id.btn_num_1 to "۱", R.id.btn_num_2 to "۲", R.id.btn_num_3 to "۳", R.id.btn_num_4 to "۴", R.id.btn_num_5 to "۵", R.id.btn_num_6 to "۶", R.id.btn_num_7 to "۷", R.id.btn_num_8 to "۸", R.id.btn_num_9 to "۹", R.id.btn_num_0 to "۰")
             } else {
@@ -263,48 +262,41 @@ class PersianKeyboardService : InputMethodService() {
             }
             
             if (isPersian) {
-                // کادر الف
+                // کادر الف (بدون کشیده‌های اضافی)
                 view.findViewById<TextView>(R.id.btn_alef)?.setOnLongClickListener {
                     showPopup(it, listOf(
-                        Pair("آ", "آ"), Pair("أ", "أ"), Pair("إ", "إ"), Pair("ٱ", "ٱ"), Pair("ا", "ا"), 
-                        Pair("اـ", "ا" + kashida.repeat(2)), Pair("اـــ", "ا" + kashida.repeat(4))
+                        Pair("آ", "آ"), Pair("أ", "أ"), Pair("إ", "إ"), Pair("ٱ", "ٱ"), Pair("ا", "ا")
                     ))
                     true
                 }
-                // کادر ت با کشیدگی‌های واقعی
+                // کادر ت (حذف ت‌های اضافی و تایپ خالص کشیده)
                 view.findViewById<TextView>(R.id.btn_te)?.setOnLongClickListener {
                     showPopup(it, listOf(
                         Pair("ت", "ت"), 
-                        Pair("تـ", "ت" + kashida.repeat(1)), 
-                        Pair("تــ", "ت" + kashida.repeat(2)), 
-                        Pair("تـــ", "ت" + kashida.repeat(3)),
-                        Pair("-5-", "ت" + kashida.repeat(5)), 
-                        Pair("-10-", "ت" + kashida.repeat(10)), 
-                        Pair("-20-", "ت" + kashida.repeat(20))
+                        Pair("-5-", kashida.repeat(5)), 
+                        Pair("-10-", kashida.repeat(10)), 
+                        Pair("-20-", kashida.repeat(20))
                     ))
                     true
                 }
                 // کادر ی
                 view.findViewById<TextView>(R.id.btn_ye)?.setOnLongClickListener {
                     showPopup(it, listOf(
-                        Pair("ي", "ي"), Pair("ى", "ى"), Pair("ئ", "ئ"), Pair("ی", "ی"), 
-                        Pair("یـ", "ی" + kashida.repeat(2)), Pair("یـــ", "ی" + kashida.repeat(4))
+                        Pair("ي", "ي"), Pair("ى", "ى"), Pair("ئ", "ئ"), Pair("ی", "ی")
                     ))
                     true
                 }
                 // کادر ک
                 view.findViewById<TextView>(R.id.btn_kaf)?.setOnLongClickListener {
                     showPopup(it, listOf(
-                        Pair("ك", "ك"), Pair("ک", "ک"), 
-                        Pair("کـ", "ک" + kashida.repeat(2)), Pair("کـــ", "ک" + kashida.repeat(4))
+                        Pair("ك", "ك"), Pair("ک", "ک")
                     ))
                     true
                 }
                 // کادر ه
                 view.findViewById<TextView>(R.id.btn_he)?.setOnLongClickListener {
                     showPopup(it, listOf(
-                        Pair("ة", "ة"), Pair("ه", "ه"), Pair("ۀ", "ۀ"), 
-                        Pair("هـ", "ه" + kashida.repeat(2)), Pair("هـــ", "ه" + kashida.repeat(4))
+                        Pair("ة", "ة"), Pair("ه", "ه"), Pair("ۀ", "ۀ")
                     ))
                     true
                 }
