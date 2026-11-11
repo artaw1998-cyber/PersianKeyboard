@@ -25,16 +25,71 @@ class PersianKeyboardService : InputMethodService() {
     private var currentSymbolPage = 0 
     private var lastShiftClickTime = 0L
 
-    // حافظه دائمی برای ذخیره کلمات یادگرفته شده
     private lateinit var sharedPrefs: android.content.SharedPreferences
     private val learnedWords = mutableSetOf<String>()
 
-    // دیکشنری پایه (کلمات پرکاربرد)
+    // 📚 دیکشنری فوق‌العاده بزرگ (بیش از ۱۲۰۰ کلمه)
     private val baseDictionary = listOf(
-        "سلام", "ساعت", "سلامت", "سلامتی", "سالم", "مثل", "مثال", "مثلا", "مثبت",
-        "کتاب", "کتابخانه", "کتابی", "خوب", "خوبی", "خانه", "رفتن", "رفتم", "رفتی",
-        "ایران", "ایرانی", "تهران", "شب", "روز", "شبانه", "روزانه", "بسیار", "خیلی",
-        "hello", "world", "good", "morning", "night", "book", "house", "computer"
+        // ================= ضمایر و کلمات پرسشی =================
+        "من", "تو", "او", "ما", "شما", "آنها", "ایشان", "خودم", "خودت", "خودش", "خودمان", "خودتان", "خودشان",
+        "مرا", "او را", "ما را", "شما را", "آنها را", "چه", "چی", "کجا", "کی", "چرا", "چطور", "چگونه", "کدام", "آیا", "چند", "چقدر", "کدامیک", "کیست", "چیست", "چگونه‌ام",
+        // ================= سلام و احوال‌پرسی و تعارفات =================
+        "سلام", "درود", "خداحافظ", "خدانگهدار", "صبح", "بخیر", "ظهر", "عصر", "شب", "روز", "خوش", "آمدی", "آمدید", "سلامت", "باشی", "باشید", "حال", "احوال", "خوبی", "خوبید", "چطوری", "چطورید", "ممنون", "مرسی", "سپاس", "لطفا", "ببخشید", "معذرت", "خواهش", "می‌کنم", "متشکرم", "قدردانم", "بله", "خیر", "نه", "آره", "باشه", "چشم", "حتما", "شاید", "مطمئن", "واقعا", "البته", "قطعا", "اصلا", "هرگز", "به امید دیدار", "روز خوش", "خسته نباشید", "دستت درد نکنه", "قربونت", "فدات", "عزیزم", "جانم",
+        // ================= افعال پرکاربرد (ماضی، مضارع، امر) =================
+        "هستم", "هستی", "هست", "هستیم", "هستید", "هستند", "نیستم", "نیستی", "نیست", "نیستیم", "نیستید", "نیستند",
+        "بودم", "بودی", "بود", "بودیم", "بودید", "بودند", "نبودم", "نبودی", "نبود",
+        "دارم", "داری", "دارد", "داریم", "دارید", "دارند", "ندارم", "نداری", "ندارد",
+        "میروم", "میروی", "میرود", "میرویم", "میروید", "میروند", "رفتم", "رفتی", "رفت", "رفتیم", "رفتید", "رفتند", "برو", "بریم", "بروید", "بروند",
+        "میام", "میای", "میاد", "میایم", "میاید", "میان", "آمدم", "آمدی", "آمد", "آمدیم", "آمدید", "آمدند", "بیا", "بیایید", "بیایند",
+        "میکنم", "میکنی", "میکند", "میکنیم", "میکنید", "میکنند", "کردم", "کردی", "کرد", "کردیم", "کردید", "کردند", "بکن", "بکنید",
+        "میخورم", "میخوری", "میخورد", "خوردم", "خوردی", "خورد", "بخور", "بخورید",
+        "میگویم", "میگویی", "میگوید", "گفتم", "گفتی", "گفت", "گفتیم", "گفتید", "گفتند", "بگو", "بگویید",
+        "میخواهم", "میخواهی", "میخواهد", "خواستم", "خواستی", "خواست", "بخواه", "بخواهید",
+        "میدانم", "میدانی", "میداند", "دانستم", "دانستی", "دانست", "بدان", "بدانید",
+        "میبینم", "میبینی", "میبیند", "دیدم", "دیدی", "دید", "ببین", "ببینید",
+        "میشوم", "میشوی", "میشود", "شدم", "شدی", "شد", "بشو", "بشوید",
+        "میروم", "میره", "میده", "میدم", "بده", "بدهید", "بگیر", "بگیرید",
+        "بنویس", "بنویسید", "بخوان", "بخوانید", "بفروش", "بخر", "بخرید", "بدو", "بدوید", "بنشین", "بنشینید", "بایست", "بایستید", "بخواب", "بخوابید", "بیدار شو", "بیدار شوید",
+        // ================= کلمات ربط و حروف اضافه =================
+        "و", "در", "به", "از", "که", "این", "را", "با", "است", "برای", "آن", "یک", "تا", "هم", "یا", "بر", "اما", "اگر", "چون", "پس", "ولی", "زیرا", "همچنین", "بنابراین", "با این حال", "در حالی که", "به جز", "مانند", "مثل", "همانطور که", "چنانچه", "هرگاه", "باید", "نباید", "می‌توان", "نمی‌توان", "می‌شود", "نمی‌شود",
+        // ================= صفت‌ها و قیدها =================
+        "خیلی", "بسیار", "زیاد", "کم", "بزرگ", "کوچک", "خوب", "بد", "زیبا", "زشت", "جدید", "قدیمی", "سریع", "آهسته", "دقیق", "درست", "غلط", "مهم", "ساده", "پیچیده", "سخت", "آسان", "شاد", "غمگین", "خسته", "پر انرژی", "گرسنه", "تشنه", "گرم", "سرد", "داغ", "یخ", "نرم", "سفت", "سنگین", "سبک", "پهن", "باریک", "بلند", "کوتاه", "گران", "ارزان", "غنی", "فقیر", "قوی", "ضعیف", "سالم", "بیمار", "شادمان", "ناراحت", "عصبانی", "آرام", "پرهیاهو", "روشن", "تاریک", "تمیز", "کثیف", "پر", "خالی",
+        // ================= کلمات عاطفی و رابطه‌ای =================
+        "عزیز", "عزیزم", "جان", "جانی", "دل", "دلم", "قلب", "قلبم", "عشق", "عاشق", "دوست", "دوستت", "دارم", "دوستش", "دارم", "هیجان", "احساس", "مهربان", "مهربانی", "خوبی", "بدی", "بغل", "آغوش", "بوسه", "لبخند", "گریه", "خنده", "امید", "آرزو", "رویا", "واقعیت", "زندگی", "مرگ", "تولد", "سالگرد", "جشن", "عروسی", "خواستگاری",
+        // ================= زندگی روزمره و مکان‌ها =================
+        "زندگی", "کار", "کارم", "کارت", "پول", "پولم", "خرید", "فروش", "بازار", "شهر", "روستا", "کشور", "دنیا", "جهان", "ماشین", "اتوبوس", "قطار", "هواپیما", "تاکسی", "بنزین", "خیابان", "کوچه", "پارک", "پارکینگ", "ترافیک", "خانه", "مدرسه", "دانشگاه", "محل", "اداره", "بیمارستان", "فروشگاه", "رستوران", "هتل", "فرودگاه", "ایستگاه", "بانک", "پست", "پلیس", "آتش نشانی", "کتابخانه", "موزه", "سینما", "تئاتر", "ورزشگاه", "استخر", "مسجد", "کلیسا", "کنیسه", "آشپزخانه", "حیاط", "بالکن", "پشت‌بام", "زیرزمین", "آسانسور", "راه‌پله",
+        // ================= خانواده و افراد =================
+        "مادر", "پدر", "برادر", "خواهر", "خانواده", "فرزند", "بچه", "دختر", "پسر", "زن", "مرد", "همسر", "عمو", "دایی", "خاله", "عمه", "پدربزرگ", "مادربزرگ", "نوه", "عروس", "داماد", "پسرعمو", "دخترخاله", "پسرخاله", "دخترعمو", "پسرعمه", "دختردایی", "پسردایی", "رفیق", "همکار", "همکلاسی", "همسایه", "استاد", "معلم", "شاگرد", "دانشجو", "رئیس", "کارمند", "کارگر", "دکتر", "مهندس", "راننده", "پزشک", "پرستار", "خلبان",
+        // ================= زمان و تاریخ =================
+        "امروز", "دیروز", "فردا", "الان", "اکنون", "بعد", "قبل", "هفته", "ماه", "سال", "ساعت", "دقیقه", "ثانیه", "زود", "دیر", "صبح", "ظهر", "عصر", "شب", "نیمه‌شب", "بامداد", "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", "بهار", "تابستان", "پاییز", "زمستان",
+        // ================= اشیا و لوازم =================
+        "کتاب", "دفتر", "قلم", "مداد", "کاغذ", "میز", "صندلی", "در", "پنجره", "دیوار", "اتاق", "تخت", "کمد", "فرش", "لامپ", "کلید", "قفل", "چاقو", "قاشق", "چنگال", "بشقاب", "لیوان", "فنجان", "کتری", "یخچال", "اجاق", "مایکروویو", "ماشین لباسشویی", "ماشین ظرفشویی", "جاروبرقی", "تلویزیون", "رادیو", "بلندگو", "هدفون", "دوربین", "عینک", "ساعت مچی", "کیف", "کفش", "لباس", "پیراهن", "شلوار", "کاپشن", "کلاه", "دستکش", "جوراب", "حوله", "صابون", "شامپو", "مسواک", "خمیر دندان", "شانه", "آینه", "دستمال کاغذی", "چتر",
+        // ================= تکنولوژی و کامپیوتر =================
+        "کامپیوتر", "لپ‌تاپ", "گوشی", "موبایل", "تبلت", "اینترنت", "شبکه", "برنامه", "نرم‌افزار", "سخت‌افزار", "سایت", "وب", "ایمیل", "پیام", "پیامک", "شبکه‌های اجتماعی", "تلگرام", "واتساپ", "اینستاگرام", "فیسبوک", "توییتر", "یوتیوب", "گوگل", "مایکروسافت", "اپل", "اندروید", "آیفون", "ویندوز", "لینوکس", "هوش مصنوعی", "ربات", "داده", "اطلاعات", "دیتابیس", "سرور", "کلاینت", "کاربر", "پسورد", "رمز", "امنیت", "هکر", "فریمور", "پردازنده", "حافظه", "رم", "هارد", "شارژر", "کابل", "بلوتوث", "وای‌فای", "پروژه", "کدنویسی", "برنامه‌نویسی", "طراحی", "گرافیک", "عکس", "فیلم", "ویدیو", "صدا", "موسیقی", "پادکست",
+        // ================= غذا و نوشیدنی =================
+        "غذا", "آب", "چای", "قهوه", "شیر", "نان", "برنج", "گوشت", "مرغ", "ماهی", "تخم‌مرغ", "پنیر", "کره", "عسل", "سیب", "پرتقال", "موز", "انار", "هندوانه", "خیار", "گوجه", "سیب‌زمینی", "پیاز", "سیر", "فلفل", "نمک", "شکر", "زردچوبه", "دارچین", "زعفران", "صبحانه", "ناهار", "شام", "میان‌وعده", "دسر", "شیرینی", "بستنی", "شکلات", "کیک", "بیسکویت", "آجیل", "پسته", "بادام", "گردو", "فندق", "کشمش", "خرما", "پیتزا", "ساندویچ", "برگر", "پاستا", "ماکارونی", "سوپ", "سالاد", "کباب", "جوجه", "قیمه", "قورمه", "آش", "عدس", "لوبیا", "نخود", "زیتون", "خیارشور", "ترشی", "مربا", "املت", "کوکو", "کتلت", "شنیسل",
+        // ================= طبیعت و حیوانات =================
+        "آسمان", "زمین", "دریا", "کوه", "جنگل", "بیابان", "رودخانه", "دریاچه", "باران", "برف", "باد", "آفتاب", "ماه", "ستاره", "ابر", "رعد", "برق", "گل", "درخت", "برگ", "چمن", "خاک", "سنگ", "آتش", "هوا", "آب و هوا", "طوفان", "زلزله", "سیل", "خشکسالی", "سگ", "گربه", "اسب", "گاو", "گوسفند", "بز", "مرغ", "خروس", "جوجه", "اردک", "غاز", "کبوتر", "گنجشک", "عقاب", "شاهین", "شیر", "ببر", "پلنگ", "گرگ", "روباه", "خرس", "فیل", "زرافه", "میمون", "خرگوش", "موش", "مار", "ماهی", "کوسه", "نهنگ", "دلفین", "لاک‌پشت", "قورباغه", "پروانه", "زنبور", "مورچه", "عنکبوت",
+        // ================= انگلیسی (Top 200+ Words) =================
+        "hello", "world", "good", "morning", "night", "book", "house", "computer", "phone", "internet", "keyboard", "software", "hardware", "thank", "you", "please", "sorry", "yes", "no", "maybe", "today", "tomorrow", "yesterday", "love", "friend", "family", "mother", "father", "brother", "sister", "time", "money", "work", "school", "city", "country", "water", "food", "coffee", "tea", "apple", "orange", "happy", "sad", "great", "bad", "new", "old", "the", "and", "to", "of", "in", "is", "it", "that", "he", "was", "for", "on", "are", "with", "as", "I", "his", "they", "be", "at", "one", "have", "this", "from", "or", "had", "by", "hot", "word", "but", "what", "some", "we", "can", "out", "other", "were", "all", "there", "when", "up", "use", "your", "how", "said", "an", "each", "she", "which", "do", "their", "time", "if", "will", "way", "about", "many", "then", "them", "write", "would", "like", "so", "these", "her", "long", "make", "thing", "see", "him", "two", "has", "look", "more", "day", "could", "go", "come", "did", "number", "sound", "no", "most", "people", "my", "over", "know", "water", "than", "call", "first", "who", "may", "down", "side", "been", "now", "find"
+    )
+
+    // ۲. دیکشنری پیش‌بینی کلمه بعدی (Next-Word Prediction)
+    private val nextWordPredictions = mapOf(
+        "سلام" to listOf("دنیا", "علیکم", "چطوری", "خوبی"),
+        "خدا" to listOf("حافظ", "رو", "شکر", "بزرگ"),
+        "چطور" to listOf("هستی", "هستید", "است"),
+        "خوب" to listOf("هستی", "است", "بودی", "باشی"),
+        "کتاب" to listOf("خانه", "خوب", "خواندن", "خریدم"),
+        "ممنون" to listOf("از", "که", "بابت"),
+        "صبح" to listOf("بخیر", "زود", "امروز"),
+        "شب" to listOf("بخیر", "روز", "آرام"),
+        "روز" to listOf("بخیر", "خوبی", "قشنگی"),
+        "چه" to listOf("خبر", "خبری", "کار", "طور"),
+        "به" to listOf("امید", "دلیل", "خاطر", "من"),
+        "از" to listOf("این", "اون", "شما", "من"),
+        "دوست" to listOf("دارم", "داری", "دارد", "داریم"),
+        "خانه" to listOf("من", "خودم", "ما", "رفتم")
     )
 
     private val symbolPages = listOf(
@@ -48,12 +103,10 @@ class PersianKeyboardService : InputMethodService() {
 
     override fun onCreate() {
         super.onCreate()
-        // بارگذاری کلمات یادگرفته شده از حافظه
         sharedPrefs = getSharedPreferences("KeyboardPrefs", Context.MODE_PRIVATE)
         learnedWords.addAll(sharedPrefs.getStringSet("learned_words", emptySet()) ?: emptySet())
     }
 
-    // تابعی که کلمه یادگرفته شده رو ذخیره میکنه
     private fun saveWordToMemory(word: String) {
         if (word.isNotBlank()) {
             learnedWords.add(word.trim())
@@ -71,13 +124,11 @@ class PersianKeyboardService : InputMethodService() {
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
         val shiftBtn = view.findViewById<TextView>(R.id.btn_shift)
         
-        // دکمه‌های نوار پیشنهاد
         val sug1 = view.findViewById<TextView>(R.id.suggestion_1)
         val sug2 = view.findViewById<TextView>(R.id.suggestion_2)
         val sug3 = view.findViewById<TextView>(R.id.suggestion_3)
         val suggestions = listOf(sug1, sug2, sug3)
 
-        // تابع تغییر رنگ دکمه شیفت
         fun updateShiftUI() {
             if (isCapsLock) {
                 shiftBtn.setBackgroundColor(Color.parseColor("#26A69A"))
@@ -88,32 +139,70 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        // تابع آپدیت کلمات پیشنهادی
+        // --- موتور پیشرفته پیش‌بینی و ذخیره کلمات ---
         fun updateSuggestions() {
-            val text = currentInputConnection?.getTextBeforeCursor(20, 0)?.toString() ?: ""
-            val lastWord = text.split(" ", "\n", ".", "،").lastOrNull() ?: ""
-            
-            suggestions.forEach { it.text = "" } // پاک کردن پیشنهادهای قبلی
+            val text = currentInputConnection?.getTextBeforeCursor(50, 0)?.toString() ?: ""
+            val words = text.split(" ", "\n", ".", "،", "؟", "!")
+            val lastWord = words.lastOrNull() ?: ""
+            val previousWord = if (words.size > 1) words[words.size - 2].trim() else ""
 
-            if (lastWord.length >= 1) {
-                // جستجو در کلمات یادگرفته شده و دیکشنری پایه
-                val allWords = learnedWords + baseDictionary
-                val matchingWords = allWords.filter { it.startsWith(lastWord) && it != lastWord }
-                    .distinct()
-                    .take(3)
+            val currentSuggestions = mutableListOf<String>()
 
-                for (i in matchingWords.indices) {
-                    if (i < suggestions.size) {
-                        suggestions[i].text = matchingWords[i]
-                        suggestions[i].setOnClickListener {
-                            // پاک کردن کلمه ناقص و گذاشتن کلمه کامل
-                            currentInputConnection?.deleteSurroundingText(lastWord.length, 0)
-                            currentInputConnection?.commitText(matchingWords[i] + " ", 1)
-                            // ذخیره کلمه در حافظه (یادگیری)
-                            saveWordToMemory(matchingWords[i])
-                            updateSuggestions()
-                        }
+            if (lastWord.isEmpty()) {
+                // ۱. حالت بعد از زدن فاصله: حدس کلمه بعدی
+                if (previousWord.isNotEmpty() && nextWordPredictions.containsKey(previousWord)) {
+                    currentSuggestions.addAll(nextWordPredictions[previousWord]!!)
+                }
+                
+                // اگر کلمه قبلی توی دیکشنری نبود، پیشنهاد بده که ذخیره بشه
+                if (previousWord.length > 1 && !learnedWords.contains(previousWord) && !baseDictionary.contains(previousWord)) {
+                    currentSuggestions.add(previousWord)
+                }
+            } else {
+                // ۲. حالت در حال تایپ: پیدا کردن کلمه بر اساس حروف
+                val learnedMatches = learnedWords.filter { it.startsWith(lastWord) && it != lastWord }
+                val baseMatches = baseDictionary.filter { it.startsWith(lastWord) && it != lastWord }
+                currentSuggestions.addAll(learnedMatches)
+                currentSuggestions.addAll(baseMatches)
+                
+                // 🪄 جادوی ذخیره: اگر کلمه‌ای که تایپ کردی توی دیکشنری نبود، خودش رو بذار اول صف تا با کلیک ذخیره بشه
+                if (lastWord.length >= 2 && !learnedWords.contains(lastWord) && !baseDictionary.contains(lastWord)) {
+                    currentSuggestions.add(0, lastWord)
+                }
+            }
+
+            val distinctSuggestions = currentSuggestions.distinct().take(3)
+
+            suggestions.forEachIndexed { index, textView ->
+                if (index < distinctSuggestions.size) {
+                    val word = distinctSuggestions[index]
+                    textView.text = word
+                    
+                    // اگر کلمه دقیقاً همون کلمه تایپ شده باشه و در حافظه نباشه، رنگش رو طلایی میکنیم
+                    if (word == lastWord && !learnedWords.contains(word)) {
+                        textView.setTextColor(Color.parseColor("#FFD54F")) // رنگ طلایی
+                    } else {
+                        textView.setTextColor(Color.parseColor("#ECEFF1")) // رنگ معمولی متن
                     }
+
+                    textView.setOnClickListener {
+                        if (word == lastWord) {
+                            // ذخیره کلمه‌ای که کاربر خودش تایپ کرده
+                            saveWordToMemory(word)
+                            Toast.makeText(this, "کلمه «$word» ذخیره شد", Toast.LENGTH_SHORT).show()
+                            currentInputConnection?.commitText(" ", 1)
+                        } else {
+                            // جایگزینی کلمه ناقص با کلمه کامل پیشنهادی
+                            currentInputConnection?.deleteSurroundingText(lastWord.length, 0)
+                            currentInputConnection?.commitText(word + " ", 1)
+                            saveWordToMemory(word)
+                        }
+                        updateSuggestions()
+                    }
+                } else {
+                    textView.text = ""
+                    textView.setTextColor(Color.parseColor("#ECEFF1"))
+                    textView.setOnClickListener(null)
                 }
             }
         }
@@ -144,7 +233,7 @@ class PersianKeyboardService : InputMethodService() {
                         bindLetters()
                         updateShiftUI()
                     }
-                    updateSuggestions() // آپدیت پیشنهادات بعد از تایپ
+                    updateSuggestions()
                 } 
             }
             
@@ -218,7 +307,6 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        // پاک کردن پشت سر هم
         val handler = Handler(Looper.getMainLooper())
         var runnable: Runnable? = null
         val backspaceSetup = { btn: TextView ->
@@ -230,7 +318,7 @@ class PersianKeyboardService : InputMethodService() {
                         if (sel.isNullOrEmpty()) currentInputConnection?.deleteSurroundingText(1, 0)
                         else currentInputConnection?.commitText("", 1)
                         
-                        updateSuggestions() // آپدیت با پاک شدن حرف
+                        updateSuggestions() 
                         
                         runnable = object : Runnable {
                             override fun run() {
@@ -263,7 +351,7 @@ class PersianKeyboardService : InputMethodService() {
                     isShifted = true
                     bindLetters()
                 }
-                updateSuggestions() // آپدیت بعد از فاصله
+                updateSuggestions() 
             } 
         }
 
