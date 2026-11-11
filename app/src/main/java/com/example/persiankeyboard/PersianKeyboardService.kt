@@ -1,5 +1,6 @@
 package com.example.persiankeyboard
 
+import android.content.Context
 import android.inputmethodservice.InputMethodService
 import android.text.SpannableString
 import android.text.Spanned
@@ -19,14 +20,23 @@ data class SymItem(val symbol: String, val meaning: String = "")
 class PersianKeyboardService : InputMethodService() {
 
     private var isPersian = true
-    private var isCapsLock = false // برای قفل کردن حروف بزرگ (با دو بار زدن شیفت)
-    private var isShifted = false  // برای بزرگ شدن فقط یک حرف (با یک بار زدن شیفت یا بعد از فاصله)
+    private var isCapsLock = false
+    private var isShifted = false
     private var currentSymbolPage = 0 
-    
-    // متغیری برای تشخیص دو بار کلیک روی شیفت
     private var lastShiftClickTime = 0L
 
-    // لیست کامل ۶ صفحه نماد
+    // حافظه دائمی برای ذخیره کلمات یادگرفته شده
+    private lateinit var sharedPrefs: android.content.SharedPreferences
+    private val learnedWords = mutableSetOf<String>()
+
+    // دیکشنری پایه (کلمات پرکاربرد)
+    private val baseDictionary = listOf(
+        "سلام", "ساعت", "سلامت", "سلامتی", "سالم", "مثل", "مثال", "مثلا", "مثبت",
+        "کتاب", "کتابخانه", "کتابی", "خوب", "خوبی", "خانه", "رفتن", "رفتم", "رفتی",
+        "ایران", "ایرانی", "تهران", "شب", "روز", "شبانه", "روزانه", "بسیار", "خیلی",
+        "hello", "world", "good", "morning", "night", "book", "house", "computer"
+    )
+
     private val symbolPages = listOf(
         listOf(SymItem("@"), SymItem("#"), SymItem("$"), SymItem("%"), SymItem("&"), SymItem("*"), SymItem("-"), SymItem("+"), SymItem("="), SymItem("/"), SymItem("("), SymItem(")"), SymItem("["), SymItem("]"), SymItem("{"), SymItem("}"), SymItem("<"), SymItem(">"), SymItem("«"), SymItem("»"), SymItem("!"), SymItem("؟"), SymItem("،"), SymItem("؛"), SymItem(":"), SymItem(";"), SymItem("'"), SymItem("\""), SymItem("_"), SymItem("\\"), SymItem("^"), SymItem("~"), SymItem("|"), SymItem("•"), SymItem("…"), SymItem("٪"), SymItem("ریال"), SymItem("€"), SymItem("£"), SymItem("¥")),
         listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
@@ -35,6 +45,21 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("𒀀", "a"), SymItem("𒀁", "i"), SymItem("𒀂", "u"), SymItem("𒅗", "k"), SymItem("𒂊", "ko"), SymItem("𒄩", "x"), SymItem("𒄀", "g"), SymItem("𒄖", "go"), SymItem("𒁺", "ch"), SymItem("𒋾", "thra"), SymItem("𒃮", "j"), SymItem("𒄿", "je"), SymItem("𒋫", "t"), SymItem("𒌈", "to"), SymItem("𒌅", "th"), SymItem("𒁕", "d"), SymItem("𒁲", "de"), SymItem("𒁺", "do"), SymItem("𒉿", "p"), SymItem("𒆰", "f"), SymItem("𒁀", "b"), SymItem("𒈾", "n"), SymItem("𒉡", "no"), SymItem("𒈬", "m"), SymItem("𒈨", "me"), SymItem("𒈬", "mo"), SymItem("𒅀", "y"), SymItem("𒉿", "v"), SymItem("𒃶", "ve"), SymItem("𒊒", "r"), SymItem("𒊑", "ro"), SymItem("𒇴", "L"), SymItem("𒊓", "s"), SymItem("𒍝", "z"), SymItem("𒊭", "sh"), SymItem("𒄩", "h"), SymItem("𒀀", "1"), SymItem("𒀁", "2"), SymItem("𒀂", "5"), SymItem("𒌋", "10"), SymItem("𒐏", "20"), SymItem("𒐕", "100")),
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
     )
+
+    override fun onCreate() {
+        super.onCreate()
+        // بارگذاری کلمات یادگرفته شده از حافظه
+        sharedPrefs = getSharedPreferences("KeyboardPrefs", Context.MODE_PRIVATE)
+        learnedWords.addAll(sharedPrefs.getStringSet("learned_words", emptySet()) ?: emptySet())
+    }
+
+    // تابعی که کلمه یادگرفته شده رو ذخیره میکنه
+    private fun saveWordToMemory(word: String) {
+        if (word.isNotBlank()) {
+            learnedWords.add(word.trim())
+            sharedPrefs.edit().putStringSet("learned_words", learnedWords).apply()
+        }
+    }
 
     override fun onCreateInputView(): View {
         val view = layoutInflater.inflate(R.layout.keyboard_view, null)
@@ -45,19 +70,54 @@ class PersianKeyboardService : InputMethodService() {
         val langBtn = view.findViewById<TextView>(R.id.btn_lang)
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
         val shiftBtn = view.findViewById<TextView>(R.id.btn_shift)
+        
+        // دکمه‌های نوار پیشنهاد
+        val sug1 = view.findViewById<TextView>(R.id.suggestion_1)
+        val sug2 = view.findViewById<TextView>(R.id.suggestion_2)
+        val sug3 = view.findViewById<TextView>(R.id.suggestion_3)
+        val suggestions = listOf(sug1, sug2, sug3)
 
-        // تابع تغییر ظاهر دکمه شیفت
+        // تابع تغییر رنگ دکمه شیفت
         fun updateShiftUI() {
             if (isCapsLock) {
-                shiftBtn.setBackgroundColor(Color.parseColor("#26A69A")) // سبز پررنگ برای قفل
+                shiftBtn.setBackgroundColor(Color.parseColor("#26A69A"))
             } else if (isShifted) {
-                shiftBtn.setBackgroundColor(Color.parseColor("#80CBC4")) // سبز کم‌رنگ برای شیفت موقت
+                shiftBtn.setBackgroundColor(Color.parseColor("#80CBC4"))
             } else {
-                shiftBtn.setBackgroundResource(R.drawable.key_bg_special) // رنگ تیره پیش‌فرض
+                shiftBtn.setBackgroundResource(R.drawable.key_bg_special)
             }
         }
 
-        // تابع چیدمان حروف و اعداد
+        // تابع آپدیت کلمات پیشنهادی
+        fun updateSuggestions() {
+            val text = currentInputConnection?.getTextBeforeCursor(20, 0)?.toString() ?: ""
+            val lastWord = text.split(" ", "\n", ".", "،").lastOrNull() ?: ""
+            
+            suggestions.forEach { it.text = "" } // پاک کردن پیشنهادهای قبلی
+
+            if (lastWord.length >= 1) {
+                // جستجو در کلمات یادگرفته شده و دیکشنری پایه
+                val allWords = learnedWords + baseDictionary
+                val matchingWords = allWords.filter { it.startsWith(lastWord) && it != lastWord }
+                    .distinct()
+                    .take(3)
+
+                for (i in matchingWords.indices) {
+                    if (i < suggestions.size) {
+                        suggestions[i].text = matchingWords[i]
+                        suggestions[i].setOnClickListener {
+                            // پاک کردن کلمه ناقص و گذاشتن کلمه کامل
+                            currentInputConnection?.deleteSurroundingText(lastWord.length, 0)
+                            currentInputConnection?.commitText(matchingWords[i] + " ", 1)
+                            // ذخیره کلمه در حافظه (یادگیری)
+                            saveWordToMemory(matchingWords[i])
+                            updateSuggestions()
+                        }
+                    }
+                }
+            }
+        }
+
         fun bindLetters() {
             val buttons = if (isPersian) {
                 mapOf(
@@ -71,7 +131,6 @@ class PersianKeyboardService : InputMethodService() {
                     R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l", R.id.btn_pe to ";",
                     R.id.btn_za to "z", R.id.btn_ta to "x", R.id.btn_ze to "c", R.id.btn_re to "v", R.id.btn_zal to "b", R.id.btn_dal to "n", R.id.btn_vav to "m", R.id.btn_kaf to ",", R.id.btn_gaf to "."
                 )
-                // اگر CapsLock یا Shift فعال باشد حروف را بزرگ میکنیم
                 if (isCapsLock || isShifted) baseMap.mapValues { it.value.uppercase() } else baseMap
             }
             
@@ -80,16 +139,15 @@ class PersianKeyboardService : InputMethodService() {
                 btn.text = text 
                 btn.setOnClickListener { 
                     currentInputConnection?.commitText(text, 1) 
-                    // اگر شیفت موقت روشن بود (نه قفل)، بعد از تایپ یک حرف، خاموشش کن
                     if (!isPersian && isShifted && !isCapsLock) {
                         isShifted = false
                         bindLetters()
                         updateShiftUI()
                     }
+                    updateSuggestions() // آپدیت پیشنهادات بعد از تایپ
                 } 
             }
             
-            // --- آپدیت اعداد بر اساس زبان ---
             val nums = if (isPersian) {
                 mapOf(R.id.btn_num_1 to "۱", R.id.btn_num_2 to "۲", R.id.btn_num_3 to "۳", R.id.btn_num_4 to "۴", R.id.btn_num_5 to "۵", R.id.btn_num_6 to "۶", R.id.btn_num_7 to "۷", R.id.btn_num_8 to "۸", R.id.btn_num_9 to "۹", R.id.btn_num_0 to "۰")
             } else {
@@ -98,14 +156,16 @@ class PersianKeyboardService : InputMethodService() {
             for ((id, text) in nums) { 
                 val btn = view.findViewById<TextView>(id)
                 btn.text = text
-                btn.setOnClickListener { currentInputConnection?.commitText(text, 1) }
+                btn.setOnClickListener { 
+                    currentInputConnection?.commitText(text, 1) 
+                    updateSuggestions()
+                }
             }
 
             langBtn.text = if (isPersian) "Ab" else "فا"
             updateShiftUI()
         }
 
-        // تابع چیدمان نمادها
         fun bindSymbols() {
             val pageData = symbolPages[currentSymbolPage]
             val symbolIds = listOf(R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10, R.id.sym_11, R.id.sym_12, R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18, R.id.sym_19, R.id.sym_20, R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24, R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30, R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36, R.id.sym_37, R.id.sym_38, R.id.sym_39, R.id.sym_40)
@@ -131,26 +191,21 @@ class PersianKeyboardService : InputMethodService() {
 
         bindLetters(); bindSymbols()
 
-        // دکمه تغییر زبان
         langBtn.setOnClickListener { 
             isPersian = !isPersian 
             isCapsLock = false
             isShifted = false
             bindLetters() 
+            updateSuggestions()
         }
 
-        // دکمه شیفت (تشخیص یک بار و دو بار کلیک)
         shiftBtn.setOnClickListener {
-            if (isPersian) {
-                // در فارسی فعلاً کاری انجام نمیدیم
-            } else {
+            if (!isPersian) {
                 val currentTime = System.currentTimeMillis()
                 if (currentTime - lastShiftClickTime < 300) {
-                    // اگر دو بار پشت سر هم زده شد (کمتر از ۳۰۰ میلی‌ثانیه)
                     isCapsLock = !isCapsLock
-                    isShifted = false // قفل، شیفت موقت رو خاموش میکنه
+                    isShifted = false 
                 } else {
-                    // اگر یک بار زده شد
                     if (isCapsLock) {
                         isCapsLock = false
                         isShifted = false
@@ -175,11 +230,14 @@ class PersianKeyboardService : InputMethodService() {
                         if (sel.isNullOrEmpty()) currentInputConnection?.deleteSurroundingText(1, 0)
                         else currentInputConnection?.commitText("", 1)
                         
+                        updateSuggestions() // آپدیت با پاک شدن حرف
+                        
                         runnable = object : Runnable {
                             override fun run() {
                                 val selText = currentInputConnection?.getSelectedText(0)
                                 if (selText.isNullOrEmpty()) currentInputConnection?.deleteSurroundingText(1, 0)
                                 else currentInputConnection?.commitText("", 1)
+                                updateSuggestions()
                                 handler.postDelayed(this, 50)
                             }
                         }
@@ -198,7 +256,6 @@ class PersianKeyboardService : InputMethodService() {
         backspaceSetup(view.findViewById(R.id.btn_backspace))
         backspaceSetup(view.findViewById(R.id.btn_backspace_sym))
 
-        // دکمه فاصله (با قابلیت بزرگ کردن حرف بعدی)
         listOf(R.id.btn_space, R.id.btn_space_sym).forEach { 
             view.findViewById<TextView>(it)?.setOnClickListener { 
                 currentInputConnection?.commitText(" ", 1) 
@@ -206,10 +263,10 @@ class PersianKeyboardService : InputMethodService() {
                     isShifted = true
                     bindLetters()
                 }
+                updateSuggestions() // آپدیت بعد از فاصله
             } 
         }
 
-        // دکمه اینتر (همون قابلیت فاصله)
         view.findViewById<TextView>(R.id.btn_enter)?.setOnClickListener { 
             currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
             currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER)) 
@@ -217,21 +274,21 @@ class PersianKeyboardService : InputMethodService() {
                 isShifted = true
                 bindLetters()
             }
+            updateSuggestions()
         }
         
-        // نقطه
-        view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { currentInputConnection?.commitText(".", 1) }
+        view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { 
+            currentInputConnection?.commitText(".", 1) 
+            updateSuggestions()
+        }
 
-        // رفتن به صفحه نمادها و برگشت
         view.findViewById<TextView>(R.id.btn_symbols)?.setOnClickListener { lettersContainer.visibility = View.GONE; symbolsContainer.visibility = View.VISIBLE; currentSymbolPage = 0; bindSymbols() }
         view.findViewById<TextView>(R.id.btn_lang_back)?.setOnClickListener { symbolsContainer.visibility = View.GONE; lettersContainer.visibility = View.VISIBLE }
         pageBtn.setOnClickListener { currentSymbolPage++; if (currentSymbolPage >= 6) currentSymbolPage = 0; bindSymbols() }
 
-        // پیام‌های موقت
         view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener { Toast.makeText(this, "پنل ایموجی به زودی...", Toast.LENGTH_SHORT).show() }
         view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener { Toast.makeText(this, "تنظیمات کیبورد به زودی...", Toast.LENGTH_SHORT).show() }
 
-        // نمایش اعراب
         val dotBtn = view.findViewById<TextView>(R.id.btn_dot)
         dotBtn.setOnLongClickListener { 
             lettersContainer.visibility = View.GONE
@@ -249,6 +306,7 @@ class PersianKeyboardService : InputMethodService() {
                 currentInputConnection?.commitText(symbol, 1)
                 diacriticsContainer.visibility = View.GONE
                 lettersContainer.visibility = View.VISIBLE
+                updateSuggestions()
             }
         }
 
