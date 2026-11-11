@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/kb_bg"
+    android:padding="4dp">
+
+    <!-- نوار پیشنهاد کلمات -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:background="@color/suggestion_bg" android:orientation="horizontal" android:layout_marginBottom="4dp">
+        <TextView android:layout_width="40dp" android:layout_height="match_parent" android:text="😊" android:gravity="center" android:textSize="20sp"/>
+        <TextView android:layout_width="40dp" android:layout_height="match_parent" android:text="⚙️" android:gravity="center" android:textSize="18sp"/>
+        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
+        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
+        <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
+    </LinearLayout>
+
+    <!-- بخش حروف -->
+    <LinearLayout android:id="@+id/letters_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        <!-- ردیف اعداد -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="45dp" android:orientation="horizontal">
+            <TextView android:id="@+id/btn_num_1" style="@style/KeyStyle" android:text="۱" />
+            <TextView android:id="@+id/btn_num_2" style="@style/KeyStyle" android:text="۲" />
+            <TextView android:id="@+id/btn_num_3" style="@style/KeyStyle" android:text="۳" />
+            <TextView android:id="@+id/btn_num_4" style="@style/KeyStyle" android:text="۴" />
+            <TextView android:id="@+id/btn_num_5" style="@style/KeyStyle" android:text="۵" />
+            <TextView android:id="@+id/btn_num_6" style="@style/KeyStyle" android:text="۶" />
+            <TextView android:id="@+id/btn_num_7" style="@style/KeyStyle" android:text="۷" />
+            <TextView android:id="@+id/btn_num_8" style="@style/KeyStyle" android:text="۸" />
+            <TextView android:id="@+id/btn_num_9" style="@style/KeyStyle" android:text="۹" />
+            <TextView android:id="@+id/btn_num_0" style="@style/KeyStyle" android:text="۰" />
+        </LinearLayout>
+
+        <!-- ردیف اول حروف -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/btn_zad" style="@style/KeyStyle" android:text="ض" />
+            <TextView android:id="@+id/btn_sad" style="@style/KeyStyle" android:text="ص" />
+            <TextView android:id="@+id/btn_se" style="@style/KeyStyle" android:text="ث" />
+            <TextView android:id="@+id/btn_ghaf" style="@style/KeyStyle" android:text="ق" />
+            <TextView android:id="@+id/btn_fe" style="@style/KeyStyle" android:text="ف" />
+            <TextView android:id="@+id/btn_ghain" style="@style/KeyStyle" android:text="غ" />
+            <TextView android:id="@+id/btn_e" style="@style/KeyStyle" android:text="ع" />
+            <TextView android:id="@+id/btn_he" style="@style/KeyStyle" android:text="ه" />
+            <TextView android:id="@+id/btn_khe" style="@style/KeyStyle" android:text="خ" />
+            <TextView android:id="@+id/btn_h" style="@style/KeyStyle" android:text="ح" />
+            <TextView android:id="@+id/btn_jim" style="@style/KeyStyle" android:text="ج" />
+            <TextView android:id="@+id/btn_che" style="@style/KeyStyle" android:text="چ" />
+        </LinearLayout>
+
+        <!-- ردیف دوم حروف -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/btn_shin" style="@style/KeyStyle" android:text="ش" />
+            <TextView android:id="@+id/btn_sin" style="@style/KeyStyle" android:text="س" />
+            <TextView android:id="@+id/btn_ye" style="@style/KeyStyle" android:text="ی" />
+            <TextView android:id="@+id/btn_be" style="@style/KeyStyle" android:text="ب" />
+            <TextView android:id="@+id/btn_lam" style="@style/KeyStyle" android:text="ل" />
+            <TextView android:id="@+id/btn_alef" style="@style/KeyStyle" android:text="ا" />
+            <TextView android:id="@+id/btn_te" style="@style/KeyStyle" android:text="ت" />
+            <TextView android:id="@+id/btn_nun" style="@style/KeyStyle" android:text="ن" />
+            <TextView android:id="@+id/btn_mim" style="@style/KeyStyle" android:text="م" />
+            <TextView android:id="@+id/btn_pe" style="@style/KeyStyle" android:text="پ" />
+        </LinearLayout>
+
+        <!-- ردیف سوم حروف -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/btn_shift" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="⇧" />
+            <TextView android:id="@+id/btn_za" style="@style/KeyStyle" android:text="ظ" />
+            <TextView android:id="@+id/btn_ta" style="@style/KeyStyle" android:text="ط" />
+            <TextView android:id="@+id/btn_ze" style="@style/KeyStyle" android:text="ز" />
+            <TextView android:id="@+id/btn_re" style="@style/KeyStyle" android:text="ر" />
+            <TextView android:id="@+id/btn_zal" style="@style/KeyStyle" android:text="ذ" />
+            <TextView android:id="@+id/btn_dal" style="@style/KeyStyle" android:text="د" />
+            <TextView android:id="@+id/btn_vav" style="@style/KeyStyle" android:text="و" />
+            <TextView android:id="@+id/btn_kaf" style="@style/KeyStyle" android:text="ک" />
+            <TextView android:id="@+id/btn_gaf" style="@style/KeyStyle" android:text="گ" />
+            <TextView android:id="@+id/btn_backspace" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="⌫" />
+        </LinearLayout>
+
+        <!-- ردیف پایین حروف -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/btn_symbols" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="نماد" android:textSize="14sp"/>
+            <TextView android:id="@+id/btn_lang" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="Ab" android:textSize="16sp" android:textStyle="bold"/>
+            <TextView android:id="@+id/btn_space" style="@style/KeyStyleSpecial" android:layout_weight="5" android:text="فاصله" />
+            <TextView android:id="@+id/btn_dot" style="@style/KeyStyleSpecial" android:layout_weight="1" android:text="." />
+            <TextView android:id="@+id/btn_enter" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="↵" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- بخش نمادها -->
+    <LinearLayout android:id="@+id/symbols_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+        
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/sym_1" style="@style/KeyStyle" /><TextView android:id="@+id/sym_2" style="@style/KeyStyle" /><TextView android:id="@+id/sym_3" style="@style/KeyStyle" /><TextView android:id="@+id/sym_4" style="@style/KeyStyle" /><TextView android:id="@+id/sym_5" style="@style/KeyStyle" /><TextView android:id="@+id/sym_6" style="@style/KeyStyle" /><TextView android:id="@+id/sym_7" style="@style/KeyStyle" /><TextView android:id="@+id/sym_8" style="@style/KeyStyle" /><TextView android:id="@+id/sym_9" style="@style/KeyStyle" /><TextView android:id="@+id/sym_10" style="@style/KeyStyle" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/sym_11" style="@style/KeyStyle" /><TextView android:id="@+id/sym_12" style="@style/KeyStyle" /><TextView android:id="@+id/sym_13" style="@style/KeyStyle" /><TextView android:id="@+id/sym_14" style="@style/KeyStyle" /><TextView android:id="@+id/sym_15" style="@style/KeyStyle" /><TextView android:id="@+id/sym_16" style="@style/KeyStyle" /><TextView android:id="@+id/sym_17" style="@style/KeyStyle" /><TextView android:id="@+id/sym_18" style="@style/KeyStyle" /><TextView android:id="@+id/sym_19" style="@style/KeyStyle" /><TextView android:id="@+id/sym_20" style="@style/KeyStyle" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/sym_21" style="@style/KeyStyle" /><TextView android:id="@+id/sym_22" style="@style/KeyStyle" /><TextView android:id="@+id/sym_23" style="@style/KeyStyle" /><TextView android:id="@+id/sym_24" style="@style/KeyStyle" /><TextView android:id="@+id/sym_25" style="@style/KeyStyle" /><TextView android:id="@+id/sym_26" style="@style/KeyStyle" /><TextView android:id="@+id/sym_27" style="@style/KeyStyle" /><TextView android:id="@+id/sym_28" style="@style/KeyStyle" /><TextView android:id="@+id/sym_29" style="@style/KeyStyle" /><TextView android:id="@+id/sym_30" style="@style/KeyStyle" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/sym_31" style="@style/KeyStyle" /><TextView android:id="@+id/sym_32" style="@style/KeyStyle" /><TextView android:id="@+id/sym_33" style="@style/KeyStyle" /><TextView android:id="@+id/sym_34" style="@style/KeyStyle" /><TextView android:id="@+id/sym_35" style="@style/KeyStyle" /><TextView android:id="@+id/sym_36" style="@style/KeyStyle" /><TextView android:id="@+id/sym_37" style="@style/KeyStyle" /><TextView android:id="@+id/sym_38" style="@style/KeyStyle" /><TextView android:id="@+id/sym_39" style="@style/KeyStyle" /><TextView android:id="@+id/sym_40" style="@style/KeyStyle" />
+        </LinearLayout>
+
+        <!-- ردیف پایین نمادها -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
+            <TextView android:id="@+id/btn_page_change" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="1/6" />
+            <TextView android:id="@+id/btn_lang_back" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="فا" />
+            <TextView android:id="@+id/btn_space_sym" style="@style/KeyStyleSpecial" android:layout_weight="5" android:text="فاصله" />
+            <TextView android:id="@+id/btn_backspace_sym" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="⌫" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
