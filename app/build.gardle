@@ -1,7 +1,5 @@
-plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-}
+apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace 'com.example.persiankeyboard'
@@ -9,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.persiankeyboard"
-        minSdk 31 // اندروید ۱۲ به بالا
+        minSdk 31
         targetSdk 34
         versionCode 1
         versionName "1.0"
