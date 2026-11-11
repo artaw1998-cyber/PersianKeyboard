@@ -8,12 +8,9 @@
 
     <!-- نوار پیشنهاد کلمات (Smartbar) -->
     <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:background="@color/suggestion_bg" android:orientation="horizontal" android:layout_marginBottom="4dp">
-        <!-- دکمه ایموجی -->
         <TextView android:id="@+id/btn_emoji_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="😊" android:gravity="center" android:textSize="20sp"/>
-        <!-- دکمه تنظیمات -->
         <TextView android:id="@+id/btn_settings_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="⚙️" android:gravity="center" android:textSize="18sp"/>
         
-        <!-- کلمات پیشنهادی (فعلاً خالی) -->
         <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
@@ -107,12 +104,35 @@
             <TextView android:id="@+id/sym_31" style="@style/KeyStyle" /><TextView android:id="@+id/sym_32" style="@style/KeyStyle" /><TextView android:id="@+id/sym_33" style="@style/KeyStyle" /><TextView android:id="@+id/sym_34" style="@style/KeyStyle" /><TextView android:id="@+id/sym_35" style="@style/KeyStyle" /><TextView android:id="@+id/sym_36" style="@style/KeyStyle" /><TextView android:id="@+id/sym_37" style="@style/KeyStyle" /><TextView android:id="@+id/sym_38" style="@style/KeyStyle" /><TextView android:id="@+id/sym_39" style="@style/KeyStyle" /><TextView android:id="@+id/sym_40" style="@style/KeyStyle" />
         </LinearLayout>
 
-        <!-- ردیف پایین نمادها -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="53dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_page_change" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="1/6" />
             <TextView android:id="@+id/btn_lang_back" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="فا" />
             <TextView android:id="@+id/btn_space_sym" style="@style/KeyStyleSpecial" android:layout_weight="5" android:text="فاصله" />
             <TextView android:id="@+id/btn_backspace_sym" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="⌫" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- لایه مخفی اعراب (به جای پنجره شناور که کرش می‌کرد) -->
+    <LinearLayout
+        android:id="@+id/diacritics_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#121212"
+        android:visibility="gone"
+        android:padding="4dp">
+        
+        <LinearLayout android:layout_width="match_parent" android:layout_height="45dp" android:orientation="horizontal">
+            <TextView android:id="@+id/diacritic_fatha" style="@style/KeyStyle" android:text="َ" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/diacritic_kasra" style="@style/KeyStyle" android:text="ِ" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/diacritic_damma" style="@style/KeyStyle" android:text="ُ" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/diacritic_shadda" style="@style/KeyStyle" android:text="ّ" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/diacritic_sukun" style="@style/KeyStyle" android:text="ْ" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/diacritic_fathatan" style="@style/KeyStyle" android:text="ً" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/diacritic_kasratan" style="@style/KeyStyle" android:text="ٍ" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/diacritic_dammatan" style="@style/KeyStyle" android:text="ٌ" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/diacritic_alef_kh" style="@style/KeyStyle" android:text="ٰ" android:textColor="#FFFFFF" />
+            <TextView android:id="@+id/btn_close_diacritics" style="@style/KeyStyleSpecial" android:text="✖" android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
