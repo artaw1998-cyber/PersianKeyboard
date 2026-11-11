@@ -6,10 +6,14 @@
     android:background="@color/kb_bg"
     android:padding="4dp">
 
-    <!-- نوار پیشنهاد کلمات -->
+    <!-- نوار پیشنهاد کلمات (Smartbar) -->
     <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:background="@color/suggestion_bg" android:orientation="horizontal" android:layout_marginBottom="4dp">
-        <TextView android:layout_width="40dp" android:layout_height="match_parent" android:text="😊" android:gravity="center" android:textSize="20sp"/>
-        <TextView android:layout_width="40dp" android:layout_height="match_parent" android:text="⚙️" android:gravity="center" android:textSize="18sp"/>
+        <!-- دکمه ایموجی -->
+        <TextView android:id="@+id/btn_emoji_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="😊" android:gravity="center" android:textSize="20sp"/>
+        <!-- دکمه تنظیمات -->
+        <TextView android:id="@+id/btn_settings_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="⚙️" android:gravity="center" android:textSize="18sp"/>
+        
+        <!-- کلمات پیشنهادی (فعلاً خالی) -->
         <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
@@ -17,6 +21,7 @@
 
     <!-- بخش حروف -->
     <LinearLayout android:id="@+id/letters_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        
         <!-- ردیف اعداد -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="45dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_num_1" style="@style/KeyStyle" android:text="۱" />
