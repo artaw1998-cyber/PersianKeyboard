@@ -9,6 +9,7 @@ import android.view.KeyEvent
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.PopupWindow
+import android.widget.Toast
 import android.graphics.drawable.ColorDrawable
 import android.graphics.Color
 
@@ -19,18 +20,13 @@ class PersianKeyboardService : InputMethodService() {
     private var isPersian = true
     private var currentSymbolPage = 0 
 
+    // لیست کامل ۶ صفحه نماد
     private val symbolPages = listOf(
-        // صفحه ۱
         listOf(SymItem("@"), SymItem("#"), SymItem("$"), SymItem("%"), SymItem("&"), SymItem("*"), SymItem("-"), SymItem("+"), SymItem("="), SymItem("/"), SymItem("("), SymItem(")"), SymItem("["), SymItem("]"), SymItem("{"), SymItem("}"), SymItem("<"), SymItem(">"), SymItem("«"), SymItem("»"), SymItem("!"), SymItem("؟"), SymItem("،"), SymItem("؛"), SymItem(":"), SymItem(";"), SymItem("'"), SymItem("\""), SymItem("_"), SymItem("\\"), SymItem("^"), SymItem("~"), SymItem("|"), SymItem("•"), SymItem("…"), SymItem("٪"), SymItem("ریال"), SymItem("€"), SymItem("£"), SymItem("¥")),
-        // صفحه ۲
         listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
-        // صفحه ۳
         listOf(SymItem("𓄆"), SymItem("𓃻"), SymItem("𖤍"), SymItem("𓃰"), SymItem("𓆉"), SymItem("𓃮"), SymItem("𓅭"), SymItem("𓆈"), SymItem("𓆙"), SymItem("𓆈"), SymItem("𓅆"), SymItem("☫"), SymItem("𓆗"), SymItem("𖤓"), SymItem("🦋⃝"), SymItem("𓇼"), SymItem("⋆.˚"), SymItem("𓆝"), SymItem("𓆡"), SymItem("𝐕"), SymItem("⃤"), SymItem("✵⃝⃟"), SymItem("⋆.˚🦋༘⋆"), SymItem("𓇢𓆸"), SymItem("ूाीू"), SymItem("☪"), SymItem("𓅇"), SymItem("✡"), SymItem("𓃬"), SymItem("𔓎"), SymItem("✮⃝ 🤍"), SymItem("𓅰"), SymItem("𓅬"), SymItem("𓅭"), SymItem("𓅮"), SymItem("𓅯"), SymItem("☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆"), SymItem("🦈"), SymItem("☣︎"), SymItem("❦")),
-        // صفحه ۴
         listOf(SymItem("𓅂"), SymItem("✞"), SymItem("𓃓"), SymItem("𓃗"), SymItem("⋆⭒˚.⋆🪐 ⋆⭒˚.⋆"), SymItem("𓏲ּ𝄢"), SymItem("♡ ᪲᪲᪲"), SymItem("𓁇𓁋"), SymItem("𓃵"), SymItem("✌︎︎"), SymItem(".☘︎ ݁˖"), SymItem("𓆰𓆪"), SymItem("𓆩𓆪"), SymItem("☕︎"), SymItem("▶︎ •၊၊||၊|။||||||• ۰:۱۰"), SymItem("୧⍤⃝🌹"), SymItem("☠"), SymItem("𝄞"), SymItem("𝐕ℳ𝓊𝓈𝒾𝒸𓂃✍︎𝄞"), SymItem("♡"), SymItem("♢"), SymItem("♤"), SymItem("♧"), SymItem("♣"), SymItem("♦"), SymItem("⚀"), SymItem("⚁"), SymItem("⚂"), SymItem("⚃"), SymItem("⚄"), SymItem("⚅"), SymItem("♚"), SymItem("♙"), SymItem("♘"), SymItem("♗"), SymItem("♖"), SymItem("♕"), SymItem("♔"), SymItem("♟"), SymItem("♞")),
-        // صفحه ۵
         listOf(SymItem("𒀀", "a"), SymItem("𒀁", "i"), SymItem("𒀂", "u"), SymItem("𒅗", "k"), SymItem("𒂊", "ko"), SymItem("𒄩", "x"), SymItem("𒄀", "g"), SymItem("𒄖", "go"), SymItem("𒁺", "ch"), SymItem("𒋾", "thra"), SymItem("𒃮", "j"), SymItem("𒄿", "je"), SymItem("𒋫", "t"), SymItem("𒌈", "to"), SymItem("𒌅", "th"), SymItem("𒁕", "d"), SymItem("𒁲", "de"), SymItem("𒁺", "do"), SymItem("𒉿", "p"), SymItem("𒆰", "f"), SymItem("𒁀", "b"), SymItem("𒈾", "n"), SymItem("𒉡", "no"), SymItem("𒈬", "m"), SymItem("𒈨", "me"), SymItem("𒈬", "mo"), SymItem("𒅀", "y"), SymItem("𒉿", "v"), SymItem("𒃶", "ve"), SymItem("𒊒", "r"), SymItem("𒊑", "ro"), SymItem("𒇴", "L"), SymItem("𒊓", "s"), SymItem("𒍝", "z"), SymItem("𒊭", "sh"), SymItem("𒄩", "h"), SymItem("𒀀", "1"), SymItem("𒀁", "2"), SymItem("𒀂", "5"), SymItem("𒌋", "10"), SymItem("𒐏", "20"), SymItem("𒐕", "100")),
-        // صفحه ۶
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
     )
 
@@ -42,16 +38,29 @@ class PersianKeyboardService : InputMethodService() {
         val langBtn = view.findViewById<TextView>(R.id.btn_lang)
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
 
+        // تابع چیدمان حروف (فارسی و انگلیسی)
         fun bindLetters() {
             val buttons = if (isPersian) {
-                mapOf(R.id.btn_zad to "ض", R.id.btn_sad to "ص", R.id.btn_se to "ث", R.id.btn_ghaf to "ق", R.id.btn_fe to "ف", R.id.btn_ghain to "غ", R.id.btn_e to "ع", R.id.btn_he to "ه", R.id.btn_khe to "خ", R.id.btn_h to "ح", R.id.btn_jim to "ج", R.id.btn_che to "چ", R.id.btn_shin to "ش", R.id.btn_sin to "س", R.id.btn_ye to "ی", R.id.btn_be to "ب", R.id.btn_lam to "ل", R.id.btn_alef to "ا", R.id.btn_te to "ت", R.id.btn_nun to "ن", R.id.btn_mim to "م", R.id.btn_pe to "پ", R.id.btn_za to "ظ", R.id.btn_ta to "ط", R.id.btn_ze to "ز", R.id.btn_re to "ر", R.id.btn_zal to "ذ", R.id.btn_dal to "د", R.id.btn_vav to "و", R.id.btn_kaf to "ک", R.id.btn_gaf to "گ")
+                mapOf(
+                    R.id.btn_zad to "ض", R.id.btn_sad to "ص", R.id.btn_se to "ث", R.id.btn_ghaf to "ق", R.id.btn_fe to "ف", R.id.btn_ghain to "غ", R.id.btn_e to "ع", R.id.btn_he to "ه", R.id.btn_khe to "خ", R.id.btn_h to "ح", R.id.btn_jim to "ج", R.id.btn_che to "چ",
+                    R.id.btn_shin to "ش", R.id.btn_sin to "س", R.id.btn_ye to "ی", R.id.btn_be to "ب", R.id.btn_lam to "ل", R.id.btn_alef to "ا", R.id.btn_te to "ت", R.id.btn_nun to "ن", R.id.btn_mim to "م", R.id.btn_pe to "پ",
+                    R.id.btn_za to "ظ", R.id.btn_ta to "ط", R.id.btn_ze to "ز", R.id.btn_re to "ر", R.id.btn_zal to "ذ", R.id.btn_dal to "د", R.id.btn_vav to "و", R.id.btn_kaf to "ک", R.id.btn_gaf to "گ"
+                )
             } else {
-                mapOf(R.id.btn_zad to "q", R.id.btn_sad to "w", R.id.btn_se to "e", R.id.btn_ghaf to "r", R.id.btn_fe to "t", R.id.btn_ghain to "y", R.id.btn_e to "u", R.id.btn_he to "i", R.id.btn_khe to "o", R.id.btn_h to "p", R.id.btn_jim to "[", R.id.btn_che to "]", R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l", R.id.btn_pe to ";", R.id.btn_za to "z", R.id.btn_ta to "x", R.id.btn_ze to "c", R.id.btn_re to "v", R.id.btn_zal to "b", R.id.btn_dal to "n", R.id.btn_vav to "m", R.id.btn_kaf to ",", R.id.btn_gaf to ".")
+                // کیبورد QWERTY انگلیسی
+                mapOf(
+                    R.id.btn_zad to "q", R.id.btn_sad to "w", R.id.btn_se to "e", R.id.btn_ghaf to "r", R.id.btn_fe to "t", R.id.btn_ghain to "y", R.id.btn_e to "u", R.id.btn_he to "i", R.id.btn_khe to "o", R.id.btn_h to "p", R.id.btn_jim to "[", R.id.btn_che to "]",
+                    R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l", R.id.btn_pe to ";",
+                    R.id.btn_za to "z", R.id.btn_ta to "x", R.id.btn_ze to "c", R.id.btn_re to "v", R.id.btn_zal to "b", R.id.btn_dal to "n", R.id.btn_vav to "m", R.id.btn_kaf to ",", R.id.btn_gaf to "."
+                )
             }
-            for ((id, text) in buttons) { view.findViewById<TextView>(id)?.setOnClickListener { currentInputConnection?.commitText(text, 1) } }
+            for ((id, text) in buttons) { 
+                view.findViewById<TextView>(id)?.setOnClickListener { currentInputConnection?.commitText(text, 1) } 
+            }
             langBtn.text = if (isPersian) "Ab" else "فا"
         }
 
+        // تابع چیدمان نمادها
         fun bindSymbols() {
             val pageData = symbolPages[currentSymbolPage]
             val symbolIds = listOf(R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10, R.id.sym_11, R.id.sym_12, R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18, R.id.sym_19, R.id.sym_20, R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24, R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30, R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36, R.id.sym_37, R.id.sym_38, R.id.sym_39, R.id.sym_40)
@@ -77,12 +86,19 @@ class PersianKeyboardService : InputMethodService() {
 
         bindLetters(); bindSymbols()
 
+        // تغییر زبان
         langBtn.setOnClickListener { isPersian = !isPersian; bindLetters() }
+
+        // رفتن به صفحه نمادها
         view.findViewById<TextView>(R.id.btn_symbols)?.setOnClickListener { lettersContainer.visibility = View.GONE; symbolsContainer.visibility = View.VISIBLE; currentSymbolPage = 0; bindSymbols() }
+        
+        // برگشت از نمادها
         view.findViewById<TextView>(R.id.btn_lang_back)?.setOnClickListener { symbolsContainer.visibility = View.GONE; lettersContainer.visibility = View.VISIBLE }
+        
+        // تغییر صفحات نماد
         pageBtn.setOnClickListener { currentSymbolPage++; if (currentSymbolPage >= 6) currentSymbolPage = 0; bindSymbols() }
 
-        // دکمه‌های عمومی
+        // دکمه‌های عمومی (فاصله، بک‌اسپیس، اینتر)
         listOf(R.id.btn_space, R.id.btn_space_sym).forEach { view.findViewById<TextView>(it)?.setOnClickListener { currentInputConnection?.commitText(" ", 1) } }
         listOf(R.id.btn_backspace, R.id.btn_backspace_sym).forEach { view.findViewById<TextView>(it)?.setOnClickListener { val sel = currentInputConnection?.getSelectedText(0); if (sel.isNullOrEmpty()) currentInputConnection?.deleteSurroundingText(1, 0) else currentInputConnection?.commitText("", 1) } }
         view.findViewById<TextView>(R.id.btn_enter)?.setOnClickListener { currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER)); currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER)) }
@@ -92,7 +108,15 @@ class PersianKeyboardService : InputMethodService() {
         for ((id, text) in nums) view.findViewById<TextView>(id)?.setOnClickListener { currentInputConnection?.commitText(text, 1) }
         view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { currentInputConnection?.commitText(".", 1) }
 
-        // پنجره اعراب
+        // کارکرد دکمه‌های بالای صفحه (ایموجی و تنظیمات)
+        view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener {
+            Toast.makeText(this, "پنل ایموجی به زودی...", Toast.LENGTH_SHORT).show()
+        }
+        view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener {
+            Toast.makeText(this, "تنظیمات کیبورد به زودی...", Toast.LENGTH_SHORT).show()
+        }
+
+        // پنجره اعراب (با نگه داشتن دکمه نقطه)
         val dotBtn = view.findViewById<TextView>(R.id.btn_dot)
         dotBtn.setOnLongClickListener { 
             val popupView = layoutInflater.inflate(R.layout.popup_diacritics, null)
