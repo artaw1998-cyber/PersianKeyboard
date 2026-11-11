@@ -12,14 +12,19 @@ import android.widget.TextView
 import android.widget.Toast
 import android.os.Handler
 import android.os.Looper
+import android.graphics.Color
 
 data class SymItem(val symbol: String, val meaning: String = "")
 
 class PersianKeyboardService : InputMethodService() {
 
     private var isPersian = true
-    private var isShifted = false
+    private var isCapsLock = false // برای قفل کردن حروف بزرگ (با دو بار زدن شیفت)
+    private var isShifted = false  // برای بزرگ شدن فقط یک حرف (با یک بار زدن شیفت یا بعد از فاصله)
     private var currentSymbolPage = 0 
+    
+    // متغیری برای تشخیص دو بار کلیک روی شیفت
+    private var lastShiftClickTime = 0L
 
     // لیست کامل ۶ صفحه نماد
     private val symbolPages = listOf(
@@ -41,7 +46,18 @@ class PersianKeyboardService : InputMethodService() {
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
         val shiftBtn = view.findViewById<TextView>(R.id.btn_shift)
 
-        // تابع چیدمان حروف (با پشتیبانی از Shift)
+        // تابع تغییر ظاهر دکمه شیفت
+        fun updateShiftUI() {
+            if (isCapsLock) {
+                shiftBtn.setBackgroundColor(Color.parseColor("#26A69A")) // سبز پررنگ برای قفل
+            } else if (isShifted) {
+                shiftBtn.setBackgroundColor(Color.parseColor("#80CBC4")) // سبز کم‌رنگ برای شیفت موقت
+            } else {
+                shiftBtn.setBackgroundResource(R.drawable.key_bg_special) // رنگ تیره پیش‌فرض
+            }
+        }
+
+        // تابع چیدمان حروف و اعداد
         fun bindLetters() {
             val buttons = if (isPersian) {
                 mapOf(
@@ -50,29 +66,43 @@ class PersianKeyboardService : InputMethodService() {
                     R.id.btn_za to "ظ", R.id.btn_ta to "ط", R.id.btn_ze to "ز", R.id.btn_re to "ر", R.id.btn_zal to "ذ", R.id.btn_dal to "د", R.id.btn_vav to "و", R.id.btn_kaf to "ک", R.id.btn_gaf to "گ"
                 )
             } else {
-                // چیدمان انگلیسی QWERTY با قابلیت Shift
                 val baseMap = mapOf(
                     R.id.btn_zad to "q", R.id.btn_sad to "w", R.id.btn_se to "e", R.id.btn_ghaf to "r", R.id.btn_fe to "t", R.id.btn_ghain to "y", R.id.btn_e to "u", R.id.btn_he to "i", R.id.btn_khe to "o", R.id.btn_h to "p", R.id.btn_jim to "[", R.id.btn_che to "]",
                     R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l", R.id.btn_pe to ";",
                     R.id.btn_za to "z", R.id.btn_ta to "x", R.id.btn_ze to "c", R.id.btn_re to "v", R.id.btn_zal to "b", R.id.btn_dal to "n", R.id.btn_vav to "m", R.id.btn_kaf to ",", R.id.btn_gaf to "."
                 )
-                // اگر شیفت فعال باشد حروف را بزرگ میکنیم
-                if (isShifted) baseMap.mapValues { it.value.uppercase() } else baseMap
+                // اگر CapsLock یا Shift فعال باشد حروف را بزرگ میکنیم
+                if (isCapsLock || isShifted) baseMap.mapValues { it.value.uppercase() } else baseMap
             }
+            
             for ((id, text) in buttons) { 
                 val btn = view.findViewById<TextView>(id)
                 btn.text = text 
                 btn.setOnClickListener { 
                     currentInputConnection?.commitText(text, 1) 
-                    // بعد از تایپ یک حرف در حالت شیفت، اگر فارسی نبود، شیفت خاموش شود
-                    if (!isPersian && isShifted) {
+                    // اگر شیفت موقت روشن بود (نه قفل)، بعد از تایپ یک حرف، خاموشش کن
+                    if (!isPersian && isShifted && !isCapsLock) {
                         isShifted = false
                         bindLetters()
-                        shiftBtn.setBackgroundResource(R.drawable.key_bg_special)
+                        updateShiftUI()
                     }
                 } 
             }
+            
+            // --- آپدیت اعداد بر اساس زبان ---
+            val nums = if (isPersian) {
+                mapOf(R.id.btn_num_1 to "۱", R.id.btn_num_2 to "۲", R.id.btn_num_3 to "۳", R.id.btn_num_4 to "۴", R.id.btn_num_5 to "۵", R.id.btn_num_6 to "۶", R.id.btn_num_7 to "۷", R.id.btn_num_8 to "۸", R.id.btn_num_9 to "۹", R.id.btn_num_0 to "۰")
+            } else {
+                mapOf(R.id.btn_num_1 to "1", R.id.btn_num_2 to "2", R.id.btn_num_3 to "3", R.id.btn_num_4 to "4", R.id.btn_num_5 to "5", R.id.btn_num_6 to "6", R.id.btn_num_7 to "7", R.id.btn_num_8 to "8", R.id.btn_num_9 to "9", R.id.btn_num_0 to "0")
+            }
+            for ((id, text) in nums) { 
+                val btn = view.findViewById<TextView>(id)
+                btn.text = text
+                btn.setOnClickListener { currentInputConnection?.commitText(text, 1) }
+            }
+
             langBtn.text = if (isPersian) "Ab" else "فا"
+            updateShiftUI()
         }
 
         // تابع چیدمان نمادها
@@ -104,24 +134,36 @@ class PersianKeyboardService : InputMethodService() {
         // دکمه تغییر زبان
         langBtn.setOnClickListener { 
             isPersian = !isPersian 
-            isShifted = false // ریست کردن شیفت هنگام تغییر زبان
-            shiftBtn.setBackgroundResource(R.drawable.key_bg_special)
+            isCapsLock = false
+            isShifted = false
             bindLetters() 
         }
 
-        // دکمه شیفت
+        // دکمه شیفت (تشخیص یک بار و دو بار کلیک)
         shiftBtn.setOnClickListener {
-            isShifted = !isShifted
-            if (isShifted) {
-                // اگر شیفت روشن شد، رنگ دکمه را تغییر بده
-                shiftBtn.setBackgroundColor(android.graphics.Color.parseColor("#80CBC4"))
+            if (isPersian) {
+                // در فارسی فعلاً کاری انجام نمیدیم
             } else {
-                shiftBtn.setBackgroundResource(R.drawable.key_bg_special)
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - lastShiftClickTime < 300) {
+                    // اگر دو بار پشت سر هم زده شد (کمتر از ۳۰۰ میلی‌ثانیه)
+                    isCapsLock = !isCapsLock
+                    isShifted = false // قفل، شیفت موقت رو خاموش میکنه
+                } else {
+                    // اگر یک بار زده شد
+                    if (isCapsLock) {
+                        isCapsLock = false
+                        isShifted = false
+                    } else {
+                        isShifted = !isShifted
+                    }
+                }
+                lastShiftClickTime = currentTime
+                bindLetters()
             }
-            bindLetters()
         }
 
-        // پاک کردن پشت سر هم (نگه داشتن دکمه)
+        // پاک کردن پشت سر هم
         val handler = Handler(Looper.getMainLooper())
         var runnable: Runnable? = null
         val backspaceSetup = { btn: TextView ->
@@ -129,21 +171,19 @@ class PersianKeyboardService : InputMethodService() {
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         v.isPressed = true
-                        // پاک کردن اولیه
                         val sel = currentInputConnection?.getSelectedText(0)
                         if (sel.isNullOrEmpty()) currentInputConnection?.deleteSurroundingText(1, 0)
                         else currentInputConnection?.commitText("", 1)
                         
-                        // شروع تایمر برای پاک کردن سریع
                         runnable = object : Runnable {
                             override fun run() {
                                 val selText = currentInputConnection?.getSelectedText(0)
                                 if (selText.isNullOrEmpty()) currentInputConnection?.deleteSurroundingText(1, 0)
                                 else currentInputConnection?.commitText("", 1)
-                                handler.postDelayed(this, 50) // هر ۵۰ میلی ثانیه
+                                handler.postDelayed(this, 50)
                             }
                         }
-                        handler.postDelayed(runnable!!, 400) // بعد از ۰.۴ ثانیه شروع به تکرار کن
+                        handler.postDelayed(runnable!!, 400) 
                         true
                     }
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -158,19 +198,34 @@ class PersianKeyboardService : InputMethodService() {
         backspaceSetup(view.findViewById(R.id.btn_backspace))
         backspaceSetup(view.findViewById(R.id.btn_backspace_sym))
 
+        // دکمه فاصله (با قابلیت بزرگ کردن حرف بعدی)
+        listOf(R.id.btn_space, R.id.btn_space_sym).forEach { 
+            view.findViewById<TextView>(it)?.setOnClickListener { 
+                currentInputConnection?.commitText(" ", 1) 
+                if (!isPersian && !isCapsLock) {
+                    isShifted = true
+                    bindLetters()
+                }
+            } 
+        }
+
+        // دکمه اینتر (همون قابلیت فاصله)
+        view.findViewById<TextView>(R.id.btn_enter)?.setOnClickListener { 
+            currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
+            currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER)) 
+            if (!isPersian && !isCapsLock) {
+                isShifted = true
+                bindLetters()
+            }
+        }
+        
+        // نقطه
+        view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { currentInputConnection?.commitText(".", 1) }
+
         // رفتن به صفحه نمادها و برگشت
         view.findViewById<TextView>(R.id.btn_symbols)?.setOnClickListener { lettersContainer.visibility = View.GONE; symbolsContainer.visibility = View.VISIBLE; currentSymbolPage = 0; bindSymbols() }
         view.findViewById<TextView>(R.id.btn_lang_back)?.setOnClickListener { symbolsContainer.visibility = View.GONE; lettersContainer.visibility = View.VISIBLE }
         pageBtn.setOnClickListener { currentSymbolPage++; if (currentSymbolPage >= 6) currentSymbolPage = 0; bindSymbols() }
-
-        // فاصله و اینتر
-        listOf(R.id.btn_space, R.id.btn_space_sym).forEach { view.findViewById<TextView>(it)?.setOnClickListener { currentInputConnection?.commitText(" ", 1) } }
-        view.findViewById<TextView>(R.id.btn_enter)?.setOnClickListener { currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER)); currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER)) }
-        
-        // اعداد و نقطه
-        val nums = mapOf(R.id.btn_num_1 to "۱", R.id.btn_num_2 to "۲", R.id.btn_num_3 to "۳", R.id.btn_num_4 to "۴", R.id.btn_num_5 to "۵", R.id.btn_num_6 to "۶", R.id.btn_num_7 to "۷", R.id.btn_num_8 to "۸", R.id.btn_num_9 to "۹", R.id.btn_num_0 to "۰")
-        for ((id, text) in nums) view.findViewById<TextView>(id)?.setOnClickListener { currentInputConnection?.commitText(text, 1) }
-        view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { currentInputConnection?.commitText(".", 1) }
 
         // پیام‌های موقت
         view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener { Toast.makeText(this, "پنل ایموجی به زودی...", Toast.LENGTH_SHORT).show() }
