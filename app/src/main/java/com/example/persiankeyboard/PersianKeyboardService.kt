@@ -8,10 +8,7 @@ import android.view.View
 import android.view.KeyEvent
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.PopupWindow
 import android.widget.Toast
-import android.graphics.drawable.ColorDrawable
-import android.graphics.Color
 
 data class SymItem(val symbol: String, val meaning: String = "")
 
@@ -20,7 +17,6 @@ class PersianKeyboardService : InputMethodService() {
     private var isPersian = true
     private var currentSymbolPage = 0 
 
-    // لیست کامل ۶ صفحه نماد
     private val symbolPages = listOf(
         listOf(SymItem("@"), SymItem("#"), SymItem("$"), SymItem("%"), SymItem("&"), SymItem("*"), SymItem("-"), SymItem("+"), SymItem("="), SymItem("/"), SymItem("("), SymItem(")"), SymItem("["), SymItem("]"), SymItem("{"), SymItem("}"), SymItem("<"), SymItem(">"), SymItem("«"), SymItem("»"), SymItem("!"), SymItem("؟"), SymItem("،"), SymItem("؛"), SymItem(":"), SymItem(";"), SymItem("'"), SymItem("\""), SymItem("_"), SymItem("\\"), SymItem("^"), SymItem("~"), SymItem("|"), SymItem("•"), SymItem("…"), SymItem("٪"), SymItem("ریال"), SymItem("€"), SymItem("£"), SymItem("¥")),
         listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
@@ -35,10 +31,11 @@ class PersianKeyboardService : InputMethodService() {
         
         val lettersContainer = view.findViewById<LinearLayout>(R.id.letters_container)
         val symbolsContainer = view.findViewById<LinearLayout>(R.id.symbols_container)
+        val diacriticsContainer = view.findViewById<LinearLayout>(R.id.diacritics_container)
         val langBtn = view.findViewById<TextView>(R.id.btn_lang)
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
 
-        // تابع چیدمان حروف (فارسی و انگلیسی)
+        // تابع چیدمان حروف (هم متن دکمه رو عوض میکنه هم عملکردش رو)
         fun bindLetters() {
             val buttons = if (isPersian) {
                 mapOf(
@@ -47,7 +44,6 @@ class PersianKeyboardService : InputMethodService() {
                     R.id.btn_za to "ظ", R.id.btn_ta to "ط", R.id.btn_ze to "ز", R.id.btn_re to "ر", R.id.btn_zal to "ذ", R.id.btn_dal to "د", R.id.btn_vav to "و", R.id.btn_kaf to "ک", R.id.btn_gaf to "گ"
                 )
             } else {
-                // کیبورد QWERTY انگلیسی
                 mapOf(
                     R.id.btn_zad to "q", R.id.btn_sad to "w", R.id.btn_se to "e", R.id.btn_ghaf to "r", R.id.btn_fe to "t", R.id.btn_ghain to "y", R.id.btn_e to "u", R.id.btn_he to "i", R.id.btn_khe to "o", R.id.btn_h to "p", R.id.btn_jim to "[", R.id.btn_che to "]",
                     R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l", R.id.btn_pe to ";",
@@ -55,7 +51,9 @@ class PersianKeyboardService : InputMethodService() {
                 )
             }
             for ((id, text) in buttons) { 
-                view.findViewById<TextView>(id)?.setOnClickListener { currentInputConnection?.commitText(text, 1) } 
+                val btn = view.findViewById<TextView>(id)
+                btn.text = text // این خط ظاهر دکمه رو عوض میکنه
+                btn.setOnClickListener { currentInputConnection?.commitText(text, 1) } 
             }
             langBtn.text = if (isPersian) "Ab" else "فا"
         }
@@ -98,7 +96,7 @@ class PersianKeyboardService : InputMethodService() {
         // تغییر صفحات نماد
         pageBtn.setOnClickListener { currentSymbolPage++; if (currentSymbolPage >= 6) currentSymbolPage = 0; bindSymbols() }
 
-        // دکمه‌های عمومی (فاصله، بک‌اسپیس، اینتر)
+        // دکمه‌های عمومی
         listOf(R.id.btn_space, R.id.btn_space_sym).forEach { view.findViewById<TextView>(it)?.setOnClickListener { currentInputConnection?.commitText(" ", 1) } }
         listOf(R.id.btn_backspace, R.id.btn_backspace_sym).forEach { view.findViewById<TextView>(it)?.setOnClickListener { val sel = currentInputConnection?.getSelectedText(0); if (sel.isNullOrEmpty()) currentInputConnection?.deleteSurroundingText(1, 0) else currentInputConnection?.commitText("", 1) } }
         view.findViewById<TextView>(R.id.btn_enter)?.setOnClickListener { currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER)); currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER)) }
@@ -108,7 +106,7 @@ class PersianKeyboardService : InputMethodService() {
         for ((id, text) in nums) view.findViewById<TextView>(id)?.setOnClickListener { currentInputConnection?.commitText(text, 1) }
         view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { currentInputConnection?.commitText(".", 1) }
 
-        // کارکرد دکمه‌های بالای صفحه (ایموجی و تنظیمات)
+        // دکمه‌های بالای صفحه (فعلاً پیام میدن)
         view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener {
             Toast.makeText(this, "پنل ایموجی به زودی...", Toast.LENGTH_SHORT).show()
         }
@@ -116,19 +114,26 @@ class PersianKeyboardService : InputMethodService() {
             Toast.makeText(this, "تنظیمات کیبورد به زودی...", Toast.LENGTH_SHORT).show()
         }
 
-        // پنجره اعراب (با نگه داشتن دکمه نقطه)
+        // نمایش و مخفی کردن لایه اعراب (بدون کرش کردن)
         val dotBtn = view.findViewById<TextView>(R.id.btn_dot)
         dotBtn.setOnLongClickListener { 
-            val popupView = layoutInflater.inflate(R.layout.popup_diacritics, null)
-            val popupWindow = PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true)
-            popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            popupWindow.isOutsideTouchable = true
-
-            val diacriticsMap = mapOf(R.id.diacritic_fatha to "َ", R.id.diacritic_kasra to "ِ", R.id.diacritic_damma to "ُ", R.id.diacritic_shadda to "ّ", R.id.diacritic_sukun to "ْ", R.id.diacritic_fathatan to "ً", R.id.diacritic_kasratan to "ٍ", R.id.diacritic_dammatan to "ٌ", R.id.diacritic_alef_kh to "ٰ")
-            for ((id, symbol) in diacriticsMap) { popupView.findViewById<TextView>(id)?.setOnClickListener { currentInputConnection?.commitText(symbol, 1); popupWindow.dismiss() } }
-            popupView.findViewById<TextView>(R.id.btn_close_popup)?.setOnClickListener { popupWindow.dismiss() }
-            popupWindow.showAsDropDown(dotBtn, 0, -dotBtn.height - 180)
+            lettersContainer.visibility = View.GONE
+            diacriticsContainer.visibility = View.VISIBLE
             true 
+        }
+
+        view.findViewById<TextView>(R.id.btn_close_diacritics)?.setOnClickListener {
+            diacriticsContainer.visibility = View.GONE
+            lettersContainer.visibility = View.VISIBLE
+        }
+
+        val diacriticsMap = mapOf(R.id.diacritic_fatha to "َ", R.id.diacritic_kasra to "ِ", R.id.diacritic_damma to "ُ", R.id.diacritic_shadda to "ّ", R.id.diacritic_sukun to "ْ", R.id.diacritic_fathatan to "ً", R.id.diacritic_kasratan to "ٍ", R.id.diacritic_dammatan to "ٌ", R.id.diacritic_alef_kh to "ٰ")
+        for ((id, symbol) in diacriticsMap) {
+            view.findViewById<TextView>(id)?.setOnClickListener {
+                currentInputConnection?.commitText(symbol, 1)
+                diacriticsContainer.visibility = View.GONE
+                lettersContainer.visibility = View.VISIBLE
+            }
         }
 
         return view
