@@ -141,10 +141,11 @@
         android:visibility="gone"
         android:padding="8dp">
         
+        <!-- 🌟 فقط این متن تغییر کرد 🌟 -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="کلیپ‌بورد (۲۰۰ مورد آخر)"
+            android:text="موارد کپی شده"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:gravity="center"
@@ -156,7 +157,6 @@
             android:layout_width="match_parent"
             android:layout_height="200dp" />
 
-        <!-- 🌟 کادر ویرایش (به صورت پیش‌فرض مخفی است) -->
         <LinearLayout
             android:id="@+id/edit_clipboard_container"
             android:layout_width="match_parent"
