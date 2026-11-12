@@ -256,38 +256,35 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     // ==========================================
-    // REGION: ENGINE & LOGIC (PREDICTION) - FIXED!
+    // REGION: ENGINE & LOGIC (PREDICTION) - REVERTED TO FAST METHOD
     // ==========================================
     private fun updateSuggestions(suggestions: List<TextView>) {
-        // خواندن ۱۰۰ کاراکتر آخر برای اطمینان
-        val text = currentInputConnection?.getTextBeforeCursor(100, 0)?.toString() ?: ""
+        // فقط ۲۰ کاراکتر آخر را می‌خوانیم تا سرعت بالا بماند
+        val text = currentInputConnection?.getTextBeforeCursor(20, 0)?.toString() ?: ""
         
-        // پیدا کردن دقیق آخرین کلمه در حال تایپ (فارسی، انگلیسی و اعداد)
-        val wordRegex = Regex("[a-zA-Zآ-ی۰-۹0-9]+$")
-        val match = wordRegex.find(text)
-        val lastWord = match?.value ?: ""
+        // تقسیم بندی ساده (همان روشی که در نسخه‌های قبل کار می‌کرد)
+        val words = text.split(" ", "\n", ".", "،", "؟", "!")
+        val lastWord = words.lastOrNull() ?: ""
+        val previousWord = if (words.size > 1) words[words.size - 2].trim() else ""
 
         val currentSuggestions = mutableListOf<String>()
 
-        if (lastWord.isNotEmpty()) {
-            // ۱. اگر کلمه در دیکشنری نیست، خودش رو در صدر لیست قرار بده (برای ذخیره با رنگ طلایی)
-            if (lastWord.length >= 2 && !learnedWords.contains(lastWord) && !baseDictionary.contains(lastWord)) {
-                currentSuggestions.add(lastWord)
+        if (lastWord.isEmpty()) {
+            // حدس کلمه بعدی
+            if (previousWord.isNotEmpty() && nextWordPredictions.containsKey(previousWord)) {
+                currentSuggestions.addAll(nextWordPredictions[previousWord]!!)
             }
-
-            // ۲. پیدا کردن پیشنهادهای دیگر از حافظه و دیکشنری
+        } else {
+            // پیدا کردن کلمه در حافظه و دیکشنری
             val learnedMatches = learnedWords.filter { it.startsWith(lastWord) && it != lastWord }
             val baseMatches = baseDictionary.filter { it.startsWith(lastWord) && it != lastWord }
             
             currentSuggestions.addAll(learnedMatches)
             currentSuggestions.addAll(baseMatches)
-        } else {
-            // ۳. حدس کلمه بعدی (وقتی فاصله زده شده)
-            val words = text.trim().split(Regex("\\s+"))
-            val previousWord = if (words.isNotEmpty()) words.last() else ""
             
-            if (previousWord.isNotEmpty() && nextWordPredictions.containsKey(previousWord)) {
-                currentSuggestions.addAll(nextWordPredictions[previousWord]!!)
+            // 🌟 اگر کلمه‌ای که تایپ کردی توی دیکشنری نبود، خودش رو بذار اول صف تا طلایی بشه
+            if (lastWord.length >= 2 && !learnedWords.contains(lastWord) && !baseDictionary.contains(lastWord)) {
+                currentSuggestions.add(0, lastWord) 
             }
         }
 
@@ -298,7 +295,7 @@ class PersianKeyboardService : InputMethodService() {
                 val word = distinctSuggestions[index]
                 textView.text = word
                 
-                // اگر کلمه دقیقاً همون کلمه تایپ شده باشه (و در حافظه نباشه) -> رنگ طلایی
+                // کلمه طلایی
                 if (word == lastWord && !learnedWords.contains(word)) {
                     textView.setTextColor(Color.parseColor("#FFD54F"))
                 } else {
