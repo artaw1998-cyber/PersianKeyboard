@@ -9,9 +9,9 @@ import com.example.persiankeyboard.R
 
 class ClipboardAdapter(
     private val items: List<ClipboardEntity>,
-    private val onItemClick: (ClipboardEntity) -> Unit, 
-    private val onEditClick: (ClipboardEntity) -> Unit, 
-    private val onDeleteClick: (ClipboardEntity) -> Unit 
+    private val onItemClick: (ClipboardEntity) -> Unit,
+    private val onEditClick: (ClipboardEntity) -> Unit,
+    private val onDeleteClick: (ClipboardEntity) -> Unit
 ) : RecyclerView.Adapter<ClipboardAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -32,9 +32,17 @@ class ClipboardAdapter(
         holder.tvNumber.text = (position + 1).toString()
         holder.tvText.text = item.text
         
-        holder.itemView.setOnClickListener { onItemClick(item) } // کلیک روی خود متن
-        holder.btnEdit.setOnClickListener { onEditClick(item) } // کلیک روی مداد
-        holder.btnDelete.setOnClickListener { onDeleteClick(item) } // کلیک روی سطل
+        // 🌟 پاک کردن کلیک‌های قبلی برای جلوگیری از دوبار پیست شدن
+        holder.itemView.setOnClickListener(null)
+        holder.tvText.setOnClickListener(null)
+        holder.btnEdit.setOnClickListener(null)
+        holder.btnDelete.setOnClickListener(null)
+
+        // تنظیم کلیک‌های جدید
+        holder.itemView.setOnClickListener { onItemClick(item) }
+        holder.tvText.setOnClickListener { onItemClick(item) }
+        holder.btnEdit.setOnClickListener { onEditClick(item) }
+        holder.btnDelete.setOnClickListener { onDeleteClick(item) }
     }
 
     override fun getItemCount(): Int = items.size
