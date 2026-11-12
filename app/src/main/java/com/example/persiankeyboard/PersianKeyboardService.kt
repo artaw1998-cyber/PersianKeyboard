@@ -88,9 +88,16 @@ class PersianKeyboardService : InputMethodService() {
         return view
     }
 
-    // 🌟 جادوی اصلی: هر بار که مکان‌نما یا متن تغییر کرد، این تابع صدا زده می‌شود
-    override fun onUpdateSelection(newSelStart: Int, newSelEnd: Int, candidatesStart: Int, candidatesEnd: Int) {
-        super.onUpdateSelection(newSelStart, newSelEnd, candidatesStart, candidatesEnd)
+    // 🌟 اصلاح باگ: امضای صحیح تابع سیستم‌عامل با ۶ پارامتر
+    override fun onUpdateSelection(
+        oldSelStart: Int,
+        oldSelEnd: Int,
+        newSelStart: Int,
+        newSelEnd: Int,
+        candidatesStart: Int,
+        candidatesEnd: Int
+    ) {
+        super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd)
         if (suggestionViews.isNotEmpty()) {
             updateSuggestions(suggestionViews)
         }
@@ -154,7 +161,6 @@ class PersianKeyboardService : InputMethodService() {
                     isShifted = true
                     bindLetters(view, shiftBtn)
                 }
-                // در onUpdateSelection خودش آپدیت میشه
             } 
         }
 
