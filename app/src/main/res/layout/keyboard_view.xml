@@ -156,16 +156,52 @@
             android:layout_width="match_parent"
             android:layout_height="200dp" />
 
-        <TextView
-            android:id="@+id/btn_close_clipboard"
+        <!-- 🌟 اینجا ۳ دکمه جدید جایگزین دکمه بستن قبلی شد -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:text="بستن"
             android:layout_marginTop="4dp"
-            android:background="@drawable/key_bg_special"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:textSize="16sp"/>
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/btn_close_clipboard"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="بستن"
+                android:background="@drawable/key_bg_special"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:layout_marginEnd="2dp"/>
+
+            <TextView
+                android:id="@+id/btn_clear_clipboard"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="پاک کردن همه"
+                android:background="@drawable/key_bg_special"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"/>
+
+            <TextView
+                android:id="@+id/btn_refresh_clipboard"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="تازه سازی"
+                android:background="@drawable/key_bg_special"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:layout_marginStart="2dp"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
