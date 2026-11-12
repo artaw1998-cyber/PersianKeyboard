@@ -220,7 +220,7 @@ class PersianKeyboardService : InputMethodService() {
         // دکمه پاک کردن همه
         view.findViewById<TextView>(R.id.btn_clear_clipboard)?.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                db.clipboardDao().deleteAll() // فرض بر این است که این متد در DAO وجود دارد
+                db.clipboardDao().deleteAll()
                 withContext(Dispatchers.Main) {
                     loadClipboardData()
                     showToast("همه موارد پاک شدند")
@@ -260,7 +260,7 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // تابع جدید برای نمایش پنجره ویرایش
+    // تابع اصلاح شده برای نمایش پنجره ویرایش بدون بستن کیبورد
     private fun showEditDialog(item: com.example.persiankeyboard.clipboard.ClipboardEntity) {
         val builder = android.app.AlertDialog.Builder(this)
         builder.setTitle("ویرایش متن")
@@ -283,8 +283,8 @@ class PersianKeyboardService : InputMethodService() {
             val newText = input.text.toString()
             if (newText.isNotBlank()) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val updatedItem = item.copy(text = newText) // آپدیت کردن متن
-                    db.clipboardDao().update(updatedItem) // فرض بر این است که این متد در DAO وجود دارد
+                    val updatedItem = item.copy(text = newText) 
+                    db.clipboardDao().update(updatedItem) 
                     withContext(Dispatchers.Main) {
                         loadClipboardData()
                     }
@@ -295,8 +295,14 @@ class PersianKeyboardService : InputMethodService() {
         builder.setNegativeButton("انصراف") { dialog, _ -> dialog.dismiss() }
 
         val dialog = builder.create()
-        // این خط برای کیبوردها بسیار مهم است تا پنجره روی کیبورد باز شود
-        dialog.window?.setType(android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+        
+        // این دو خط باعث میشن کیبورد موقع باز شدن پنجره بسته نشه
+        dialog.window?.setType(android.view.WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG)
+        dialog.window?.setFlags(
+            android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+            android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+        )
+        
         dialog.show()
     }
 
