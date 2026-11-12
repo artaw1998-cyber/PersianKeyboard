@@ -17,7 +17,6 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
@@ -26,7 +25,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.persiankeyboard.clipboard.ClipboardAdapter
 import com.example.persiankeyboard.clipboard.ClipboardDatabase
-import com.example.persiankeyboard.clipboard.ClipboardEntity
 import com.example.persiankeyboard.clipboard.ClipboardListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -217,7 +215,7 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // 🌟 تابع لود اطلاعات و رفع ارور Type mismatch
+    // تابع اصلاح شده برای هماهنگی کامل با آداپتر
     private fun loadClipboardData() {
         CoroutineScope(Dispatchers.Main).launch {
             val items = withContext(Dispatchers.IO) {
@@ -226,9 +224,8 @@ class PersianKeyboardService : InputMethodService() {
             
             if (clipboardRecyclerView != null) {
                 val adapter = ClipboardAdapter(
-                    items,
+                    items = items,
                     onItemClick = { item ->
-                        // اینجا دقیقاً item.text رو پاس می‌دیم که String هست
                         this@PersianKeyboardService.currentInputConnection?.commitText(item.text, 1)
                         clipboardContainer?.visibility = View.GONE
                         lettersContainer?.visibility = View.VISIBLE
@@ -237,7 +234,7 @@ class PersianKeyboardService : InputMethodService() {
                         CoroutineScope(Dispatchers.IO).launch {
                             db.clipboardDao().deleteById(item.id)
                             withContext(Dispatchers.Main) {
-                                loadClipboardData() // رفرش لیست بعد از حذف
+                                loadClipboardData()
                             }
                         }
                     }
