@@ -196,20 +196,20 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        // 🌟 اصلاح باگ هم‌ترازی در حالت انگلیسی
         val specialKeys = listOf(R.id.btn_sad, R.id.btn_e, R.id.btn_ta, R.id.btn_ze, R.id.btn_dal)
         if (isPersian) {
             setupHiddenCharsAndDoubleTap(view)
             setupLongPressPopups(view)
         } else {
-            // ریست کردن تنظیمات ظاهری برای حالت انگلیسی
+            // 🌟 ریست کردن تنظیمات ظاهری برای حالت انگلیسی
             specialKeys.forEach { id ->
                 view.findViewById<TextView>(id)?.apply {
-                    this.translationY = 0f // برگرداندن به حالت عادی
-                    this.setLineSpacing(0f, 1.0f) // فاصله خطوط استاندارد
-                    this.includeFontPadding = true // بازگرداندن پدینگ فونت
+                    this.setPadding(0, 0, 0, 0)
+                    this.setLineSpacing(0f, 1.0f)
+                    this.includeFontPadding = true
                     this.gravity = Gravity.CENTER
-                    this.setOnLongClickListener(null) // حذف پاپ‌آپ‌های فارسی
+                    this.translationY = 0f // اطمینان از اینکه شیفت ریاضی صفر است
+                    this.setOnLongClickListener(null) 
                 }
             }
         }
@@ -239,93 +239,58 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
+    // 🌟 روش جدید: همپوشانی خطوط و شیفت ریاضی دقیق (بدون فضای خالی)
     private fun setupHiddenCharsAndDoubleTap(view: View) {
-        val shiftY = { tv: TextView ->
+        val setupKey = { tv: TextView, hidden: String, main: String, onMainClick: () -> Unit, onHiddenClick: () -> Unit ->
             tv.includeFontPadding = false
             tv.gravity = Gravity.CENTER
-            tv.translationY = -tv.textSize * 0.38f
-            tv.setLineSpacing(0f, 0.85f) 
+            
+            // نزدیک کردن دو خط به هم تا روی هم بیفتند
+            tv.setLineSpacing(-tv.textSize * 0.15f, 1f) 
+            
+            // شیفت دادن کل بلاک به بالا تا حرف اصلی دقیقاً در مرکز دکمه قرار بگیرد
+            tv.translationY = -tv.textSize * 0.25f 
+
+            tv.text = createSpannableKey(hidden, main)
+            
+            var lastClick = 0L
+            tv.setOnClickListener {
+                val time = System.currentTimeMillis()
+                if (time - lastClick < 400) {
+                    currentInputConnection?.deleteSurroundingText(1, 0)
+                    onHiddenClick()
+                } else {
+                    onMainClick()
+                }
+                lastClick = time
+            }
         }
 
-        // ۱. حرف ص (پشتش ض)
-        val btnSad = view.findViewById<TextView>(R.id.btn_sad)
-        shiftY(btnSad)
-        btnSad.text = createSpannableKey("ض", "ص")
-        var lastSadClick = 0L
-        btnSad.setOnClickListener {
-            val time = System.currentTimeMillis()
-            if (time - lastSadClick < 400) {
-                currentInputConnection?.deleteSurroundingText(1, 0)
-                currentInputConnection?.commitText("ض", 1)
-            } else {
-                currentInputConnection?.commitText("ص", 1)
-            }
-            lastSadClick = time
-        }
-
-        // ۲. حرف ع (پشتش غ)
-        val btnE = view.findViewById<TextView>(R.id.btn_e)
-        shiftY(btnE)
-        btnE.text = createSpannableKey("غ", "ع")
-        var lastEClick = 0L
-        btnE.setOnClickListener {
-            val time = System.currentTimeMillis()
-            if (time - lastEClick < 400) {
-                currentInputConnection?.deleteSurroundingText(1, 0)
-                currentInputConnection?.commitText("غ", 1)
-            } else {
-                currentInputConnection?.commitText("ع", 1)
-            }
-            lastEClick = time
-        }
-
-        // ۳. حرف ط (پشتش ظ)
-        val btnTa = view.findViewById<TextView>(R.id.btn_ta)
-        shiftY(btnTa)
-        btnTa.text = createSpannableKey("ظ", "ط")
-        var lastTaClick = 0L
-        btnTa.setOnClickListener {
-            val time = System.currentTimeMillis()
-            if (time - lastTaClick < 400) {
-                currentInputConnection?.deleteSurroundingText(1, 0)
-                currentInputConnection?.commitText("ظ", 1)
-            } else {
-                currentInputConnection?.commitText("ط", 1)
-            }
-            lastTaClick = time
-        }
-
-        // ۴. حرف ز (پشتش ژ)
-        val btnZe = view.findViewById<TextView>(R.id.btn_ze)
-        shiftY(btnZe)
-        btnZe.text = createSpannableKey("ژ", "ز")
-        var lastZeClick = 0L
-        btnZe.setOnClickListener {
-            val time = System.currentTimeMillis()
-            if (time - lastZeClick < 400) {
-                currentInputConnection?.deleteSurroundingText(1, 0)
-                currentInputConnection?.commitText("ژ", 1)
-            } else {
-                currentInputConnection?.commitText("ز", 1)
-            }
-            lastZeClick = time
-        }
-
-        // ۵. حرف د (پشتش ذ)
-        val btnDal = view.findViewById<TextView>(R.id.btn_dal)
-        shiftY(btnDal)
-        btnDal.text = createSpannableKey("ذ", "د")
-        var lastDalClick = 0L
-        btnDal.setOnClickListener {
-            val time = System.currentTimeMillis()
-            if (time - lastDalClick < 400) {
-                currentInputConnection?.deleteSurroundingText(1, 0)
-                currentInputConnection?.commitText("ذ", 1)
-            } else {
-                currentInputConnection?.commitText("د", 1)
-            }
-            lastDalClick = time
-        }
+        // ص
+        setupKey(view.findViewById(R.id.btn_sad), "ض", "ص", 
+            { currentInputConnection?.commitText("ص", 1) }, 
+            { currentInputConnection?.commitText("ض", 1) }
+        )
+        // ع
+        setupKey(view.findViewById(R.id.btn_e), "غ", "ع", 
+            { currentInputConnection?.commitText("ع", 1) }, 
+            { currentInputConnection?.commitText("غ", 1) }
+        )
+        // ط
+        setupKey(view.findViewById(R.id.btn_ta), "ظ", "ط", 
+            { currentInputConnection?.commitText("ط", 1) }, 
+            { currentInputConnection?.commitText("ظ", 1) }
+        )
+        // ز
+        setupKey(view.findViewById(R.id.btn_ze), "ژ", "ز", 
+            { currentInputConnection?.commitText("ز", 1) }, 
+            { currentInputConnection?.commitText("ژ", 1) }
+        )
+        // د
+        setupKey(view.findViewById(R.id.btn_dal), "ذ", "د", 
+            { currentInputConnection?.commitText("د", 1) }, 
+            { currentInputConnection?.commitText("ذ", 1) }
+        )
     }
 
     private fun createSpannableKey(hidden: String, main: String): SpannableString {
