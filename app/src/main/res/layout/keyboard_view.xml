@@ -20,7 +20,6 @@
 
     <!-- بخش حروف -->
     <LinearLayout android:id="@+id/letters_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-        <!-- ردیف اعداد -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_num_1" style="@style/KeyStyle" android:text="۱" />
             <TextView android:id="@+id/btn_num_2" style="@style/KeyStyle" android:text="۲" />
@@ -34,7 +33,6 @@
             <TextView android:id="@+id/btn_num_0" style="@style/KeyStyle" android:text="۰" />
         </LinearLayout>
 
-        <!-- ردیف اول حروف -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_sad" style="@style/KeyStyle" android:text="ص" />
             <TextView android:id="@+id/btn_se" style="@style/KeyStyle" android:text="ث" />
@@ -48,7 +46,6 @@
             <TextView android:id="@+id/btn_che" style="@style/KeyStyle" android:text="چ" />
         </LinearLayout>
 
-        <!-- ردیف دوم حروف -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_shin" style="@style/KeyStyle" android:text="ش" />
             <TextView android:id="@+id/btn_sin" style="@style/KeyStyle" android:text="س" />
@@ -62,7 +59,6 @@
             <TextView android:id="@+id/btn_pe" style="@style/KeyStyle" android:text="پ" />
         </LinearLayout>
 
-        <!-- ردیف سوم حروف -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_shift" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="⇧" />
             <TextView android:id="@+id/btn_ta" style="@style/KeyStyle" android:text="ط" />
@@ -75,7 +71,6 @@
             <TextView android:id="@+id/btn_backspace" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="⌫" />
         </LinearLayout>
 
-        <!-- ردیف پایین -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_symbols" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="نماد" android:textSize="14sp"/>
             <TextView android:id="@+id/btn_lang" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="Ab" android:textSize="16sp" android:textStyle="bold"/>
@@ -131,7 +126,43 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 🌟 لایه کلیپ‌بورد -->
+    <!-- 🌟 پنل ایموجی 🌟 -->
+    <LinearLayout
+        android:id="@+id/emoji_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#263238"
+        android:visibility="gone"
+        android:padding="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:orientation="horizontal"
+            android:background="#1E272E">
+            
+            <TextView
+                android:id="@+id/btn_back_to_letters"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="بازگشت به کیبورد  ⬅️"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/emoji_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="210dp"
+            android:padding="4dp" />
+    </LinearLayout>
+
+    <!-- 🌟 لایه کلیپ‌بورد 🌟 -->
     <LinearLayout
         android:id="@+id/clipboard_container"
         android:layout_width="match_parent"
@@ -164,7 +195,6 @@
             android:visibility="gone"
             android:layout_marginBottom="8dp">
 
-            <!-- 🌟 اینجا ارتفاع کادر ویرایش رو ثابت کردم و اسکرول بهش دادم 🌟 -->
             <EditText
                 android:id="@+id/edit_clipboard_text"
                 android:layout_width="match_parent"
@@ -211,7 +241,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- ۳ دکمه پایین -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
