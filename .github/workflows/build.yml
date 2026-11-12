@@ -26,7 +26,7 @@ jobs:
     - name: Accept Android SDK licenses
       run: yes | sdkmanager --licenses || true
 
-    - name: Magic Fix (Auto-Create ALL Gradle Files with Room)
+    - name: Magic Fix (Auto-Create ALL Gradle Files with Room & AndroidX)
       run: |
         cat << 'EOF' > settings.gradle
         pluginManagement {
@@ -53,6 +53,13 @@ jobs:
             id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
             id 'org.jetbrains.kotlin.kapt' version '1.9.0' apply false
         }
+        EOF
+
+        # 🌟 ساخت فایل gradle.properties برای فعال کردن AndroidX
+        cat << 'EOF' > gradle.properties
+        android.useAndroidX=true
+        android.enableJetifier=true
+        org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
         EOF
 
         mkdir -p app
