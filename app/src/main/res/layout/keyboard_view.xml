@@ -8,12 +8,18 @@
 
     <!-- نوار پیشنهاد کلمات -->
     <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:background="@color/suggestion_bg" android:orientation="horizontal" android:layout_marginBottom="4dp">
+        
+        <!-- آیکون‌های سمت چپ -->
         <TextView android:id="@+id/btn_emoji_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="😊" android:gravity="center" android:textSize="20sp"/>
         <TextView android:id="@+id/btn_settings_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="⚙️" android:gravity="center" android:textSize="18sp"/>
         
+        <!-- کلمات پیشنهادی در وسط -->
         <TextView android:id="@+id/suggestion_1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         <TextView android:id="@+id/suggestion_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         <TextView android:id="@+id/suggestion_3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
+        
+        <!-- 🌟 آیکون کلیپ‌بورد در سمت راست -->
+        <TextView android:id="@+id/btn_clipboard_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="📋" android:gravity="center" android:textSize="18sp"/>
     </LinearLayout>
 
     <!-- بخش حروف -->
@@ -74,16 +80,14 @@
             <TextView android:id="@+id/btn_backspace" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="⌫" />
         </LinearLayout>
 
-        <!-- ردیف پایین (تغییر وزن دکمه‌های سمت راست برای وسط‌چین شدن فاصله) -->
+        <!-- ردیف پایین -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_symbols" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="نماد" android:textSize="14sp"/>
             <TextView android:id="@+id/btn_lang" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="Ab" android:textSize="16sp" android:textStyle="bold"/>
             <TextView android:id="@+id/btn_mic" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="🎤" android:textSize="18sp"/>
             
-            <!-- دکمه فاصله در مرکز قرار می‌گیرد -->
             <TextView android:id="@+id/btn_space" style="@style/KeyStyleSpecial" android:layout_weight="4" android:text="فاصله" />
             
-            <!-- 🌟 وزن نقطه و اینتر افزایش یافت تا فاصله به سمت چپ (میکروفون) شیفت پیدا کند -->
             <TextView android:id="@+id/btn_dot" style="@style/KeyStyleSpecial" android:layout_weight="1.4" android:text="." />
             <TextView android:id="@+id/btn_enter" style="@style/KeyStyleSpecial" android:layout_weight="2.2" android:text="↵" />
         </LinearLayout>
