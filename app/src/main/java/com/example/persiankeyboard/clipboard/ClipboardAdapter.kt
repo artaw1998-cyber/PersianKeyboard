@@ -14,6 +14,9 @@ class ClipboardAdapter(
     private val onDeleteClick: (ClipboardEntity) -> Unit
 ) : RecyclerView.Adapter<ClipboardAdapter.ViewHolder>() {
 
+    // 🌟 این متغیر زمان آخرین کلیک رو ذخیره می‌کنه تا از دوبار کلیک جلوگیری کنه
+    private var lastClickTime = 0L
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvNumber: TextView = view.findViewById(R.id.tvItemNumber)
         val tvText: TextView = view.findViewById(R.id.tvItemText)
@@ -32,16 +35,22 @@ class ClipboardAdapter(
         holder.tvNumber.text = (position + 1).toString()
         holder.tvText.text = item.text
 
-        // 🌟 پاک کردن کلیک‌های قبلی برای جلوگیری از باگ 🌟
+        // پاک کردن کلیک‌های قبلی
         holder.itemView.setOnClickListener(null)
         holder.tvText.setOnClickListener(null)
         holder.btnEdit.setOnClickListener(null)
         holder.btnDelete.setOnClickListener(null)
 
-        // 🌟 فقط و فقط کلیک روی کل کادر (نه خود متن) باعث کپی میشه 🌟
-        holder.itemView.setOnClickListener { onItemClick(item) }
+        // 🌟 استفاده از تایمر برای جلوگیری از دوبار کپی شدن 🌟
+        holder.itemView.setOnClickListener { 
+            val currentTime = System.currentTimeMillis()
+            // اگر از آخرین کلیک بیشتر از ۵۰۰ میلی‌ثانیه گذشته باشه، اجازه بده پیست کنه
+            if (currentTime - lastClickTime > 500) {
+                lastClickTime = currentTime
+                onItemClick(item) 
+            }
+        }
         
-        // دکمه‌های ویرایش و حذف
         holder.btnEdit.setOnClickListener { onEditClick(item) }
         holder.btnDelete.setOnClickListener { onDeleteClick(item) }
     }
