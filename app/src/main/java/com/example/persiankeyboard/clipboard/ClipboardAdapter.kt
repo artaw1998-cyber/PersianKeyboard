@@ -8,28 +8,36 @@ import androidx.recyclerview.widget.RecyclerView
 
 class ClipboardAdapter(
     private val items: List<ClipboardEntity>,
-    private val onItemClick: (String) -> Unit
+    private val onItemClick: (ClipboardEntity) -> Unit,
+    private val onDeleteClick: (ClipboardEntity) -> Unit
 ) : RecyclerView.Adapter<ClipboardAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(android.R.id.text1)
+        val tvNumber: TextView = view.findViewById(R.id.tvItemNumber)
+        val tvText: TextView = view.findViewById(R.id.tvItemText)
+        val btnEdit: TextView = view.findViewById(R.id.btnEdit)
+        val btnDelete: TextView = view.findViewById(R.id.btnDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.item_clipboard, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        val displayText = if (item.text.length > 80) item.text.take(80) + "..." else item.text
-        holder.textView.text = displayText
-        holder.textView.setTextColor(android.graphics.Color.WHITE)
+        holder.tvNumber.text = (position + 1).toString()
+        holder.tvText.text = item.text
         
-        holder.itemView.setOnClickListener {
-            onItemClick(item.text)
-        }
+        // کلیک روی متن (تایپ شدن متن)
+        holder.itemView.setOnClickListener { onItemClick(item) }
+        
+        // کلیک روی مداد (فعلاً متن رو تایپ می‌کنه تا کاربر خودش ویرایش کنه)
+        holder.btnEdit.setOnClickListener { onItemClick(item) }
+        
+        // کلیک روی سطل زباله (حذف)
+        holder.btnDelete.setOnClickListener { onDeleteClick(item) }
     }
 
     override fun getItemCount(): Int = items.size
