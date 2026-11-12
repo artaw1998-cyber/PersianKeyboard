@@ -265,21 +265,29 @@ class PersianKeyboardService : InputMethodService() {
                 db.clipboardDao().getAllItems()
             }
             
-            // 🌟 حذف متن‌های تکراری از لیست (فقط یکی از هر متن رو نشون بده) 🌟
+            // حذف متن‌های تکراری
             val items = rawItems.distinctBy { it.text }
             
             if (clipboardRecyclerView != null) {
                 val adapter = ClipboardAdapter(
                     items = items,
                     onItemClick = { item ->
-                        // 🌟 پیست کردن بدون هیچ قفلی (تا مشکل پیست نشدن حل بشه) 🌟
                         val ic = this@PersianKeyboardService.currentInputConnection
                         if (ic != null) {
-                            ic.commitText(item.text, 1)
+                            try {
+                                // 🌟 این خط جادوییه! به تلگرام و اینستاگرام میگه تایپ رو تموم کن تا متن رو قبول کنن 🌟
+                                ic.finishComposingText()
+                                ic.commitText(item.text, 1)
+                            } catch (e: Exception) {
+                                showToast("خطا در پیست کردن")
+                            }
                         }
-                        // بستن لیست و برگشتن به کیبورد
-                        clipboardContainer?.visibility = View.GONE
-                        lettersContainer?.visibility = View.VISIBLE
+                        
+                        // 🌟 یک کمی صبر میکنیم تا برنامه متن رو بگیره، بعد کیبورد رو برمیگردونیم 🌟
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            clipboardContainer?.visibility = View.GONE
+                            lettersContainer?.visibility = View.VISIBLE
+                        }, 100)
                     },
                     onEditClick = { item ->
                         editingItem = item
@@ -302,7 +310,7 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
     
-    // ... بقیه توابع (bindLetters, bindSymbols, setupNavigation و...) دقیقاً مثل قبل هستن و نیازی به تغییرشون نیست ...
+    // ... (بقیه توابع مثل bindLetters, bindSymbols, setupNavigation و... دقیقاً بدون تغییر مثل قبل هستن) ...
     
     private fun bindLetters(view: View, shiftBtn: TextView) {
         val buttons = if (isPersian) {
