@@ -31,19 +31,25 @@
         android:maxLines="3"
         android:ellipsize="end" />
 
+    <!-- دکمه مداد (ویرایش) -->
     <TextView
         android:id="@+id/btnEdit"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:text="✏️"
         android:gravity="center"
-        android:textSize="16sp" />
+        android:textSize="18sp"
+        android:clickable="true"
+        android:focusable="true" />
 
+    <!-- دکمه سطل زباله (حذف) -->
     <TextView
         android:id="@+id/btnDelete"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:text="🗑️"
         android:gravity="center"
-        android:textSize="16sp" />
+        android:textSize="18sp"
+        android:clickable="true"
+        android:focusable="true" />
 </LinearLayout>
