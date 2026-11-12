@@ -131,6 +131,9 @@ class PersianKeyboardService : InputMethodService() {
         
         clipboardRecyclerView = view.findViewById(R.id.clipboard_recycler)
         clipboardRecyclerView?.layoutManager = LinearLayoutManager(this)
+        // 🌟 جلوگیری از دزدی فوکوس توسط لیست 🌟
+        clipboardRecyclerView?.isFocusable = false
+        clipboardRecyclerView?.isFocusableInTouchMode = false
         
         editClipboardContainer = view.findViewById(R.id.edit_clipboard_container)
         editClipboardText = view.findViewById(R.id.edit_clipboard_text)
@@ -265,7 +268,6 @@ class PersianKeyboardService : InputMethodService() {
                 db.clipboardDao().getAllItems()
             }
             
-            // حذف متن‌های تکراری
             val items = rawItems.distinctBy { it.text }
             
             if (clipboardRecyclerView != null) {
@@ -275,19 +277,20 @@ class PersianKeyboardService : InputMethodService() {
                         val ic = this@PersianKeyboardService.currentInputConnection
                         if (ic != null) {
                             try {
-                                // 🌟 این خط جادوییه! به تلگرام و اینستاگرام میگه تایپ رو تموم کن تا متن رو قبول کنن 🌟
+                                // 1. تموم کردن تایپ قبلی
                                 ic.finishComposingText()
+                                // 2. فرستادن متن
                                 ic.commitText(item.text, 1)
                             } catch (e: Exception) {
                                 showToast("خطا در پیست کردن")
                             }
                         }
                         
-                        // 🌟 یک کمی صبر میکنیم تا برنامه متن رو بگیره، بعد کیبورد رو برمیگردونیم 🌟
+                        // 🌟 3. صبر کردن (۴۰۰ میلی ثانیه) تا تلگرام متن رو بگیره و گیج نشه 🌟
                         Handler(Looper.getMainLooper()).postDelayed({
                             clipboardContainer?.visibility = View.GONE
                             lettersContainer?.visibility = View.VISIBLE
-                        }, 100)
+                        }, 400)
                     },
                     onEditClick = { item ->
                         editingItem = item
@@ -309,9 +312,7 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
     }
-    
-    // ... (بقیه توابع مثل bindLetters, bindSymbols, setupNavigation و... دقیقاً بدون تغییر مثل قبل هستن) ...
-    
+
     private fun bindLetters(view: View, shiftBtn: TextView) {
         val buttons = if (isPersian) {
             view.findViewById<TextView>(R.id.btn_pe)?.visibility = View.VISIBLE
