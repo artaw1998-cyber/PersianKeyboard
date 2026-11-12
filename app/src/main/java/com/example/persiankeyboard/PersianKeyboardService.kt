@@ -1,6 +1,5 @@
 package com.example.persiankeyboard
 
-import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
@@ -18,7 +17,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
@@ -193,22 +192,27 @@ class PersianKeyboardService : InputMethodService() {
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { showToast("تایپ صوتی به زودی...") }
         
         view.findViewById<TextView>(R.id.btn_clipboard_bar)?.setOnClickListener {
-            showClipboardDialog()
+            showClipboardPopup(view)
         }
     }
 
-    private fun showClipboardDialog() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_clipboard)
-        
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        
-        val recyclerView = dialog.findViewById<RecyclerView>(R.id.clipboard_recycler)
-        val btnClose = dialog.findViewById<android.widget.Button>(R.id.btn_close_clipboard)
-        
+    // 🌟 تابع باز کردن پنجره به صورت PopupWindow (بدون بسته شدن کیبورد)
+    private fun showClipboardPopup(rootView: View) {
+        val popupView = layoutInflater.inflate(R.layout.dialog_clipboard, null)
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.parseColor("#263238")))
+        popupWindow.isOutsideTouchable = true
+
+        val recyclerView = popupView.findViewById<RecyclerView>(R.id.clipboard_recycler)
+        val btnClose = popupView.findViewById<Button>(R.id.btn_close_clipboard)
+
         recyclerView.layoutManager = LinearLayoutManager(this)
-        
+
         CoroutineScope(Dispatchers.Main).launch {
             val items = withContext(Dispatchers.IO) {
                 db.clipboardDao().getAllItems()
@@ -216,13 +220,15 @@ class PersianKeyboardService : InputMethodService() {
             
             val adapter = ClipboardAdapter(items) { selectedText ->
                 currentInputConnection?.commitText(selectedText, 1)
-                dialog.dismiss()
+                popupWindow.dismiss()
             }
             recyclerView.adapter = adapter
         }
         
-        btnClose.setOnClickListener { dialog.dismiss() }
-        dialog.show()
+        btnClose.setOnClickListener { popupWindow.dismiss() }
+        
+        // نمایش پنجره دقیقاً از پایین صفحه (روی کیبورد)
+        popupWindow.showAtLocation(rootView, Gravity.BOTTOM, 0, 0)
     }
 
     private fun bindLetters(view: View, shiftBtn: TextView) {
