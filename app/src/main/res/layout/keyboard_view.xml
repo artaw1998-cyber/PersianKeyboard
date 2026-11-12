@@ -141,7 +141,6 @@
         android:visibility="gone"
         android:padding="8dp">
         
-        <!-- 🌟 فقط این متن تغییر کرد 🌟 -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -165,16 +164,20 @@
             android:visibility="gone"
             android:layout_marginBottom="8dp">
 
+            <!-- 🌟 اینجا ارتفاع کادر ویرایش رو ثابت کردم و اسکرول بهش دادم 🌟 -->
             <EditText
                 android:id="@+id/edit_clipboard_text"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:hint="متن را ویرایش کنید..."
                 android:textColor="#FFFFFF"
                 android:textColorHint="#B0BEC5"
                 android:background="#37474F"
                 android:padding="12dp"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:scrollbars="vertical" />
 
             <LinearLayout
                 android:layout_width="match_parent"
