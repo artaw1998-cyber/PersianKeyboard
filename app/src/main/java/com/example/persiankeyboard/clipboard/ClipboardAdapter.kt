@@ -30,13 +30,8 @@ class ClipboardAdapter(
         holder.tvNumber.text = (position + 1).toString()
         holder.tvText.text = item.text
         
-        // کلیک روی متن (تایپ شدن متن)
         holder.itemView.setOnClickListener { onItemClick(item) }
-        
-        // کلیک روی مداد (فعلاً متن رو تایپ می‌کنه تا کاربر خودش ویرایش کنه)
         holder.btnEdit.setOnClickListener { onItemClick(item) }
-        
-        // کلیک روی سطل زباله (حذف)
         holder.btnDelete.setOnClickListener { onDeleteClick(item) }
     }
 
