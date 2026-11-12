@@ -37,7 +37,6 @@ class PersianKeyboardService : InputMethodService() {
     private val learnedWords = mutableSetOf<String>()
     private val kashida = "ـ"
     
-    // نگه داشتن رفرنس به دکمه‌های پیشنهاد برای آپدیت خودکار
     private var suggestionViews: List<TextView> = emptyList()
 
     // ==========================================
@@ -88,7 +87,6 @@ class PersianKeyboardService : InputMethodService() {
         return view
     }
 
-    // 🌟 اصلاح باگ: امضای صحیح تابع سیستم‌عامل با ۶ پارامتر
     override fun onUpdateSelection(
         oldSelStart: Int,
         oldSelEnd: Int,
@@ -181,21 +179,19 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     private fun bindLetters(view: View, shiftBtn: TextView) {
-        val extraEnglishKeys = listOf(R.id.btn_jim, R.id.btn_che, R.id.btn_pe, R.id.btn_kaf, R.id.btn_gaf)
-        
+        // چیدمان جدید با ۲۸ کلید
         val buttons = if (isPersian) {
-            extraEnglishKeys.forEach { view.findViewById<TextView>(it)?.visibility = View.VISIBLE }
             mapOf(
-                R.id.btn_zad to "ض", R.id.btn_sad to "ص", R.id.btn_se to "ث", R.id.btn_ghaf to "ق", R.id.btn_fe to "ف", R.id.btn_ghain to "غ", R.id.btn_e to "ع", R.id.btn_he to "ه", R.id.btn_khe to "خ", R.id.btn_h to "ح", R.id.btn_jim to "ج", R.id.btn_che to "چ",
+                R.id.btn_sad to "ص", R.id.btn_se to "ث", R.id.btn_ghaf to "ق", R.id.btn_fe to "ف", R.id.btn_e to "ع", R.id.btn_he to "ه", R.id.btn_khe to "خ", R.id.btn_h to "ح", R.id.btn_jim to "ج", R.id.btn_che to "چ",
                 R.id.btn_shin to "ش", R.id.btn_sin to "س", R.id.btn_ye to "ی", R.id.btn_be to "ب", R.id.btn_lam to "ل", R.id.btn_alef to "ا", R.id.btn_te to "ت", R.id.btn_nun to "ن", R.id.btn_mim to "م", R.id.btn_pe to "پ",
-                R.id.btn_za to "ظ", R.id.btn_ta to "ط", R.id.btn_ze to "ز", R.id.btn_re to "ر", R.id.btn_zal to "ذ", R.id.btn_dal to "د", R.id.btn_vav to "و", R.id.btn_kaf to "ک", R.id.btn_gaf to "گ"
+                R.id.btn_ta to "ط", R.id.btn_ze to "ز", R.id.btn_re to "ر", R.id.btn_zal to "ذ", R.id.btn_dal to "د", R.id.btn_vav to "و", R.id.btn_kaf to "ک", R.id.btn_gaf to "گ"
             )
         } else {
-            extraEnglishKeys.forEach { view.findViewById<TextView>(it)?.visibility = View.GONE }
+            // چیدمان انگلیسی QWERTY منطبق بر ۲۸ دکمه
             val baseMap = mapOf(
-                R.id.btn_zad to "q", R.id.btn_sad to "w", R.id.btn_se to "e", R.id.btn_ghaf to "r", R.id.btn_fe to "t", R.id.btn_ghain to "y", R.id.btn_e to "u", R.id.btn_he to "i", R.id.btn_khe to "o", R.id.btn_h to "p",
-                R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l",
-                R.id.btn_za to "z", R.id.btn_ta to "x", R.id.btn_ze to "c", R.id.btn_re to "v", R.id.btn_zal to "b", R.id.btn_dal to "n", R.id.btn_vav to "m"
+                R.id.btn_sad to "q", R.id.btn_se to "w", R.id.btn_ghaf to "e", R.id.btn_fe to "r", R.id.btn_e to "t", R.id.btn_he to "y", R.id.btn_khe to "u", R.id.btn_h to "i", R.id.btn_jim to "o", R.id.btn_che to "p",
+                R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l", R.id.btn_pe to ";",
+                R.id.btn_ta to "z", R.id.btn_ze to "x", R.id.btn_re to "c", R.id.btn_zal to "v", R.id.btn_dal to "b", R.id.btn_vav to "n", R.id.btn_kaf to "m", R.id.btn_gaf to "."
             )
             if (isCapsLock || isShifted) baseMap.mapValues { it.value.uppercase() } else baseMap
         }
@@ -339,7 +335,7 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     // ==========================================
-    // REGION: HELPER FUNCTIONS (UNCHANGED)
+    // REGION: HELPER FUNCTIONS
     // ==========================================
     private fun setupContinuousDeletion(btn: TextView, suggestions: List<TextView>) {
         val handler = Handler(Looper.getMainLooper())
@@ -376,25 +372,53 @@ class PersianKeyboardService : InputMethodService() {
         else currentInputConnection?.commitText("", 1)
     }
 
+    // 🌟 کادرهای بازشو دقیقاً طبق درخواست تو تنظیم شدند
     private fun setupLongPressPopups(view: View) {
+        // الف
         view.findViewById<TextView>(R.id.btn_alef)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("آ", "آ"), Pair("أ", "أ"), Pair("إ", "إ"), Pair("ٱ", "ٱ"), Pair("ا", "ا")))
             true
         }
+        // ت
         view.findViewById<TextView>(R.id.btn_te)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ت", "ت"), Pair("-5-", kashida.repeat(5)), Pair("-10-", kashida.repeat(10)), Pair("-20-", kashida.repeat(20))))
             true
         }
+        // ی
         view.findViewById<TextView>(R.id.btn_ye)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ي", "ي"), Pair("ى", "ى"), Pair("ئ", "ئ"), Pair("ی", "ی")))
             true
         }
+        // ک
         view.findViewById<TextView>(R.id.btn_kaf)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ك", "ك"), Pair("ک", "ک")))
             true
         }
+        // ه
         view.findViewById<TextView>(R.id.btn_he)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ة", "ة"), Pair("ه", "ه"), Pair("ۀ", "ۀ")))
+            true
+        }
+        
+        // 🌟 درخواست‌های جدید تو (حروف مخفی)
+        // ص -> ض
+        view.findViewById<TextView>(R.id.btn_sad)?.setOnLongClickListener {
+            showPopup(it, listOf(Pair("ض", "ض"), Pair("ص", "ص")))
+            true
+        }
+        // ع -> غ
+        view.findViewById<TextView>(R.id.btn_e)?.setOnLongClickListener {
+            showPopup(it, listOf(Pair("غ", "غ"), Pair("ع", "ع")))
+            true
+        }
+        // ط -> ظ
+        view.findViewById<TextView>(R.id.btn_ta)?.setOnLongClickListener {
+            showPopup(it, listOf(Pair("ظ", "ظ"), Pair("ط", "ط")))
+            true
+        }
+        // ز -> ژ
+        view.findViewById<TextView>(R.id.btn_ze)?.setOnLongClickListener {
+            showPopup(it, listOf(Pair("ژ", "ژ"), Pair("ز", "ز")))
             true
         }
     }
