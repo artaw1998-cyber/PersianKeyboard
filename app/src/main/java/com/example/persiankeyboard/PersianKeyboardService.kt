@@ -2,15 +2,16 @@ package com.example.persiankeyboard
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.inputmethodservice.InputMethodService
 import android.os.Handler
 import android.os.Looper
 import android.text.SpannableString
 import android.text.Spanned
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
+import android.text.style.ReplacementSpan
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -196,22 +197,9 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        val specialKeys = listOf(R.id.btn_sad, R.id.btn_e, R.id.btn_ta, R.id.btn_ze, R.id.btn_dal)
         if (isPersian) {
             setupHiddenCharsAndDoubleTap(view)
             setupLongPressPopups(view)
-        } else {
-            // 🌟 ریست کردن تنظیمات ظاهری برای حالت انگلیسی
-            specialKeys.forEach { id ->
-                view.findViewById<TextView>(id)?.apply {
-                    this.setPadding(0, 0, 0, 0)
-                    this.setLineSpacing(0f, 1.0f)
-                    this.includeFontPadding = true
-                    this.gravity = Gravity.CENTER
-                    this.translationY = 0f // اطمینان از اینکه شیفت ریاضی صفر است
-                    this.setOnLongClickListener(null) 
-                }
-            }
         }
 
         val nums = if (isPersian) {
@@ -239,20 +227,14 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // 🌟 روش جدید: همپوشانی خطوط و شیفت ریاضی دقیق (بدون فضای خالی)
+    // 🌟 اینبار از ReplacementSpan استفاده می‌کنیم تا دقیقاً روی مرکز دکمه نقاشی کنیم
     private fun setupHiddenCharsAndDoubleTap(view: View) {
         val setupKey = { tv: TextView, hidden: String, main: String, onMainClick: () -> Unit, onHiddenClick: () -> Unit ->
-            tv.includeFontPadding = false
-            tv.gravity = Gravity.CENTER
-            
-            // نزدیک کردن دو خط به هم تا روی هم بیفتند
-            tv.setLineSpacing(-tv.textSize * 0.15f, 1f) 
-            
-            // شیفت دادن کل بلاک به بالا تا حرف اصلی دقیقاً در مرکز دکمه قرار بگیرد
-            tv.translationY = -tv.textSize * 0.25f 
+            // ساخت متن با اسپن اختصاصی
+            val spannable = SpannableString(main)
+            spannable.setSpan(DoubleLetterSpan(hidden, main), 0, main.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            tv.text = spannable
 
-            tv.text = createSpannableKey(hidden, main)
-            
             var lastClick = 0L
             tv.setOnClickListener {
                 val time = System.currentTimeMillis()
@@ -266,39 +248,48 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        // ص
         setupKey(view.findViewById(R.id.btn_sad), "ض", "ص", 
             { currentInputConnection?.commitText("ص", 1) }, 
             { currentInputConnection?.commitText("ض", 1) }
         )
-        // ع
         setupKey(view.findViewById(R.id.btn_e), "غ", "ع", 
             { currentInputConnection?.commitText("ع", 1) }, 
             { currentInputConnection?.commitText("غ", 1) }
         )
-        // ط
         setupKey(view.findViewById(R.id.btn_ta), "ظ", "ط", 
             { currentInputConnection?.commitText("ط", 1) }, 
             { currentInputConnection?.commitText("ظ", 1) }
         )
-        // ز
         setupKey(view.findViewById(R.id.btn_ze), "ژ", "ز", 
             { currentInputConnection?.commitText("ز", 1) }, 
             { currentInputConnection?.commitText("ژ", 1) }
         )
-        // د
         setupKey(view.findViewById(R.id.btn_dal), "ذ", "د", 
             { currentInputConnection?.commitText("د", 1) }, 
             { currentInputConnection?.commitText("ذ", 1) }
         )
     }
 
-    private fun createSpannableKey(hidden: String, main: String): SpannableString {
-        val spannable = SpannableString("$hidden\n$main")
-        spannable.setSpan(RelativeSizeSpan(0.55f), 0, hidden.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannable.setSpan(ForegroundColorSpan(Color.parseColor("#B0BEC5")), 0, hidden.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannable.setSpan(RelativeSizeSpan(1.0f), hidden.length + 1, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return spannable
+    // 🌟 کلاس جادویی برای نقاشی کردن دو حرف روی هم
+    class DoubleLetterSpan(private val hiddenLetter: String, private val mainLetter: String) : ReplacementSpan() {
+        override fun getSize(paint: Paint, text: CharSequence, start: Int, end: Int, fm: Paint.FontMetricsInt?): Int {
+            return paint.measureText(mainLetter).toInt()
+        }
+
+        override fun draw(canvas: Canvas, text: CharSequence, start: Int, end: Int, x: Float, top: Int, y: Int, bottom: Int, paint: Paint) {
+            // ۱. رسم حرف اصلی دقیقاً در مرکز
+            val mainWidth = paint.measureText(mainLetter)
+            canvas.drawText(mainLetter, x, y.toFloat(), paint)
+
+            // ۲. رسم حرف مخفی کوچک‌تر و در بالای حرف اصلی
+            val hiddenPaint = Paint(paint)
+            hiddenPaint.textSize = paint.textSize * 0.45f
+            hiddenPaint.color = Color.parseColor("#B0BEC5") // رنگ خاکستری روشن
+            val hiddenWidth = hiddenPaint.measureText(hiddenLetter)
+            val hiddenX = x + (mainWidth - hiddenWidth) / 2 // وسط‌چین کردن حرف مخفی
+            val hiddenY = y - paint.textSize * 0.8f // جابه‌جایی به سمت بالا
+            canvas.drawText(hiddenLetter, hiddenX, hiddenY, hiddenPaint)
+        }
     }
 
     private fun bindSymbols(view: View, pageBtn: TextView) {
@@ -317,8 +308,8 @@ class PersianKeyboardService : InputMethodService() {
                     val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
                     val spannable = SpannableString(fullText)
                     if (item.meaning.isNotEmpty()) {
-                        spannable.setSpan(RelativeSizeSpan(1.4f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        spannable.setSpan(RelativeSizeSpan(0.6f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        spannable.setSpan(android.text.style.RelativeSizeSpan(1.4f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        spannable.setSpan(android.text.style.RelativeSizeSpan(0.6f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
                     text = spannable
                     setOnClickListener { currentInputConnection?.commitText(item.symbol, 1) }
