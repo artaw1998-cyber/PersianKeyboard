@@ -36,6 +36,9 @@ class PersianKeyboardService : InputMethodService() {
     private lateinit var sharedPrefs: android.content.SharedPreferences
     private val learnedWords = mutableSetOf<String>()
     private val kashida = "ـ"
+    
+    // نگه داشتن رفرنس به دکمه‌های پیشنهاد برای آپدیت خودکار
+    private var suggestionViews: List<TextView> = emptyList()
 
     // ==========================================
     // REGION: STATIC DATA & DICTIONARIES
@@ -85,6 +88,14 @@ class PersianKeyboardService : InputMethodService() {
         return view
     }
 
+    // 🌟 جادوی اصلی: هر بار که مکان‌نما یا متن تغییر کرد، این تابع صدا زده می‌شود
+    override fun onUpdateSelection(newSelStart: Int, newSelEnd: Int, candidatesStart: Int, candidatesEnd: Int) {
+        super.onUpdateSelection(newSelStart, newSelEnd, candidatesStart, candidatesEnd)
+        if (suggestionViews.isNotEmpty()) {
+            updateSuggestions(suggestionViews)
+        }
+    }
+
     // ==========================================
     // REGION: UI SETUP & BINDING
     // ==========================================
@@ -96,7 +107,7 @@ class PersianKeyboardService : InputMethodService() {
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
         val shiftBtn = view.findViewById<TextView>(R.id.btn_shift)
         
-        val suggestions = listOf(
+        suggestionViews = listOf(
             view.findViewById<TextView>(R.id.suggestion_1),
             view.findViewById<TextView>(R.id.suggestion_2),
             view.findViewById<TextView>(R.id.suggestion_3)
@@ -104,14 +115,14 @@ class PersianKeyboardService : InputMethodService() {
 
         bindLetters(view, shiftBtn)
         bindSymbols(view, pageBtn)
-        updateSuggestions(suggestions)
+        updateSuggestions(suggestionViews)
 
         langBtn.setOnClickListener { 
             isPersian = !isPersian 
             isCapsLock = false
             isShifted = false
             bindLetters(view, shiftBtn) 
-            updateSuggestions(suggestions)
+            updateSuggestions(suggestionViews)
         }
 
         shiftBtn.setOnClickListener {
@@ -133,8 +144,8 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        setupContinuousDeletion(view.findViewById(R.id.btn_backspace), suggestions)
-        setupContinuousDeletion(view.findViewById(R.id.btn_backspace_sym), suggestions)
+        setupContinuousDeletion(view.findViewById(R.id.btn_backspace), suggestionViews)
+        setupContinuousDeletion(view.findViewById(R.id.btn_backspace_sym), suggestionViews)
 
         listOf(R.id.btn_space, R.id.btn_space_sym).forEach { 
             view.findViewById<TextView>(it)?.setOnClickListener { 
@@ -143,7 +154,7 @@ class PersianKeyboardService : InputMethodService() {
                     isShifted = true
                     bindLetters(view, shiftBtn)
                 }
-                updateSuggestions(suggestions) 
+                // در onUpdateSelection خودش آپدیت میشه
             } 
         }
 
@@ -154,10 +165,9 @@ class PersianKeyboardService : InputMethodService() {
                 isShifted = true
                 bindLetters(view, shiftBtn)
             }
-            updateSuggestions(suggestions)
         }
 
-        setupNavigation(view, lettersContainer, symbolsContainer, diacriticsContainer, pageBtn, suggestions)
+        setupNavigation(view, lettersContainer, symbolsContainer, diacriticsContainer, pageBtn, suggestionViews)
 
         view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener { showToast("پنل ایموجی به زودی...") }
         view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener { showToast("تنظیمات کیبورد به زودی...") }
@@ -256,13 +266,10 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     // ==========================================
-    // REGION: ENGINE & LOGIC (PREDICTION) - REVERTED TO FAST METHOD
+    // REGION: ENGINE & LOGIC (PREDICTION)
     // ==========================================
     private fun updateSuggestions(suggestions: List<TextView>) {
-        // فقط ۲۰ کاراکتر آخر را می‌خوانیم تا سرعت بالا بماند
         val text = currentInputConnection?.getTextBeforeCursor(20, 0)?.toString() ?: ""
-        
-        // تقسیم بندی ساده (همان روشی که در نسخه‌های قبل کار می‌کرد)
         val words = text.split(" ", "\n", ".", "،", "؟", "!")
         val lastWord = words.lastOrNull() ?: ""
         val previousWord = if (words.size > 1) words[words.size - 2].trim() else ""
@@ -270,19 +277,16 @@ class PersianKeyboardService : InputMethodService() {
         val currentSuggestions = mutableListOf<String>()
 
         if (lastWord.isEmpty()) {
-            // حدس کلمه بعدی
             if (previousWord.isNotEmpty() && nextWordPredictions.containsKey(previousWord)) {
                 currentSuggestions.addAll(nextWordPredictions[previousWord]!!)
             }
         } else {
-            // پیدا کردن کلمه در حافظه و دیکشنری
             val learnedMatches = learnedWords.filter { it.startsWith(lastWord) && it != lastWord }
             val baseMatches = baseDictionary.filter { it.startsWith(lastWord) && it != lastWord }
             
             currentSuggestions.addAll(learnedMatches)
             currentSuggestions.addAll(baseMatches)
             
-            // 🌟 اگر کلمه‌ای که تایپ کردی توی دیکشنری نبود، خودش رو بذار اول صف تا طلایی بشه
             if (lastWord.length >= 2 && !learnedWords.contains(lastWord) && !baseDictionary.contains(lastWord)) {
                 currentSuggestions.add(0, lastWord) 
             }
@@ -295,7 +299,6 @@ class PersianKeyboardService : InputMethodService() {
                 val word = distinctSuggestions[index]
                 textView.text = word
                 
-                // کلمه طلایی
                 if (word == lastWord && !learnedWords.contains(word)) {
                     textView.setTextColor(Color.parseColor("#FFD54F"))
                 } else {
@@ -341,12 +344,10 @@ class PersianKeyboardService : InputMethodService() {
                 MotionEvent.ACTION_DOWN -> {
                     v.isPressed = true
                     deleteCharacter()
-                    updateSuggestions(suggestions)
                     
                     runnable = object : Runnable {
                         override fun run() {
                             deleteCharacter()
-                            updateSuggestions(suggestions)
                             handler.postDelayed(this, 50)
                         }
                     }
@@ -460,7 +461,6 @@ class PersianKeyboardService : InputMethodService() {
 
         view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { 
             currentInputConnection?.commitText(".", 1) 
-            updateSuggestions(suggestions)
         }
         view.findViewById<TextView>(R.id.btn_dot)?.setOnLongClickListener {
             lettersContainer.visibility = View.GONE
@@ -482,7 +482,6 @@ class PersianKeyboardService : InputMethodService() {
                 currentInputConnection?.commitText(symbol, 1)
                 diacriticsContainer.visibility = View.GONE
                 lettersContainer.visibility = View.VISIBLE
-                updateSuggestions(suggestions)
             }
         }
     }
