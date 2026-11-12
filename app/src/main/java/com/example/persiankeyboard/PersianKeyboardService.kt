@@ -17,7 +17,6 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
@@ -50,6 +49,13 @@ class PersianKeyboardService : InputMethodService() {
     
     private lateinit var clipboardListener: ClipboardListener
     private val db by lazy { ClipboardDatabase.getDatabase(this) }
+    
+    // نگه داشتن رفرنس به ویوها برای کنترل راحت‌تر
+    private var lettersContainer: LinearLayout? = null
+    private var symbolsContainer: LinearLayout? = null
+    private var diacriticsContainer: LinearLayout? = null
+    private var clipboardContainer: LinearLayout? = null
+    private var clipboardAdapter: ClipboardAdapter? = null
 
     private val baseDictionary = listOf(
         "من", "تو", "او", "ما", "شما", "آنها", "خودم", "خودت", "خودش", "چه", "چی", "کجا", "کی", "چرا", "چطور", "چگونه", "کدام", "آیا", "چند", "سلام", "درود", "خداحافظ", "صبح", "بخیر", "ظهر", "عصر", "شب", "روز", "خوش", "آمدی", "سلامت", "باشی", "حال", "احوال", "خوبی", "ممنون", "مرسی", "سپاس", "لطفا", "ببخشید", "معذرت", "خواهش", "بله", "خیر", "نه", "آره", "باشه", "چشم", "حتما", "شاید", "مطمئن", "واقعا", "البته", "هستم", "هستی", "هست", "هستیم", "هستید", "هستند", "نیستم", "نیستی", "نیست", "بودم", "بودی", "بود", "دارم", "داری", "دارد", "میروم", "میروی", "میرود", "رفتم", "رفتی", "رفت", "میکنم", "میکنی", "میکند", "کردم", "کردی", "کرد", "میخورم", "میخوری", "میخورد", "خوردم", "خوردی", "خورد", "میگویم", "میگویی", "میگوید", "گفتم", "گفتی", "گفت", "میخواهم", "میخواهی", "میخواهد", "خواستم", "خواستی", "خواست", "میدانم", "میدانی", "میداند", "دانستم", "دانستی", "دانست", "میبینم", "میبینی", "میبیند", "دیدم", "دیدی", "دید", "میشوم", "میشوی", "میشود", "شدم", "شدی", "شد", "برو", "بیا", "بخور", "بگو", "ببین", "بده", "بگیر", "بنویس", "بخوان", "و", "در", "به", "از", "که", "این", "را", "با", "است", "برای", "آن", "یک", "تا", "هم", "یا", "بر", "اما", "اگر", "چون", "پس", "ولی", "زیرا", "خیلی", "بسیار", "زیاد", "کم", "بزرگ", "کوچک", "خوب", "بد", "زیبا", "زشت", "جدید", "قدیمی", "سریع", "آهسته", "دقیق", "درست", "غلط", "مهم", "ساده", "پیچیده", "سخت", "آسان", "شاد", "غمگین", "خسته", "گرسنه", "تشنه", "گرم", "سرد", "نرم", "سفت", "سنگین", "سبک", "پهن", "باریک", "بلند", "کوتاه", "گران", "ارزان", "قوی", "ضعیف", "سالم", "بیمار", "ناراحت", "عصبانی", "آرام", "روشن", "تاریک", "تمیز", "کثیف", "پر", "خالی", "عزیز", "عزیزم", "جان", "دل", "دلم", "قلب", "قلبم", "عشق", "عاشق", "دوست", "دوستت", "دارم", "دوستش", "هیجان", "احساس", "مهربان", "مهربانی", "خوبی", "بدی", "بغل", "آغوش", "بوسه", "لبخند", "گریه", "خنده", "امید", "آرزو", "رویا", "واقعیت", "زندگی", "مرگ", "تولد", "جشن", "عروسی", "کار", "پول", "خرید", "فروش", "بازار", "شهر", "روستا", "کشور", "دنیا", "جهان", "ماشین", "اتوبوس", "قطار", "هواپیما", "تاکسی", "خیابان", "کوچه", "پارک", "ترافیک", "خانه", "مدرسه", "دانشگاه", "اداره", "بیمارستان", "فروشگاه", "رستوران", "هتل", "فرودگاه", "ایستگاه", "بانک", "پست", "پلیس", "کتابخانه", "موزه", "سینما", "ورزشگاه", "استخر", "مادر", "پدر", "برادر", "خواهر", "خانواده", "فرزند", "بچه", "دختر", "پسر", "زن", "مرد", "همسر", "عمو", "دایی", "خاله", "عمه", "پدربزرگ", "مادربزرگ", "رفیق", "همکار", "همکلاسی", "همسایه", "استاد", "معلم", "شاگرد", "دانشجو", "رئیس", "کارمند", "دکتر", "مهندس", "امروز", "دیروز", "فردا", "الان", "اکنون", "بعد", "قبل", "هفته", "ماه", "سال", "ساعت", "دقیقه", "ثانیه", "زود", "دیر", "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "کتاب", "دفتر", "قلم", "مداد", "کاغذ", "میز", "صندلی", "در", "پنجره", "دیوار", "اتاق", "تخت", "کمد", "فرش", "لامپ", "کلید", "قفل", "چاقو", "قاشق", "چنگال", "بشقاب", "لیوان", "فنجان", "کتری", "یخچال", "اجاق", "تلویزیون", "رادیو", "بلندگو", "هدفون", "دوربین", "عینک", "کیف", "کفش", "لباس", "پیراهن", "شلوار", "کاپشن", "کلاه", "دستکش", "جوراب", "حوله", "صابون", "شامپو", "کامپیوتر", "لپ‌تاپ", "گوشی", "موبایل", "تبلت", "اینترنت", "شبکه", "برنامه", "نرم‌افزار", "سخت‌افزار", "سایت", "وب", "ایمیل", "پیام", "پیامک", "تلگرام", "واتساپ", "اینستاگرام", "فیسبوک", "گوگل", "اندروید", "آیفون", "ویندوز", "هوش مصنوعی", "ربات", "داده", "اطلاعات", "دیتابیس", "سرور", "کاربر", "پسورد", "رمز", "امنیت", "پروژه", "کدنویسی", "برنامه‌نویسی", "طراحی", "گرافیک", "عکس", "فیلم", "ویدیو", "صدا", "موسیقی", "غذا", "آب", "چای", "قهوه", "شیر", "نان", "برنج", "گوشت", "مرغ", "ماهی", "تخم‌مرغ", "پنیر", "کره", "عسل", "سیب", "پرتقال", "موز", "انار", "هندوانه", "خیار", "گوجه", "سیب‌زمینی", "پیاز", "سیر", "فلفل", "نمک", "شکر", "زردچوبه", "دارچین", "زعفران", "صبحانه", "ناهار", "شام", "میان‌وعده", "دسر", "شیرینی", "بستنی", "شکلات", "کیک", "بیسکویت", "آجیل", "پسته", "بادام", "گردو", "فندق", "کشمش", "خرما", "پیتزا", "ساندویچ", "برگر", "پاستا", "ماکارونی", "سوپ", "سالاد", "کباب", "جوجه", "قیمه", "قورمه", "آش", "عدس", "لوبیا", "نخود", "زیتون", "خیارشور", "ترشی", "مربا", "املت", "کوکو", "کتلت", "آسمان", "زمین", "دریا", "کوه", "جنگل", "بیابان", "رودخانه", "دریاچه", "باران", "برف", "باد", "آفتاب", "ماه", "ستاره", "ابر", "رعد", "برق", "گل", "درخت", "برگ", "چمن", "خاک", "سنگ", "آتش", "هوا", "آب و هوا", "طوفان", "زلزله", "سیل", "خشکسالی", "سگ", "گربه", "اسب", "گاو", "گوسفند", "بز", "مرغ", "خروس", "جوجه", "اردک", "غاز", "کبوتر", "گنجشک", "عقاب", "شاهین", "شیر", "ببر", "پلنگ", "گرگ", "روباه", "خرس", "فیل", "زرافه", "میمون", "خرگوش", "موش", "مار", "ماهی", "کوسه", "نهنگ", "دلفین", "لاک‌پشت", "قورباغه", "پروانه", "زنبور", "مورچه", "عنکبوت", "hello", "world", "good", "morning", "night", "book", "house", "computer", "phone", "internet", "keyboard", "software", "hardware", "thank", "you", "please", "sorry", "yes", "no", "maybe", "today", "tomorrow", "yesterday", "love", "friend", "family", "mother", "father", "brother", "sister", "time", "money", "work", "school", "city", "country", "water", "food", "coffee", "tea", "apple", "orange", "happy", "sad", "great", "bad", "new", "old"
@@ -119,9 +125,11 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     private fun setupKeyboardUI(view: View) {
-        val lettersContainer = view.findViewById<LinearLayout>(R.id.letters_container)
-        val symbolsContainer = view.findViewById<LinearLayout>(R.id.symbols_container)
-        val diacriticsContainer = view.findViewById<LinearLayout>(R.id.diacritics_container)
+        lettersContainer = view.findViewById(R.id.letters_container)
+        symbolsContainer = view.findViewById(R.id.symbols_container)
+        diacriticsContainer = view.findViewById(R.id.diacritics_container)
+        clipboardContainer = view.findViewById(R.id.clipboard_container)
+        
         val langBtn = view.findViewById<TextView>(R.id.btn_lang)
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
         val shiftBtn = view.findViewById<TextView>(R.id.btn_shift)
@@ -185,50 +193,49 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
-        setupNavigation(view, lettersContainer, symbolsContainer, diacriticsContainer, pageBtn, suggestionViews)
+        setupNavigation(view, pageBtn, suggestionViews)
 
         view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener { showToast("پنل ایموجی به زودی...") }
         view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener { showToast("تنظیمات کیبورد به زودی...") }
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { showToast("تایپ صوتی به زودی...") }
         
+        // 🌟 باز کردن لایه کلیپ‌بورد
+        val recyclerView = view.findViewById<RecyclerView>(R.id.clipboard_recycler)
+        val btnClose = view.findViewById<TextView>(R.id.btn_close_clipboard)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
         view.findViewById<TextView>(R.id.btn_clipboard_bar)?.setOnClickListener {
-            showClipboardPopup(view)
+            lettersContainer?.visibility = View.GONE
+            symbolsContainer?.visibility = View.GONE
+            diacriticsContainer?.visibility = View.GONE
+            clipboardContainer?.visibility = View.VISIBLE
+            loadClipboardData()
+        }
+
+        btnClose.setOnClickListener {
+            clipboardContainer?.visibility = View.GONE
+            lettersContainer?.visibility = View.VISIBLE
         }
     }
 
-    // 🌟 تابع باز کردن پنجره به صورت PopupWindow (بدون بسته شدن کیبورد)
-    private fun showClipboardPopup(rootView: View) {
-        val popupView = layoutInflater.inflate(R.layout.dialog_clipboard, null)
-        val popupWindow = PopupWindow(
-            popupView,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
-        )
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.parseColor("#263238")))
-        popupWindow.isOutsideTouchable = true
-
-        val recyclerView = popupView.findViewById<RecyclerView>(R.id.clipboard_recycler)
-        val btnClose = popupView.findViewById<Button>(R.id.btn_close_clipboard)
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
+    // 🌟 تابع لود کردن لیست در پس‌زمینه
+    private fun loadClipboardData() {
         CoroutineScope(Dispatchers.Main).launch {
             val items = withContext(Dispatchers.IO) {
                 db.clipboardDao().getAllItems()
             }
             
-            val adapter = ClipboardAdapter(items) { selectedText ->
-                currentInputConnection?.commitText(selectedText, 1)
-                popupWindow.dismiss()
+            val recyclerView = currentInputView?.findViewById<RecyclerView>(R.id.clipboard_recycler)
+            if (recyclerView != null) {
+                val adapter = ClipboardAdapter(items) { selectedText ->
+                    currentInputConnection?.commitText(selectedText, 1)
+                    // بستن لیست بعد از انتخاب
+                    clipboardContainer?.visibility = View.GONE
+                    lettersContainer?.visibility = View.VISIBLE
+                }
+                recyclerView.adapter = adapter
             }
-            recyclerView.adapter = adapter
         }
-        
-        btnClose.setOnClickListener { popupWindow.dismiss() }
-        
-        // نمایش پنجره دقیقاً از پایین صفحه (روی کیبورد)
-        popupWindow.showAtLocation(rootView, Gravity.BOTTOM, 0, 0)
     }
 
     private fun bindLetters(view: View, shiftBtn: TextView) {
@@ -573,16 +580,16 @@ class PersianKeyboardService : InputMethodService() {
         popupWindow.showAsDropDown(anchorView, -100, -220)
     }
 
-    private fun setupNavigation(view: View, lettersContainer: LinearLayout, symbolsContainer: LinearLayout, diacriticsContainer: LinearLayout, pageBtn: TextView, suggestions: List<TextView>) {
+    private fun setupNavigation(view: View, pageBtn: TextView, suggestions: List<TextView>) {
         view.findViewById<TextView>(R.id.btn_symbols)?.setOnClickListener { 
-            lettersContainer.visibility = View.GONE
-            symbolsContainer.visibility = View.VISIBLE
+            lettersContainer?.visibility = View.GONE
+            symbolsContainer?.visibility = View.VISIBLE
             currentSymbolPage = 0
             bindSymbols(view, pageBtn) 
         }
         view.findViewById<TextView>(R.id.btn_lang_back)?.setOnClickListener { 
-            symbolsContainer.visibility = View.GONE
-            lettersContainer.visibility = View.VISIBLE 
+            symbolsContainer?.visibility = View.GONE
+            lettersContainer?.visibility = View.VISIBLE 
         }
         pageBtn.setOnClickListener { 
             currentSymbolPage++
@@ -594,13 +601,13 @@ class PersianKeyboardService : InputMethodService() {
             currentInputConnection?.commitText(".", 1) 
         }
         view.findViewById<TextView>(R.id.btn_dot)?.setOnLongClickListener {
-            lettersContainer.visibility = View.GONE
-            diacriticsContainer.visibility = View.VISIBLE
+            lettersContainer?.visibility = View.GONE
+            diacriticsContainer?.visibility = View.VISIBLE
             true
         }
         view.findViewById<TextView>(R.id.btn_close_diacritics)?.setOnClickListener {
-            diacriticsContainer.visibility = View.GONE
-            lettersContainer.visibility = View.VISIBLE
+            diacriticsContainer?.visibility = View.GONE
+            lettersContainer?.visibility = View.VISIBLE
         }
         
         val diacriticsMap = mapOf(
@@ -611,8 +618,8 @@ class PersianKeyboardService : InputMethodService() {
         for ((id, symbol) in diacriticsMap) {
             view.findViewById<TextView>(id)?.setOnClickListener {
                 currentInputConnection?.commitText(symbol, 1)
-                diacriticsContainer.visibility = View.GONE
-                lettersContainer.visibility = View.VISIBLE
+                diacriticsContainer?.visibility = View.GONE
+                lettersContainer?.visibility = View.VISIBLE
             }
         }
     }
