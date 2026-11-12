@@ -16,7 +16,9 @@
         android:text="1"
         android:textColor="#B0BEC5"
         android:textSize="14sp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:clickable="false"
+        android:focusable="false" />
 
     <TextView
         android:id="@+id/tvItemText"
@@ -29,7 +31,9 @@
         android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:maxLines="3"
-        android:ellipsize="end" />
+        android:ellipsize="end"
+        android:clickable="false"
+        android:focusable="false" />
 
     <!-- دکمه مداد (ویرایش) -->
     <TextView
