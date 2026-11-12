@@ -131,9 +131,6 @@ class PersianKeyboardService : InputMethodService() {
         
         clipboardRecyclerView = view.findViewById(R.id.clipboard_recycler)
         clipboardRecyclerView?.layoutManager = LinearLayoutManager(this)
-        // 🌟 جلوگیری از دزدی فوکوس توسط لیست 🌟
-        clipboardRecyclerView?.isFocusable = false
-        clipboardRecyclerView?.isFocusableInTouchMode = false
         
         editClipboardContainer = view.findViewById(R.id.edit_clipboard_container)
         editClipboardText = view.findViewById(R.id.edit_clipboard_text)
@@ -268,6 +265,7 @@ class PersianKeyboardService : InputMethodService() {
                 db.clipboardDao().getAllItems()
             }
             
+            // حذف متن‌های تکراری
             val items = rawItems.distinctBy { it.text }
             
             if (clipboardRecyclerView != null) {
@@ -276,21 +274,15 @@ class PersianKeyboardService : InputMethodService() {
                     onItemClick = { item ->
                         val ic = this@PersianKeyboardService.currentInputConnection
                         if (ic != null) {
-                            try {
-                                // 1. تموم کردن تایپ قبلی
-                                ic.finishComposingText()
-                                // 2. فرستادن متن
-                                ic.commitText(item.text, 1)
-                            } catch (e: Exception) {
-                                showToast("خطا در پیست کردن")
-                            }
+                            // فرستادن متن به تلگرام/اینستاگرام
+                            ic.commitText(item.text, 1)
                         }
                         
-                        // 🌟 3. صبر کردن (۴۰۰ میلی ثانیه) تا تلگرام متن رو بگیره و گیج نشه 🌟
+                        // 🌟 تاخیر ۱۵۰ میلی ثانیه‌ای تا برنامه فرصت کنه متن رو بگیره، بعد کیبورد عوض بشه 🌟
                         Handler(Looper.getMainLooper()).postDelayed({
                             clipboardContainer?.visibility = View.GONE
                             lettersContainer?.visibility = View.VISIBLE
-                        }, 400)
+                        }, 150)
                     },
                     onEditClick = { item ->
                         editingItem = item
