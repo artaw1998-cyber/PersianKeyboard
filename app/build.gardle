@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.kapt'
 }
 
 android {
@@ -33,11 +33,11 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     
-    // 🌟 کتابخانه‌های جدید برای دیتابیس Room (کلیپ‌بورد)
+    // کتابخانه‌های دیتابیس Room
     implementation "androidx.room:room-runtime:2.6.1"
     implementation "androidx.room:room-ktx:2.6.1"
     kapt "androidx.room:room-compiler:2.6.1"
     
-    // کتابخانه برای مدیریت لیست‌ها (RecyclerView)
+    // کتابخانه لیست‌ها
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
 }
