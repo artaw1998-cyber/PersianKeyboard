@@ -170,15 +170,21 @@ class PersianKeyboardService : InputMethodService() {
 
     private fun bindLetters(view: View, shiftBtn: TextView) {
         val buttons = if (isPersian) {
+            // 🌟 دکمه پ را در حالت فارسی نشان بده
+            view.findViewById<TextView>(R.id.btn_pe)?.visibility = View.VISIBLE
+
             mapOf(
                 R.id.btn_sad to "ص", R.id.btn_se to "ث", R.id.btn_ghaf to "ق", R.id.btn_fe to "ف", R.id.btn_e to "ع", R.id.btn_he to "ه", R.id.btn_khe to "خ", R.id.btn_h to "ح", R.id.btn_jim to "ج", R.id.btn_che to "چ",
                 R.id.btn_shin to "ش", R.id.btn_sin to "س", R.id.btn_ye to "ی", R.id.btn_be to "ب", R.id.btn_lam to "ل", R.id.btn_alef to "ا", R.id.btn_te to "ت", R.id.btn_nun to "ن", R.id.btn_mim to "م", R.id.btn_pe to "پ",
                 R.id.btn_ta to "ط", R.id.btn_ze to "ز", R.id.btn_re to "ر", R.id.btn_dal to "د", R.id.btn_vav to "و", R.id.btn_kaf to "ک", R.id.btn_gaf to "گ"
             )
         } else {
+            // 🌟 دکمه پ (که در انگلیسی می‌شود ;) را کاملاً مخفی کن تا ۹ دکمه باقی بماند
+            view.findViewById<TextView>(R.id.btn_pe)?.visibility = View.GONE
+
             val baseMap = mapOf(
                 R.id.btn_sad to "q", R.id.btn_se to "w", R.id.btn_ghaf to "e", R.id.btn_fe to "r", R.id.btn_e to "t", R.id.btn_he to "y", R.id.btn_khe to "u", R.id.btn_h to "i", R.id.btn_jim to "o", R.id.btn_che to "p",
-                R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l", R.id.btn_pe to ";",
+                R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l",
                 R.id.btn_ta to "z", R.id.btn_ze to "x", R.id.btn_re to "c", R.id.btn_dal to "v", R.id.btn_vav to "b", R.id.btn_kaf to "n", R.id.btn_gaf to "m"
             )
             if (isCapsLock || isShifted) baseMap.mapValues { it.value.uppercase() } else baseMap
@@ -227,10 +233,8 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // 🌟 اینبار از ReplacementSpan استفاده می‌کنیم تا دقیقاً روی مرکز دکمه نقاشی کنیم
     private fun setupHiddenCharsAndDoubleTap(view: View) {
         val setupKey = { tv: TextView, hidden: String, main: String, onMainClick: () -> Unit, onHiddenClick: () -> Unit ->
-            // ساخت متن با اسپن اختصاصی
             val spannable = SpannableString(main)
             spannable.setSpan(DoubleLetterSpan(hidden, main), 0, main.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             tv.text = spannable
@@ -270,24 +274,21 @@ class PersianKeyboardService : InputMethodService() {
         )
     }
 
-    // 🌟 کلاس جادویی برای نقاشی کردن دو حرف روی هم
     class DoubleLetterSpan(private val hiddenLetter: String, private val mainLetter: String) : ReplacementSpan() {
         override fun getSize(paint: Paint, text: CharSequence, start: Int, end: Int, fm: Paint.FontMetricsInt?): Int {
             return paint.measureText(mainLetter).toInt()
         }
 
         override fun draw(canvas: Canvas, text: CharSequence, start: Int, end: Int, x: Float, top: Int, y: Int, bottom: Int, paint: Paint) {
-            // ۱. رسم حرف اصلی دقیقاً در مرکز
             val mainWidth = paint.measureText(mainLetter)
             canvas.drawText(mainLetter, x, y.toFloat(), paint)
 
-            // ۲. رسم حرف مخفی کوچک‌تر و در بالای حرف اصلی
             val hiddenPaint = Paint(paint)
             hiddenPaint.textSize = paint.textSize * 0.45f
-            hiddenPaint.color = Color.parseColor("#B0BEC5") // رنگ خاکستری روشن
+            hiddenPaint.color = Color.parseColor("#B0BEC5") 
             val hiddenWidth = hiddenPaint.measureText(hiddenLetter)
-            val hiddenX = x + (mainWidth - hiddenWidth) / 2 // وسط‌چین کردن حرف مخفی
-            val hiddenY = y - paint.textSize * 0.8f // جابه‌جایی به سمت بالا
+            val hiddenX = x + (mainWidth - hiddenWidth) / 2 
+            val hiddenY = y - paint.textSize * 0.8f 
             canvas.drawText(hiddenLetter, hiddenX, hiddenY, hiddenPaint)
         }
     }
