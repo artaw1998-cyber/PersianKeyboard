@@ -31,16 +31,17 @@ class ClipboardAdapter(
         val item = items[position]
         holder.tvNumber.text = (position + 1).toString()
         holder.tvText.text = item.text
-        
-        // 🌟 پاک کردن کلیک‌های قبلی برای جلوگیری از دوبار پیست شدن
+
+        // 🌟 پاک کردن کلیک‌های قبلی برای جلوگیری از باگ 🌟
         holder.itemView.setOnClickListener(null)
         holder.tvText.setOnClickListener(null)
         holder.btnEdit.setOnClickListener(null)
         holder.btnDelete.setOnClickListener(null)
 
-        // تنظیم کلیک‌های جدید
+        // 🌟 فقط و فقط کلیک روی کل کادر (نه خود متن) باعث کپی میشه 🌟
         holder.itemView.setOnClickListener { onItemClick(item) }
-        holder.tvText.setOnClickListener { onItemClick(item) }
+        
+        // دکمه‌های ویرایش و حذف
         holder.btnEdit.setOnClickListener { onEditClick(item) }
         holder.btnDelete.setOnClickListener { onDeleteClick(item) }
     }
