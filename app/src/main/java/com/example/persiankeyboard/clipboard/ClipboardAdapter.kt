@@ -32,13 +32,12 @@ class ClipboardAdapter(
         holder.tvNumber.text = (position + 1).toString()
         holder.tvText.text = item.text
 
-        // پاک کردن هرگونه کلیک قبلی
+        // پاک کردن کلیک‌های قبلی
         holder.itemView.setOnClickListener(null)
-        holder.tvText.setOnClickListener(null)
         holder.btnEdit.setOnClickListener(null)
         holder.btnDelete.setOnClickListener(null)
 
-        // 🌟 فقط و فقط روی کل کادر کلیک بشه تا دوبار تایپ نشه 🌟
+        // 🌟 کلیک فقط روی کل کادر (شامل عدد، متن و فضای خالی)
         holder.itemView.setOnClickListener { 
             onItemClick(item) 
         }
