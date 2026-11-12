@@ -8,23 +8,18 @@
 
     <!-- نوار پیشنهاد کلمات -->
     <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:background="@color/suggestion_bg" android:orientation="horizontal" android:layout_marginBottom="4dp">
-        
-        <!-- آیکون‌های سمت چپ -->
         <TextView android:id="@+id/btn_emoji_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="😊" android:gravity="center" android:textSize="20sp"/>
         <TextView android:id="@+id/btn_settings_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="⚙️" android:gravity="center" android:textSize="18sp"/>
         
-        <!-- کلمات پیشنهادی در وسط -->
         <TextView android:id="@+id/suggestion_1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         <TextView android:id="@+id/suggestion_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         <TextView android:id="@+id/suggestion_3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:text="" android:textColor="@color/key_text" android:gravity="center" android:textSize="16sp"/>
         
-        <!-- 🌟 آیکون کلیپ‌بورد در سمت راست -->
         <TextView android:id="@+id/btn_clipboard_bar" android:layout_width="40dp" android:layout_height="match_parent" android:text="📋" android:gravity="center" android:textSize="18sp"/>
     </LinearLayout>
 
     <!-- بخش حروف -->
     <LinearLayout android:id="@+id/letters_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-        
         <!-- ردیف اعداد -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_num_1" style="@style/KeyStyle" android:text="۱" />
@@ -85,9 +80,7 @@
             <TextView android:id="@+id/btn_symbols" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="نماد" android:textSize="14sp"/>
             <TextView android:id="@+id/btn_lang" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="Ab" android:textSize="16sp" android:textStyle="bold"/>
             <TextView android:id="@+id/btn_mic" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="🎤" android:textSize="18sp"/>
-            
             <TextView android:id="@+id/btn_space" style="@style/KeyStyleSpecial" android:layout_weight="4" android:text="فاصله" />
-            
             <TextView android:id="@+id/btn_dot" style="@style/KeyStyleSpecial" android:layout_weight="1.4" android:text="." />
             <TextView android:id="@+id/btn_enter" style="@style/KeyStyleSpecial" android:layout_weight="2.2" android:text="↵" />
         </LinearLayout>
@@ -137,4 +130,42 @@
             <TextView android:id="@+id/btn_close_diacritics" style="@style/KeyStyleSpecial" android:text="✖" android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
+
+    <!-- 🌟 لایه جدید کلیپ‌بورد (داخل خود کیبورد) -->
+    <LinearLayout
+        android:id="@+id/clipboard_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#263238"
+        android:visibility="gone"
+        android:padding="8dp">
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="کلیپ‌بورد (۲۰۰ مورد آخر)"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:padding="4dp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/clipboard_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <TextView
+            android:id="@+id/btn_close_clipboard"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:text="بستن"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/key_bg_special"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
 </LinearLayout>
