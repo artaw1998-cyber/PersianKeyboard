@@ -32,19 +32,18 @@ class ClipboardAdapter(
         holder.tvNumber.text = (position + 1).toString()
         holder.tvText.text = item.text
 
-        // 🌟 برگرداندن دکمه به حالت اولیه
-        holder.itemView.isEnabled = true
+        // پاکسازی کامل لیسنرها
         holder.itemView.setOnClickListener(null)
         holder.tvText.setOnClickListener(null)
         holder.btnEdit.setOnClickListener(null)
         holder.btnDelete.setOnClickListener(null)
 
-        // 🌟 قفل کردن دکمه به محض کلیک اول
+        // کلیک روی کل کادر
         holder.itemView.setOnClickListener { 
-            holder.itemView.isEnabled = false 
             onItemClick(item) 
         }
         
+        // کلیک روی دکمه‌ها
         holder.btnEdit.setOnClickListener { onEditClick(item) }
         holder.btnDelete.setOnClickListener { onDeleteClick(item) }
     }
