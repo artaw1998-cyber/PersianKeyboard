@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="400dp"
+    android:layout_height="300dp"
     android:orientation="vertical"
     android:background="#263238"
     android:padding="8dp">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="کلیپ‌بورد (۲۰۰ مورد آخر)"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:padding="8dp"
-        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/clipboard_recycler"
@@ -22,12 +12,43 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/btn_close_clipboard"
+    <!-- دکمه‌های پایین صفحه -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="بستن"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#455A64"
-        android:textColor="#FFFFFF" />
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnRefresh"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:text="تازه سازی"
+            android:textSize="12sp"
+            android:backgroundTint="#546E7A"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnClearAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:text="پاک کردن همه"
+            android:textSize="12sp"
+            android:backgroundTint="#E53935"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnClose"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="بستن"
+            android:textSize="12sp"
+            android:backgroundTint="#455A64"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 </LinearLayout>
