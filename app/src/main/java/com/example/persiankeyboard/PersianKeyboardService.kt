@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.view.Gravity
 import android.view.KeyEvent
@@ -179,7 +180,6 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     private fun bindLetters(view: View, shiftBtn: TextView) {
-        // چیدمان جدید با ۲۸ کلید
         val buttons = if (isPersian) {
             mapOf(
                 R.id.btn_sad to "ص", R.id.btn_se to "ث", R.id.btn_ghaf to "ق", R.id.btn_fe to "ف", R.id.btn_e to "ع", R.id.btn_he to "ه", R.id.btn_khe to "خ", R.id.btn_h to "ح", R.id.btn_jim to "ج", R.id.btn_che to "چ",
@@ -187,7 +187,6 @@ class PersianKeyboardService : InputMethodService() {
                 R.id.btn_ta to "ط", R.id.btn_ze to "ز", R.id.btn_re to "ر", R.id.btn_zal to "ذ", R.id.btn_dal to "د", R.id.btn_vav to "و", R.id.btn_kaf to "ک", R.id.btn_gaf to "گ"
             )
         } else {
-            // چیدمان انگلیسی QWERTY منطبق بر ۲۸ دکمه
             val baseMap = mapOf(
                 R.id.btn_sad to "q", R.id.btn_se to "w", R.id.btn_ghaf to "e", R.id.btn_fe to "r", R.id.btn_e to "t", R.id.btn_he to "y", R.id.btn_khe to "u", R.id.btn_h to "i", R.id.btn_jim to "o", R.id.btn_che to "p",
                 R.id.btn_shin to "a", R.id.btn_sin to "s", R.id.btn_ye to "d", R.id.btn_be to "f", R.id.btn_lam to "g", R.id.btn_alef to "h", R.id.btn_te to "j", R.id.btn_nun to "k", R.id.btn_mim to "l", R.id.btn_pe to ";",
@@ -235,7 +234,82 @@ class PersianKeyboardService : InputMethodService() {
 
         if (isPersian) {
             setupLongPressPopups(view)
+            setupHiddenCharsAndDoubleTap(view)
         }
+    }
+
+    // 🌟 این تابع جادویی، حروف مخفی رو نشون میده و قابلیت دو بار کلیک رو اضافه میکنه
+    private fun setupHiddenCharsAndDoubleTap(view: View) {
+        // ۱. حرف ص (پشتش ض)
+        val btnSad = view.findViewById<TextView>(R.id.btn_sad)
+        btnSad.text = createSpannableKey("ض", "ص")
+        var lastSadClick = 0L
+        btnSad.setOnClickListener {
+            val time = System.currentTimeMillis()
+            if (time - lastSadClick < 400) {
+                currentInputConnection?.deleteSurroundingText(1, 0)
+                currentInputConnection?.commitText("ض", 1)
+            } else {
+                currentInputConnection?.commitText("ص", 1)
+            }
+            lastSadClick = time
+        }
+
+        // ۲. حرف ع (پشتش غ)
+        val btnE = view.findViewById<TextView>(R.id.btn_e)
+        btnE.text = createSpannableKey("غ", "ع")
+        var lastEClick = 0L
+        btnE.setOnClickListener {
+            val time = System.currentTimeMillis()
+            if (time - lastEClick < 400) {
+                currentInputConnection?.deleteSurroundingText(1, 0)
+                currentInputConnection?.commitText("غ", 1)
+            } else {
+                currentInputConnection?.commitText("ع", 1)
+            }
+            lastEClick = time
+        }
+
+        // ۳. حرف ط (پشتش ظ)
+        val btnTa = view.findViewById<TextView>(R.id.btn_ta)
+        btnTa.text = createSpannableKey("ظ", "ط")
+        var lastTaClick = 0L
+        btnTa.setOnClickListener {
+            val time = System.currentTimeMillis()
+            if (time - lastTaClick < 400) {
+                currentInputConnection?.deleteSurroundingText(1, 0)
+                currentInputConnection?.commitText("ظ", 1)
+            } else {
+                currentInputConnection?.commitText("ط", 1)
+            }
+            lastTaClick = time
+        }
+
+        // ۴. حرف ز (پشتش ژ)
+        val btnZe = view.findViewById<TextView>(R.id.btn_ze)
+        btnZe.text = createSpannableKey("ژ", "ز")
+        var lastZeClick = 0L
+        btnZe.setOnClickListener {
+            val time = System.currentTimeMillis()
+            if (time - lastZeClick < 400) {
+                currentInputConnection?.deleteSurroundingText(1, 0)
+                currentInputConnection?.commitText("ژ", 1)
+            } else {
+                currentInputConnection?.commitText("ز", 1)
+            }
+            lastZeClick = time
+        }
+    }
+
+    // تابع کمکی برای ساخت متن دوتایی (حرف اصلی بزرگ + حرف مخفی کوچک و خاکستری)
+    private fun createSpannableKey(hidden: String, main: String): SpannableString {
+        val spannable = SpannableString("$hidden\n$main")
+        // حرف مخفی: سایز کوچک‌تر و رنگ خاکستری روشن
+        spannable.setSpan(RelativeSizeSpan(0.6f), 0, hidden.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(ForegroundColorSpan(Color.parseColor("#B0BEC5")), 0, hidden.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        // حرف اصلی: سایز نرمال و رنگ سفید
+        spannable.setSpan(RelativeSizeSpan(1.0f), hidden.length + 1, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannable
     }
 
     private fun bindSymbols(view: View, pageBtn: TextView) {
@@ -372,51 +446,41 @@ class PersianKeyboardService : InputMethodService() {
         else currentInputConnection?.commitText("", 1)
     }
 
-    // 🌟 کادرهای بازشو دقیقاً طبق درخواست تو تنظیم شدند
     private fun setupLongPressPopups(view: View) {
-        // الف
         view.findViewById<TextView>(R.id.btn_alef)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("آ", "آ"), Pair("أ", "أ"), Pair("إ", "إ"), Pair("ٱ", "ٱ"), Pair("ا", "ا")))
             true
         }
-        // ت
         view.findViewById<TextView>(R.id.btn_te)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ت", "ت"), Pair("-5-", kashida.repeat(5)), Pair("-10-", kashida.repeat(10)), Pair("-20-", kashida.repeat(20))))
             true
         }
-        // ی
         view.findViewById<TextView>(R.id.btn_ye)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ي", "ي"), Pair("ى", "ى"), Pair("ئ", "ئ"), Pair("ی", "ی")))
             true
         }
-        // ک
         view.findViewById<TextView>(R.id.btn_kaf)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ك", "ك"), Pair("ک", "ک")))
             true
         }
-        // ه
         view.findViewById<TextView>(R.id.btn_he)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ة", "ة"), Pair("ه", "ه"), Pair("ۀ", "ۀ")))
             true
         }
         
-        // 🌟 درخواست‌های جدید تو (حروف مخفی)
-        // ص -> ض
+        // حروف پاپ‌آپ‌دار برای لمس طولانی
         view.findViewById<TextView>(R.id.btn_sad)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ض", "ض"), Pair("ص", "ص")))
             true
         }
-        // ع -> غ
         view.findViewById<TextView>(R.id.btn_e)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("غ", "غ"), Pair("ع", "ع")))
             true
         }
-        // ط -> ظ
         view.findViewById<TextView>(R.id.btn_ta)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ظ", "ظ"), Pair("ط", "ط")))
             true
         }
-        // ز -> ژ
         view.findViewById<TextView>(R.id.btn_ze)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ژ", "ژ"), Pair("ز", "ز")))
             true
