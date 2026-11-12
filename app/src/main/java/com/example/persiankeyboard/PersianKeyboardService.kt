@@ -110,12 +110,7 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     override fun onUpdateSelection(
-        oldSelStart: Int,
-        oldSelEnd: Int,
-        newSelStart: Int,
-        newSelEnd: Int,
-        candidatesStart: Int,
-        candidatesEnd: Int
+        oldSelStart: Int, oldSelEnd: Int, newSelStart: Int, newSelEnd: Int, candidatesStart: Int, candidatesEnd: Int
     ) {
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd)
         if (suggestionViews.isNotEmpty()) {
@@ -201,6 +196,7 @@ class PersianKeyboardService : InputMethodService() {
         view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener { showToast("تنظیمات کیبورد به زودی...") }
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { showToast("تایپ صوتی به زودی...") }
         
+        // دکمه باز کردن کلیپ بورد
         view.findViewById<TextView>(R.id.btn_clipboard_bar)?.setOnClickListener {
             lettersContainer?.visibility = View.GONE
             symbolsContainer?.visibility = View.GONE
@@ -209,13 +205,30 @@ class PersianKeyboardService : InputMethodService() {
             loadClipboardData()
         }
 
+        // دکمه بستن کلیپ بورد
         view.findViewById<TextView>(R.id.btn_close_clipboard)?.setOnClickListener {
             clipboardContainer?.visibility = View.GONE
             lettersContainer?.visibility = View.VISIBLE
         }
+
+        // دکمه تازه سازی کلیپ بورد
+        view.findViewById<TextView>(R.id.btn_refresh_clipboard)?.setOnClickListener {
+            loadClipboardData()
+            showToast("لیست به‌روز شد")
+        }
+
+        // دکمه پاک کردن همه
+        view.findViewById<TextView>(R.id.btn_clear_clipboard)?.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                db.clipboardDao().deleteAll() // فرض بر این است که این متد در DAO وجود دارد
+                withContext(Dispatchers.Main) {
+                    loadClipboardData()
+                    showToast("همه موارد پاک شدند")
+                }
+            }
+        }
     }
 
-    // تابع اصلاح شده برای هماهنگی کامل با آداپتر
     private fun loadClipboardData() {
         CoroutineScope(Dispatchers.Main).launch {
             val items = withContext(Dispatchers.IO) {
@@ -230,6 +243,9 @@ class PersianKeyboardService : InputMethodService() {
                         clipboardContainer?.visibility = View.GONE
                         lettersContainer?.visibility = View.VISIBLE
                     },
+                    onEditClick = { item ->
+                        showEditDialog(item)
+                    },
                     onDeleteClick = { item ->
                         CoroutineScope(Dispatchers.IO).launch {
                             db.clipboardDao().deleteById(item.id)
@@ -242,6 +258,46 @@ class PersianKeyboardService : InputMethodService() {
                 clipboardRecyclerView?.adapter = adapter
             }
         }
+    }
+
+    // تابع جدید برای نمایش پنجره ویرایش
+    private fun showEditDialog(item: com.example.persiankeyboard.clipboard.ClipboardEntity) {
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle("ویرایش متن")
+
+        val input = android.widget.EditText(this)
+        input.setText(item.text)
+        input.setSelection(item.text.length)
+        
+        val container = android.widget.FrameLayout(this)
+        val lp = android.widget.FrameLayout.LayoutParams(
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT, 
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        lp.setMargins(50, 20, 50, 20)
+        input.layoutParams = lp
+        container.addView(input)
+        builder.setView(container)
+
+        builder.setPositiveButton("ذخیره") { dialog, _ ->
+            val newText = input.text.toString()
+            if (newText.isNotBlank()) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val updatedItem = item.copy(text = newText) // آپدیت کردن متن
+                    db.clipboardDao().update(updatedItem) // فرض بر این است که این متد در DAO وجود دارد
+                    withContext(Dispatchers.Main) {
+                        loadClipboardData()
+                    }
+                }
+            }
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("انصراف") { dialog, _ -> dialog.dismiss() }
+
+        val dialog = builder.create()
+        // این خط برای کیبوردها بسیار مهم است تا پنجره روی کیبورد باز شود
+        dialog.window?.setType(android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
+        dialog.show()
     }
 
     private fun bindLetters(view: View, shiftBtn: TextView) {
