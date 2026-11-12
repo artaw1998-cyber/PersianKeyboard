@@ -25,6 +25,9 @@ data class SymItem(val symbol: String, val meaning: String = "")
 
 class PersianKeyboardService : InputMethodService() {
 
+    // ==========================================
+    // REGION: STATE VARIABLES
+    // ==========================================
     private var isPersian = true
     private var isCapsLock = false
     private var isShifted = false
@@ -37,6 +40,9 @@ class PersianKeyboardService : InputMethodService() {
     
     private var suggestionViews: List<TextView> = emptyList()
 
+    // ==========================================
+    // REGION: STATIC DATA & DICTIONARIES
+    // ==========================================
     private val baseDictionary = listOf(
         "من", "تو", "او", "ما", "شما", "آنها", "خودم", "خودت", "خودش", "چه", "چی", "کجا", "کی", "چرا", "چطور", "چگونه", "کدام", "آیا", "چند", "سلام", "درود", "خداحافظ", "صبح", "بخیر", "ظهر", "عصر", "شب", "روز", "خوش", "آمدی", "سلامت", "باشی", "حال", "احوال", "خوبی", "ممنون", "مرسی", "سپاس", "لطفا", "ببخشید", "معذرت", "خواهش", "بله", "خیر", "نه", "آره", "باشه", "چشم", "حتما", "شاید", "مطمئن", "واقعا", "البته", "هستم", "هستی", "هست", "هستیم", "هستید", "هستند", "نیستم", "نیستی", "نیست", "بودم", "بودی", "بود", "دارم", "داری", "دارد", "میروم", "میروی", "میرود", "رفتم", "رفتی", "رفت", "میکنم", "میکنی", "میکند", "کردم", "کردی", "کرد", "میخورم", "میخوری", "میخورد", "خوردم", "خوردی", "خورد", "میگویم", "میگویی", "میگوید", "گفتم", "گفتی", "گفت", "میخواهم", "میخواهی", "میخواهد", "خواستم", "خواستی", "خواست", "میدانم", "میدانی", "میداند", "دانستم", "دانستی", "دانست", "میبینم", "میبینی", "میبیند", "دیدم", "دیدی", "دید", "میشوم", "میشوی", "میشود", "شدم", "شدی", "شد", "برو", "بیا", "بخور", "بگو", "ببین", "بده", "بگیر", "بنویس", "بخوان", "و", "در", "به", "از", "که", "این", "را", "با", "است", "برای", "آن", "یک", "تا", "هم", "یا", "بر", "اما", "اگر", "چون", "پس", "ولی", "زیرا", "خیلی", "بسیار", "زیاد", "کم", "بزرگ", "کوچک", "خوب", "بد", "زیبا", "زشت", "جدید", "قدیمی", "سریع", "آهسته", "دقیق", "درست", "غلط", "مهم", "ساده", "پیچیده", "سخت", "آسان", "شاد", "غمگین", "خسته", "گرسنه", "تشنه", "گرم", "سرد", "نرم", "سفت", "سنگین", "سبک", "پهن", "باریک", "بلند", "کوتاه", "گران", "ارزان", "قوی", "ضعیف", "سالم", "بیمار", "ناراحت", "عصبانی", "آرام", "روشن", "تاریک", "تمیز", "کثیف", "پر", "خالی", "عزیز", "عزیزم", "جان", "دل", "دلم", "قلب", "قلبم", "عشق", "عاشق", "دوست", "دوستت", "دارم", "دوستش", "هیجان", "احساس", "مهربان", "مهربانی", "خوبی", "بدی", "بغل", "آغوش", "بوسه", "لبخند", "گریه", "خنده", "امید", "آرزو", "رویا", "واقعیت", "زندگی", "مرگ", "تولد", "جشن", "عروسی", "کار", "پول", "خرید", "فروش", "بازار", "شهر", "روستا", "کشور", "دنیا", "جهان", "ماشین", "اتوبوس", "قطار", "هواپیما", "تاکسی", "خیابان", "کوچه", "پارک", "ترافیک", "خانه", "مدرسه", "دانشگاه", "اداره", "بیمارستان", "فروشگاه", "رستوران", "هتل", "فرودگاه", "ایستگاه", "بانک", "پست", "پلیس", "کتابخانه", "موزه", "سینما", "ورزشگاه", "استخر", "مادر", "پدر", "برادر", "خواهر", "خانواده", "فرزند", "بچه", "دختر", "پسر", "زن", "مرد", "همسر", "عمو", "دایی", "خاله", "عمه", "پدربزرگ", "مادربزرگ", "رفیق", "همکار", "همکلاسی", "همسایه", "استاد", "معلم", "شاگرد", "دانشجو", "رئیس", "کارمند", "دکتر", "مهندس", "امروز", "دیروز", "فردا", "الان", "اکنون", "بعد", "قبل", "هفته", "ماه", "سال", "ساعت", "دقیقه", "ثانیه", "زود", "دیر", "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "کتاب", "دفتر", "قلم", "مداد", "کاغذ", "میز", "صندلی", "در", "پنجره", "دیوار", "اتاق", "تخت", "کمد", "فرش", "لامپ", "کلید", "قفل", "چاقو", "قاشق", "چنگال", "بشقاب", "لیوان", "فنجان", "کتری", "یخچال", "اجاق", "تلویزیون", "رادیو", "بلندگو", "هدفون", "دوربین", "عینک", "کیف", "کفش", "لباس", "پیراهن", "شلوار", "کاپشن", "کلاه", "دستکش", "جوراب", "حوله", "صابون", "شامپو", "کامپیوتر", "لپ‌تاپ", "گوشی", "موبایل", "تبلت", "اینترنت", "شبکه", "برنامه", "نرم‌افزار", "سخت‌افزار", "سایت", "وب", "ایمیل", "پیام", "پیامک", "تلگرام", "واتساپ", "اینستاگرام", "فیسبوک", "گوگل", "اندروید", "آیفون", "ویندوز", "هوش مصنوعی", "ربات", "داده", "اطلاعات", "دیتابیس", "سرور", "کاربر", "پسورد", "رمز", "امنیت", "پروژه", "کدنویسی", "برنامه‌نویسی", "طراحی", "گرافیک", "عکس", "فیلم", "ویدیو", "صدا", "موسیقی", "غذا", "آب", "چای", "قهوه", "شیر", "نان", "برنج", "گوشت", "مرغ", "ماهی", "تخم‌مرغ", "پنیر", "کره", "عسل", "سیب", "پرتقال", "موز", "انار", "هندوانه", "خیار", "گوجه", "سیب‌زمینی", "پیاز", "سیر", "فلفل", "نمک", "شکر", "زردچوبه", "دارچین", "زعفران", "صبحانه", "ناهار", "شام", "میان‌وعده", "دسر", "شیرینی", "بستنی", "شکلات", "کیک", "بیسکویت", "آجیل", "پسته", "بادام", "گردو", "فندق", "کشمش", "خرما", "پیتزا", "ساندویچ", "برگر", "پاستا", "ماکارونی", "سوپ", "سالاد", "کباب", "جوجه", "قیمه", "قورمه", "آش", "عدس", "لوبیا", "نخود", "زیتون", "خیارشور", "ترشی", "مربا", "املت", "کوکو", "کتلت", "آسمان", "زمین", "دریا", "کوه", "جنگل", "بیابان", "رودخانه", "دریاچه", "باران", "برف", "باد", "آفتاب", "ماه", "ستاره", "ابر", "رعد", "برق", "گل", "درخت", "برگ", "چمن", "خاک", "سنگ", "آتش", "هوا", "آب و هوا", "طوفان", "زلزله", "سیل", "خشکسالی", "سگ", "گربه", "اسب", "گاو", "گوسفند", "بز", "مرغ", "خروس", "جوجه", "اردک", "غاز", "کبوتر", "گنجشک", "عقاب", "شاهین", "شیر", "ببر", "پلنگ", "گرگ", "روباه", "خرس", "فیل", "زرافه", "میمون", "خرگوش", "موش", "مار", "ماهی", "کوسه", "نهنگ", "دلفین", "لاک‌پشت", "قورباغه", "پروانه", "زنبور", "مورچه", "عنکبوت", "hello", "world", "good", "morning", "night", "book", "house", "computer", "phone", "internet", "keyboard", "software", "hardware", "thank", "you", "please", "sorry", "yes", "no", "maybe", "today", "tomorrow", "yesterday", "love", "friend", "family", "mother", "father", "brother", "sister", "time", "money", "work", "school", "city", "country", "water", "food", "coffee", "tea", "apple", "orange", "happy", "sad", "great", "bad", "new", "old"
     )
@@ -67,6 +73,9 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
     )
 
+    // ==========================================
+    // REGION: LIFECYCLE METHODS
+    // ==========================================
     override fun onCreate() {
         super.onCreate()
         sharedPrefs = getSharedPreferences("KeyboardPrefs", Context.MODE_PRIVATE)
@@ -93,6 +102,9 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
+    // ==========================================
+    // REGION: UI SETUP & BINDING
+    // ==========================================
     private fun setupKeyboardUI(view: View) {
         val lettersContainer = view.findViewById<LinearLayout>(R.id.letters_container)
         val symbolsContainer = view.findViewById<LinearLayout>(R.id.symbols_container)
@@ -226,11 +238,14 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
+    // 🌟 این تابع برای هم‌ترازی دقیق دکمه‌ها با حروف مخفی اصلاح شد
     private fun setupHiddenCharsAndDoubleTap(view: View) {
         // ۱. حرف ص (پشتش ض)
         val btnSad = view.findViewById<TextView>(R.id.btn_sad)
         btnSad.includeFontPadding = false
         btnSad.gravity = Gravity.CENTER
+        btnSad.setLineSpacing(0f, 0.75f)
+        btnSad.translationY = -10f // 🌟 کل متن رو به بالا شیفت میده تا ص هم‌تراز بشه
         btnSad.text = createSpannableKey("ض", "ص")
         var lastSadClick = 0L
         btnSad.setOnClickListener {
@@ -248,6 +263,8 @@ class PersianKeyboardService : InputMethodService() {
         val btnE = view.findViewById<TextView>(R.id.btn_e)
         btnE.includeFontPadding = false
         btnE.gravity = Gravity.CENTER
+        btnE.setLineSpacing(0f, 0.75f)
+        btnE.translationY = -10f
         btnE.text = createSpannableKey("غ", "ع")
         var lastEClick = 0L
         btnE.setOnClickListener {
@@ -265,6 +282,8 @@ class PersianKeyboardService : InputMethodService() {
         val btnTa = view.findViewById<TextView>(R.id.btn_ta)
         btnTa.includeFontPadding = false
         btnTa.gravity = Gravity.CENTER
+        btnTa.setLineSpacing(0f, 0.75f)
+        btnTa.translationY = -10f
         btnTa.text = createSpannableKey("ظ", "ط")
         var lastTaClick = 0L
         btnTa.setOnClickListener {
@@ -282,6 +301,8 @@ class PersianKeyboardService : InputMethodService() {
         val btnZe = view.findViewById<TextView>(R.id.btn_ze)
         btnZe.includeFontPadding = false
         btnZe.gravity = Gravity.CENTER
+        btnZe.setLineSpacing(0f, 0.75f)
+        btnZe.translationY = -10f
         btnZe.text = createSpannableKey("ژ", "ز")
         var lastZeClick = 0L
         btnZe.setOnClickListener {
@@ -298,7 +319,7 @@ class PersianKeyboardService : InputMethodService() {
 
     private fun createSpannableKey(hidden: String, main: String): SpannableString {
         val spannable = SpannableString("$hidden\n$main")
-        spannable.setSpan(RelativeSizeSpan(0.6f), 0, hidden.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(RelativeSizeSpan(0.55f), 0, hidden.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannable.setSpan(ForegroundColorSpan(Color.parseColor("#B0BEC5")), 0, hidden.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         spannable.setSpan(RelativeSizeSpan(1.0f), hidden.length + 1, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         return spannable
@@ -333,6 +354,9 @@ class PersianKeyboardService : InputMethodService() {
         pageBtn.text = "${currentSymbolPage + 1}/6"
     }
 
+    // ==========================================
+    // REGION: ENGINE & LOGIC (PREDICTION)
+    // ==========================================
     private fun updateSuggestions(suggestions: List<TextView>) {
         val text = currentInputConnection?.getTextBeforeCursor(20, 0)?.toString() ?: ""
         val words = text.split(" ", "\n", ".", "،", "؟", "!")
@@ -397,6 +421,9 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
+    // ==========================================
+    // REGION: HELPER FUNCTIONS
+    // ==========================================
     private fun setupContinuousDeletion(btn: TextView, suggestions: List<TextView>) {
         val handler = Handler(Looper.getMainLooper())
         var runnable: Runnable? = null
