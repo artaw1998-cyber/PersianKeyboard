@@ -32,18 +32,16 @@ class ClipboardAdapter(
         holder.tvNumber.text = (position + 1).toString()
         holder.tvText.text = item.text
 
-        // پاک کردن کلیک‌های قبلی
+        // پاک کردن هرگونه کلیک قبلی
         holder.itemView.setOnClickListener(null)
         holder.tvText.setOnClickListener(null)
         holder.btnEdit.setOnClickListener(null)
         holder.btnDelete.setOnClickListener(null)
 
-        // 🌟 حالا هم کلیک روی کادر و هم کلیک روی متن کار می‌کنه 🌟
-        val clickAction = View.OnClickListener { 
+        // 🌟 فقط و فقط روی کل کادر کلیک بشه تا دوبار تایپ نشه 🌟
+        holder.itemView.setOnClickListener { 
             onItemClick(item) 
         }
-        holder.itemView.setOnClickListener(clickAction)
-        holder.tvText.setOnClickListener(clickAction)
         
         // دکمه‌های ویرایش و حذف
         holder.btnEdit.setOnClickListener { onEditClick(item) }
