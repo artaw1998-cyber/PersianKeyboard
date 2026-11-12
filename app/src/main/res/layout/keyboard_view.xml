@@ -75,7 +75,7 @@
             <TextView android:id="@+id/btn_backspace" style="@style/KeyStyleSpecial" android:layout_weight="1.5" android:text="⌫" />
         </LinearLayout>
 
-        <!-- ردیف پایین (نمادها، تغییر زبان، میکروفون، فاصله، نقطه، اینتر) -->
+        <!-- ردیف پایین -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_symbols" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="نماد" android:textSize="14sp"/>
             <TextView android:id="@+id/btn_lang" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="Ab" android:textSize="16sp" android:textStyle="bold"/>
@@ -86,7 +86,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- بخش نمادها (دست نخورده) -->
+    <!-- بخش نمادها -->
     <LinearLayout android:id="@+id/symbols_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal">
             <TextView android:id="@+id/sym_1" style="@style/KeyStyle" /><TextView android:id="@+id/sym_2" style="@style/KeyStyle" /><TextView android:id="@+id/sym_3" style="@style/KeyStyle" /><TextView android:id="@+id/sym_4" style="@style/KeyStyle" /><TextView android:id="@+id/sym_5" style="@style/KeyStyle" /><TextView android:id="@+id/sym_6" style="@style/KeyStyle" /><TextView android:id="@+id/sym_7" style="@style/KeyStyle" /><TextView android:id="@+id/sym_8" style="@style/KeyStyle" /><TextView android:id="@+id/sym_9" style="@style/KeyStyle" /><TextView android:id="@+id/sym_10" style="@style/KeyStyle" />
@@ -108,7 +108,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- لایه اعراب (دست نخورده) -->
+    <!-- لایه اعراب -->
     <LinearLayout
         android:id="@+id/diacritics_container"
         android:layout_width="match_parent"
