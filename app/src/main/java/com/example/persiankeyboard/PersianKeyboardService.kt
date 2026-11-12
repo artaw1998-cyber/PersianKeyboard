@@ -169,7 +169,6 @@ class PersianKeyboardService : InputMethodService() {
 
     private fun bindLetters(view: View, shiftBtn: TextView) {
         val buttons = if (isPersian) {
-            // چیدمان ۲۸ حرفی استاندارد (۷ دکمه در ردیف آخر)
             mapOf(
                 R.id.btn_sad to "ص", R.id.btn_se to "ث", R.id.btn_ghaf to "ق", R.id.btn_fe to "ف", R.id.btn_e to "ع", R.id.btn_he to "ه", R.id.btn_khe to "خ", R.id.btn_h to "ح", R.id.btn_jim to "ج", R.id.btn_che to "چ",
                 R.id.btn_shin to "ش", R.id.btn_sin to "س", R.id.btn_ye to "ی", R.id.btn_be to "ب", R.id.btn_lam to "ل", R.id.btn_alef to "ا", R.id.btn_te to "ت", R.id.btn_nun to "ن", R.id.btn_mim to "م", R.id.btn_pe to "پ",
@@ -197,6 +196,24 @@ class PersianKeyboardService : InputMethodService() {
             }
         }
 
+        // 🌟 اصلاح باگ هم‌ترازی در حالت انگلیسی
+        val specialKeys = listOf(R.id.btn_sad, R.id.btn_e, R.id.btn_ta, R.id.btn_ze, R.id.btn_dal)
+        if (isPersian) {
+            setupHiddenCharsAndDoubleTap(view)
+            setupLongPressPopups(view)
+        } else {
+            // ریست کردن تنظیمات ظاهری برای حالت انگلیسی
+            specialKeys.forEach { id ->
+                view.findViewById<TextView>(id)?.apply {
+                    this.translationY = 0f // برگرداندن به حالت عادی
+                    this.setLineSpacing(0f, 1.0f) // فاصله خطوط استاندارد
+                    this.includeFontPadding = true // بازگرداندن پدینگ فونت
+                    this.gravity = Gravity.CENTER
+                    this.setOnLongClickListener(null) // حذف پاپ‌آپ‌های فارسی
+                }
+            }
+        }
+
         val nums = if (isPersian) {
             mapOf(R.id.btn_num_1 to "۱", R.id.btn_num_2 to "۲", R.id.btn_num_3 to "۳", R.id.btn_num_4 to "۴", R.id.btn_num_5 to "۵", R.id.btn_num_6 to "۶", R.id.btn_num_7 to "۷", R.id.btn_num_8 to "۸", R.id.btn_num_9 to "۹", R.id.btn_num_0 to "۰")
         } else {
@@ -220,19 +237,14 @@ class PersianKeyboardService : InputMethodService() {
         } else {
             shiftBtn.backgroundTintList = null
         }
-
-        if (isPersian) {
-            setupLongPressPopups(view)
-            setupHiddenCharsAndDoubleTap(view)
-        }
     }
 
     private fun setupHiddenCharsAndDoubleTap(view: View) {
         val shiftY = { tv: TextView ->
             tv.includeFontPadding = false
             tv.gravity = Gravity.CENTER
-            // محاسبه داینامیک برای هم‌ترازی دقیق (شیفت به اندازه ۳۵ درصد سایز فونت)
-            tv.translationY = -tv.textSize * 0.35f
+            tv.translationY = -tv.textSize * 0.38f
+            tv.setLineSpacing(0f, 0.85f) 
         }
 
         // ۱. حرف ص (پشتش ض)
@@ -490,7 +502,6 @@ class PersianKeyboardService : InputMethodService() {
             showPopup(it, listOf(Pair("ژ", "ژ"), Pair("ز", "ز")))
             true
         }
-        // 🌟 اضافه شدن کادر بازشو برای د
         view.findViewById<TextView>(R.id.btn_dal)?.setOnLongClickListener {
             showPopup(it, listOf(Pair("ذ", "ذ"), Pair("د", "د")))
             true
