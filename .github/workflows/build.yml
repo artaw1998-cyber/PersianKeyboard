@@ -26,9 +26,8 @@ jobs:
     - name: Accept Android SDK licenses
       run: yes | sdkmanager --licenses || true
 
-    - name: Magic Fix (Auto-Create ALL Gradle Files)
+    - name: Magic Fix (Auto-Create ALL Gradle Files with Room)
       run: |
-        # ساخت فایل settings.gradle
         cat << 'EOF' > settings.gradle
         pluginManagement {
             repositories {
@@ -48,27 +47,20 @@ jobs:
         include ':app'
         EOF
 
-        # ساخت فایل build.gradle در ریشه
         cat << 'EOF' > build.gradle
         plugins {
             id 'com.android.application' version '8.1.0' apply false
             id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+            id 'org.jetbrains.kotlin.kapt' version '1.9.0' apply false
         }
         EOF
 
-        # ساخت فایل gradle.properties (راز حل مشکل الان این بود!)
-        cat << 'EOF' > gradle.properties
-        android.useAndroidX=true
-        android.enableJetifier=true
-        org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-        EOF
-
-        # ساخت فایل app/build.gradle
         mkdir -p app
         cat << 'EOF' > app/build.gradle
         plugins {
             id 'com.android.application'
             id 'org.jetbrains.kotlin.android'
+            id 'org.jetbrains.kotlin.kapt'
         }
         android {
             namespace 'com.example.persiankeyboard'
@@ -96,6 +88,10 @@ jobs:
         dependencies {
             implementation 'androidx.core:core-ktx:1.10.1'
             implementation 'androidx.appcompat:appcompat:1.6.1'
+            implementation "androidx.room:room-runtime:2.6.1"
+            implementation "androidx.room:room-ktx:2.6.1"
+            kapt "androidx.room:room-compiler:2.6.1"
+            implementation 'androidx.recyclerview:recyclerview:1.3.2'
         }
         EOF
 
