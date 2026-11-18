@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class EmojiAdapter(
     private val emojis: List<String>,
-    private val onEmojiClick: (String) -> Unit
+    private val onEmojiClick: (String) -> Unit,
+    private val onEmojiLongClick: (String) -> Unit // 🌟 پارامتر جدید برای لمس طولانی
 ) : RecyclerView.Adapter<EmojiAdapter.EmojiViewHolder>() {
 
     class EmojiViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
@@ -31,8 +32,16 @@ class EmojiAdapter(
         holder.textView.text = emoji
         
         holder.textView.setOnClickListener(null)
+        holder.textView.setOnLongClickListener(null)
+        
         holder.textView.setOnClickListener {
             onEmojiClick(emoji)
+        }
+        
+        // 🌟 قابلیت لمس طولانی
+        holder.textView.setOnLongClickListener {
+            onEmojiLongClick(emoji)
+            true
         }
     }
 
