@@ -82,10 +82,10 @@ class VoiceTypingActivity : Activity() {
                     val recognizedText = matches[0]
                     finish() // بستن صفحه ضبط صدا
                     
-                    // 🌟 صبر می‌کنیم تا صفحه بسته بشه و فوکوس به کیبورد برگرده، بعد متن رو می‌فرستیم
+                    // 🌟 زمان تاخیر رو به ۱ ثانیه افزایش دادم تا مرورگرها و صفحه‌های وب فوکوسشون رو بدست بیارن
                     Handler(Looper.getMainLooper()).postDelayed({
                         PersianKeyboardService.voiceResultListener?.invoke(recognizedText)
-                    }, 500) // نیم ثانیه تاخیر
+                    }, 1000) // ۱ ثانیه تاخیر
                 } else {
                     finish()
                 }
