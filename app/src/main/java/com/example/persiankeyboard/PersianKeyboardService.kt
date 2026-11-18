@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.inputmethodservice.InputMethodService
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.SpannableString
@@ -62,8 +63,8 @@ class PersianKeyboardService : InputMethodService() {
     private var emojiRecyclerView: RecyclerView? = null
     private var emojiAdapter: EmojiAdapter? = null
     private var recentEmojis = mutableListOf<String>()
-    private var favoriteEmojis = mutableListOf<String>() // 🌟 لیست علاقه‌مندی‌ها
-    private var currentEmojiCategory = "recent" // برای اینکه بدونیم الان کدوم تبیم
+    private var favoriteEmojis = mutableListOf<String>() 
+    private var currentEmojiCategory = "recent" 
 
     private var editClipboardContainer: LinearLayout? = null
     private var editClipboardText: EditText? = null
@@ -103,11 +104,11 @@ class PersianKeyboardService : InputMethodService() {
         "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰",
         "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳", "😏",
         "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😮‍💨", "😤",
-        "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🫣", "🤗", "🫡", "🤔",
-        "🫢", "🤭", "🤫", "🤥", "😶", "🫥", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱",
+        "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔",
+        "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱",
         "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿",
         "👹", "👺", "🤡", "💩", "👻", "💀", "☠️", "👽", "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼",
-        "😽", "🙀", "😿", "😾", "🫠", "🫨", "🫤", "🥹", "🥲"
+        "😽", "🙀", "😿", "😾"
     )
 
     private val emojisNature = listOf(
@@ -190,7 +191,6 @@ class PersianKeyboardService : InputMethodService() {
         learnedWords.addAll(sharedPrefs.getStringSet("learned_words", emptySet()) ?: emptySet())
         
         recentEmojis.addAll(sharedPrefs.getStringSet("recent_emojis", emptySet()) ?: emptySet())
-        // 🌟 لود کردن علاقه‌مندی‌ها
         favoriteEmojis.addAll(sharedPrefs.getStringSet("favorite_emojis", emptySet()) ?: emptySet())
 
         val db = ClipboardDatabase.getDatabase(this)
@@ -211,7 +211,6 @@ class PersianKeyboardService : InputMethodService() {
         return view
     }
 
-    // 🌟 هندل کردن دکمه Back گوشی برای برگشت از منوها
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (emojiContainer?.visibility == View.VISIBLE) {
@@ -265,7 +264,6 @@ class PersianKeyboardService : InputMethodService() {
         emojiRecyclerView?.adapter = emojiAdapter
 
         view.findViewById<TextView>(R.id.tab_recent)?.setOnClickListener { showEmojiCategory("recent") }
-        // 🌟 تب جدید برای علاقه‌مندی‌ها
         view.findViewById<TextView>(R.id.tab_favorites)?.setOnClickListener { showEmojiCategory("favorites") }
         view.findViewById<TextView>(R.id.tab_smileys)?.setOnClickListener { showEmojiCategory("smileys") }
         view.findViewById<TextView>(R.id.tab_nature)?.setOnClickListener { showEmojiCategory("nature") }
@@ -353,8 +351,6 @@ class PersianKeyboardService : InputMethodService() {
             showEmojiCategory("recent") 
         }
 
-        // 🌟 دکمه بازگشت به کیبورد حذف شد، دیگه نیازی به کدش نیست
-
         view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener { showToast("تنظیمات کیبورد به زودی...") }
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { showToast("تایپ صوتی به زودی...") }
         
@@ -416,7 +412,7 @@ class PersianKeyboardService : InputMethodService() {
         currentEmojiCategory = category
         val emojisToShow = when (category) {
             "recent" -> if (recentEmojis.isEmpty()) emojisSmileys else recentEmojis 
-            "favorites" -> favoriteEmojis // 🌟 لیست علاقه‌مندی‌ها
+            "favorites" -> favoriteEmojis 
             "smileys" -> emojisSmileys
             "nature" -> emojisNature
             "food" -> emojisFood
@@ -438,7 +434,6 @@ class PersianKeyboardService : InputMethodService() {
         emojiRecyclerView?.adapter = emojiAdapter
     }
 
-    // 🌟 تابع برای اضافه/حذف کردن ایموجی به علاقه‌مندی‌ها
     private fun toggleFavoriteEmoji(emoji: String) {
         if (favoriteEmojis.contains(emoji)) {
             favoriteEmojis.remove(emoji)
@@ -449,7 +444,6 @@ class PersianKeyboardService : InputMethodService() {
         }
         sharedPrefs.edit().putStringSet("favorite_emojis", favoriteEmojis.toSet()).apply()
         
-        // اگر الان توی تب علاقه‌مندی‌ها هستیم، لیست رو آپدیت کن
         if (currentEmojiCategory == "favorites") {
             showEmojiCategory("favorites")
         }
@@ -767,10 +761,26 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
+    // 🌟 تابع اصلاح شده برای پاک کردن صحیح ایموجی‌ها 🌟
     private fun deleteCharacter() {
-        val sel = currentInputConnection?.getSelectedText(0)
-        if (sel.isNullOrEmpty()) currentInputConnection?.deleteSurroundingText(1, 0)
-        else currentInputConnection?.commitText("", 1)
+        val ic = currentInputConnection ?: return
+        val sel = ic.getSelectedText(0)
+        if (sel.isNullOrEmpty()) {
+            // اگر اندروید ۷ به بالا بود، از متد مخصوص پاک کردن کدپوینت (ایموجی) استفاده کن
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                ic.deleteSurroundingTextInCodePoints(1, 0)
+            } else {
+                // برای اندرویدهای قدیمی‌تر، چک کن اگر دو کاراکتر آخر یک ایموجی بودن، جفتش رو پاک کن
+                val text = ic.getTextBeforeCursor(2, 0)?.toString() ?: ""
+                if (text.length == 2 && Character.isSurrogatePair(text[0], text[1])) {
+                    ic.deleteSurroundingText(2, 0)
+                } else {
+                    ic.deleteSurroundingText(1, 0)
+                }
+            }
+        } else {
+            ic.commitText("", 1)
+        }
     }
 
     private fun setupLongPressPopups(view: View) {
