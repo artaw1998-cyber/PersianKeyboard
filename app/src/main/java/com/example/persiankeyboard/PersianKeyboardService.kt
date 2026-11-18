@@ -60,7 +60,9 @@ class PersianKeyboardService : InputMethodService() {
     
     private var emojiContainer: LinearLayout? = null
     private var emojiRecyclerView: RecyclerView? = null
-    
+    private var emojiAdapter: EmojiAdapter? = null
+    private var recentEmojis = mutableListOf<String>()
+
     private var editClipboardContainer: LinearLayout? = null
     private var editClipboardText: EditText? = null
     private var editingItem: com.example.persiankeyboard.clipboard.ClipboardEntity? = null
@@ -95,7 +97,7 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
     )
 
-    private val emojis = listOf(
+    private val emojisSmileys = listOf(
         "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰",
         "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳", "😏",
         "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😮‍💨", "😤",
@@ -103,13 +105,10 @@ class PersianKeyboardService : InputMethodService() {
         "🫢", "🤭", "🤫", "🤥", "😶", "🫥", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱",
         "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿",
         "👹", "👺", "🤡", "💩", "👻", "💀", "☠️", "👽", "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼",
-        "😽", "🙀", "😿", "😾", "🫠", "🫨", "🫤", "🥹", "🥲",
-        "👋", "🤚", "🖐", "✋", "🖖", "🫱", "🫲", "🫳", "🫴", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟",
-        "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "🫵", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏",
-        "🙌", "🫶", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻",
-        "👃", "🧠", "🫀", "🫁", "🦷", "🦴", "👀", "👁", "👅", "👄", "🫦",
-        "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❣️", "💕", "💞", "💓", "💗", "💖",
-        "💘", "💝", "💟", "🩷", "🩵", "🩶", "💋", "💌", "🫂",
+        "😽", "🙀", "😿", "😾", "🫠", "🫨", "🫤", "🥹", "🥲"
+    )
+
+    private val emojisNature = listOf(
         "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐽", "🐸",
         "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤", "🐣", "🐥", "🦆", "🦅", "🦉", "🦇", "🐺",
         "🐗", "🐴", "🦄", "🐝", "🪱", "🐛", "🦋", "🐌", "🐞", "🐜", "🪰", "🪱", "🦟", "🦗", "🕷", "🕸",
@@ -121,7 +120,10 @@ class PersianKeyboardService : InputMethodService() {
         "🎋", "🍃", "🍂", "🍁", "🪺", "🍄", "🐚", "🪨", "🌾", "💐", "🌷", "🌹", "🥀", "🌺", "🌸", "🌼",
         "🌻", "🌞", "🌝", "🌚", "🌙", "🌎", "🌍", "🌏", "🪐", "💫", "⭐️", "🌟", "✨", "⚡️", "☄️", "💥",
         "🔥", "🌪", "🌈", "☀️", "🌤", "⛅️", "🌥", "☁️", "🌦", "🌧", "⛈", "🌩", "🌨", "❄️", "☃️", "⛄️",
-        "🌬", "💨", "💧", "💦", "🫧", "☔️", "☂️", "🌊", "🌫", "🪷",
+        "🌬", "💨", "💧", "💦", "🫧", "☔️", "☂️", "🌊", "🌫", "🪷"
+    )
+
+    private val emojisFood = listOf(
         "🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥",
         "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶", "🫑", "🌽", "🥕", "🫒", "🧄", "🧅", "🥔", "🍠",
         "🫘", "🥐", "🥯", "🍞", "🥖", "🥨", "🧀", "🥚", "🍳", "🧈", "🥞", "🧇", "🥓", "🥩", "🍗", "🍖",
@@ -129,7 +131,10 @@ class PersianKeyboardService : InputMethodService() {
         "🍝", "🍜", "🍲", "🍛", "🍣", "🍱", "🥟", "🦪", "🍤", "🍙", "🍚", "🍘", "🍥", "🥠", "🥮", "🍢",
         "🍡", "🍧", "🍨", "🍦", "🥧", "🧁", "🍰", "🎂", "🍮", "🍭", "🍬", "🍫", "🍿", "🍩", "🍪", "🌰",
         "🥜", "🍯", "🥛", "🍼", "🫖", "☕️", "🍵", "🧃", "🥤", "🧋", "🍶", "🍺", "🍻", "🥂", "🍷", "🥃",
-        "🍸", "🍹", "🧉", "🍾", "🧊", "🥄", "🍴", "🍽", "🥣", "🥡", "🥢", "🧂", "🫙",
+        "🍸", "🍹", "🧉", "🍾", "🧊", "🥄", "🍴", "🍽", "🥣", "🥡", "🥢", "🧂", "🫙"
+    )
+
+    private val emojisTravel = listOf(
         "🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚", "🚛", "🚜", "🦯", "🦽",
         "🦼", "🛴", "🚲", "🛵", "🏍", "🛺", "🚨", "🚔", "🚍", "🚘", "🚖", "🚡", "🚠", "🚟", "🚃", "🚋",
         "🚞", "🚝", "🚄", "🚅", "🚈", "🚂", "🚆", "🚇", "🚊", "🚉", "✈️", "🛫", "🛬", "🛩", "💺", "🛰",
@@ -137,7 +142,10 @@ class PersianKeyboardService : InputMethodService() {
         "🚏", "🗺", "🗿", "🗽", "🗼", "🏰", "🏯", "🏟", "🎡", "🎢", "🎠", "⛲️", "⛱", "🏖", "🏝", "🏜",
         "🌋", "⛰", "🏔", "🗻", "🏕", "⛺️", "🛖", "🏠", "🏡", "🏘", "🏚", "🏗", "🏭", "🏢", "🏬", "🏣",
         "🏤", "🏥", "🏦", "🏨", "🏪", "🏫", "🏩", "💒", "🏛", "⛪️", "🕌", "🕍", "🛕", "🕋", "⛩", "🛤",
-        "🛣", "🗾", "🎑", "🏞", "🌅", "🌄", "🌠", "🎇", "🎆", "🌇", "🌆", "🏙", "🌃", "🌌", "🌉", "🌁",
+        "🛣", "🗾", "🎑", "🏞", "🌅", "🌄", "🌠", "🎇", "🎆", "🌇", "🌆", "🏙", "🌃", "🌌", "🌉", "🌁"
+    )
+
+    private val emojisObjects = listOf(
         "⌚️", "📱", "📲", "💻", "⌨️", "🖥", "🖨", "🖱", "🖲", "🕹", "🗜", "💽", "💾", "💿", "📀", "📼",
         "📷", "📸", "📹", "🎥", "📽", "🎞", "📞", "☎️", "📟", "📠", "📺", "📻", "🎙", "🎚", "🎛", "🧭",
         "⏱", "⏲", "⏰", "🕰", "⌛️", "⏳", "📡", "🔋", "🪫", "🔌", "💡", "🔦", "🕯", "🪔", "🧯", "🛢",
@@ -151,7 +159,10 @@ class PersianKeyboardService : InputMethodService() {
         "📫", "📬", "📭", "📮", "📯", "📜", "📃", "📄", "📑", "🧾", "📊", "📈", "📉", "🗒", "🗓", "📆",
         "📅", "🗑", "📇", "🗃", "🗳", "🗄", "📋", "📁", "📂", "🗂", "🗞", "📰", "📓", "📔", "📒", "📕",
         "📗", "📘", "📙", "📚", "📖", "🔖", "🧷", "🔗", "📎", "🖇", "📐", "📏", "🧮", "📌", "📍", "✂️",
-        "🖊", "🖋", "✒️", "🖌", "🖍", "📝", "✏️", "🔍", "🔎", "🔏", "🔐", "🔒", "🔓",
+        "🖊", "🖋", "✒️", "🖌", "🖍", "📝", "✏️", "🔍", "🔎", "🔏", "🔐", "🔒", "🔓"
+    )
+
+    private val emojisSymbols = listOf(
         "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❣️", "💕", "💞", "💓", "💗", "💖",
         "💘", "💝", "💟", "☮️", "✝️", "☪️", "🕉", "☸️", "✡️", "🔯", "🕎", "☯️", "☦️", "🛐", "⛎", "♈️",
         "♉️", "♊️", "♋️", "♌️", "♍️", "♎️", "♏️", "♐️", "♑️", "♒️", "♓️", "🆔", "⚛️", "🉑", "☢️", "☣️",
@@ -176,6 +187,8 @@ class PersianKeyboardService : InputMethodService() {
         sharedPrefs = getSharedPreferences("KeyboardPrefs", Context.MODE_PRIVATE)
         learnedWords.addAll(sharedPrefs.getStringSet("learned_words", emptySet()) ?: emptySet())
         
+        recentEmojis.addAll(sharedPrefs.getStringSet("recent_emojis", emptySet()) ?: emptySet())
+
         val db = ClipboardDatabase.getDatabase(this)
         clipboardListener = ClipboardListener(this, db.clipboardDao())
         clipboardListener.startListening()
@@ -216,10 +229,19 @@ class PersianKeyboardService : InputMethodService() {
         emojiRecyclerView = view.findViewById(R.id.emoji_recycler)
         emojiRecyclerView?.layoutManager = GridLayoutManager(this, 8)
         
-        val emojiAdapter = EmojiAdapter(emojis) { emoji ->
+        emojiAdapter = EmojiAdapter(emojisSmileys) { emoji ->
             currentInputConnection?.commitText(emoji, 1)
+            addToRecentEmojis(emoji)
         }
         emojiRecyclerView?.adapter = emojiAdapter
+
+        view.findViewById<TextView>(R.id.tab_recent)?.setOnClickListener { showEmojiCategory("recent") }
+        view.findViewById<TextView>(R.id.tab_smileys)?.setOnClickListener { showEmojiCategory("smileys") }
+        view.findViewById<TextView>(R.id.tab_nature)?.setOnClickListener { showEmojiCategory("nature") }
+        view.findViewById<TextView>(R.id.tab_food)?.setOnClickListener { showEmojiCategory("food") }
+        view.findViewById<TextView>(R.id.tab_travel)?.setOnClickListener { showEmojiCategory("travel") }
+        view.findViewById<TextView>(R.id.tab_objects)?.setOnClickListener { showEmojiCategory("objects") }
+        view.findViewById<TextView>(R.id.tab_symbols)?.setOnClickListener { showEmojiCategory("symbols") }
         
         editClipboardContainer = view.findViewById(R.id.edit_clipboard_container)
         editClipboardText = view.findViewById(R.id.edit_clipboard_text)
@@ -297,6 +319,7 @@ class PersianKeyboardService : InputMethodService() {
             diacriticsContainer?.visibility = View.GONE
             clipboardContainer?.visibility = View.GONE
             emojiContainer?.visibility = View.VISIBLE
+            showEmojiCategory("recent") 
         }
 
         view.findViewById<TextView>(R.id.btn_back_to_letters)?.setOnClickListener {
@@ -359,6 +382,38 @@ class PersianKeyboardService : InputMethodService() {
             editClipboardContainer?.visibility = View.GONE
             clipboardRecyclerView?.visibility = View.VISIBLE
         }
+    }
+
+    private fun showEmojiCategory(category: String) {
+        val emojisToShow = when (category) {
+            "recent" -> if (recentEmojis.isEmpty()) emojisSmileys else recentEmojis 
+            "smileys" -> emojisSmileys
+            "nature" -> emojisNature
+            "food" -> emojisFood
+            "travel" -> emojisTravel
+            "objects" -> emojisObjects
+            "symbols" -> emojisSymbols
+            else -> emojisSmileys
+        }
+        
+        emojiAdapter = EmojiAdapter(emojisToShow) { emoji ->
+            currentInputConnection?.commitText(emoji, 1)
+            addToRecentEmojis(emoji)
+        }
+        emojiRecyclerView?.adapter = emojiAdapter
+    }
+
+    private fun addToRecentEmojis(emoji: String) {
+        if (recentEmojis.contains(emoji)) {
+            recentEmojis.remove(emoji)
+        }
+        recentEmojis.add(0, emoji)
+        
+        if (recentEmojis.size > 30) {
+            recentEmojis.removeAt(recentEmojis.size - 1)
+        }
+        
+        sharedPrefs.edit().putStringSet("recent_emojis", recentEmojis.toSet()).apply()
     }
 
     private fun loadClipboardData() {
@@ -603,10 +658,23 @@ class PersianKeyboardService : InputMethodService() {
                     }
                     updateSuggestions(suggestions)
                 }
+
+                textView.setOnLongClickListener {
+                    if (learnedWords.contains(word)) {
+                        learnedWords.remove(word)
+                        sharedPrefs.edit().putStringSet("learned_words", learnedWords).apply()
+                        showToast("کلمه «$word» از حافظه حذف شد")
+                        updateSuggestions(suggestions)
+                    } else {
+                        showToast("این کلمه ذخیره نشده است")
+                    }
+                    true
+                }
             } else {
                 textView.text = ""
                 textView.setTextColor(Color.parseColor("#ECEFF1"))
                 textView.setOnClickListener(null)
+                textView.setOnLongClickListener(null)
             }
         }
     }
