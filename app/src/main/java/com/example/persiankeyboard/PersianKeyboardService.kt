@@ -62,6 +62,8 @@ class PersianKeyboardService : InputMethodService() {
     private var emojiRecyclerView: RecyclerView? = null
     private var emojiAdapter: EmojiAdapter? = null
     private var recentEmojis = mutableListOf<String>()
+    private var favoriteEmojis = mutableListOf<String>() // 🌟 لیست علاقه‌مندی‌ها
+    private var currentEmojiCategory = "recent" // برای اینکه بدونیم الان کدوم تبیم
 
     private var editClipboardContainer: LinearLayout? = null
     private var editClipboardText: EditText? = null
@@ -188,6 +190,8 @@ class PersianKeyboardService : InputMethodService() {
         learnedWords.addAll(sharedPrefs.getStringSet("learned_words", emptySet()) ?: emptySet())
         
         recentEmojis.addAll(sharedPrefs.getStringSet("recent_emojis", emptySet()) ?: emptySet())
+        // 🌟 لود کردن علاقه‌مندی‌ها
+        favoriteEmojis.addAll(sharedPrefs.getStringSet("favorite_emojis", emptySet()) ?: emptySet())
 
         val db = ClipboardDatabase.getDatabase(this)
         clipboardListener = ClipboardListener(this, db.clipboardDao())
@@ -205,6 +209,26 @@ class PersianKeyboardService : InputMethodService() {
         val view = layoutInflater.inflate(R.layout.keyboard_view, null)
         setupKeyboardUI(view)
         return view
+    }
+
+    // 🌟 هندل کردن دکمه Back گوشی برای برگشت از منوها
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (emojiContainer?.visibility == View.VISIBLE) {
+                emojiContainer?.visibility = View.GONE
+                lettersContainer?.visibility = View.VISIBLE
+                return true
+            } else if (clipboardContainer?.visibility == View.VISIBLE) {
+                clipboardContainer?.visibility = View.GONE
+                lettersContainer?.visibility = View.VISIBLE
+                return true
+            } else if (symbolsContainer?.visibility == View.VISIBLE) {
+                symbolsContainer?.visibility = View.GONE
+                lettersContainer?.visibility = View.VISIBLE
+                return true
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onUpdateSelection(
@@ -229,13 +253,20 @@ class PersianKeyboardService : InputMethodService() {
         emojiRecyclerView = view.findViewById(R.id.emoji_recycler)
         emojiRecyclerView?.layoutManager = GridLayoutManager(this, 8)
         
-        emojiAdapter = EmojiAdapter(emojisSmileys) { emoji ->
-            currentInputConnection?.commitText(emoji, 1)
-            addToRecentEmojis(emoji)
-        }
+        emojiAdapter = EmojiAdapter(emojisSmileys, 
+            onEmojiClick = { emoji ->
+                currentInputConnection?.commitText(emoji, 1)
+                addToRecentEmojis(emoji)
+            },
+            onEmojiLongClick = { emoji ->
+                toggleFavoriteEmoji(emoji)
+            }
+        )
         emojiRecyclerView?.adapter = emojiAdapter
 
         view.findViewById<TextView>(R.id.tab_recent)?.setOnClickListener { showEmojiCategory("recent") }
+        // 🌟 تب جدید برای علاقه‌مندی‌ها
+        view.findViewById<TextView>(R.id.tab_favorites)?.setOnClickListener { showEmojiCategory("favorites") }
         view.findViewById<TextView>(R.id.tab_smileys)?.setOnClickListener { showEmojiCategory("smileys") }
         view.findViewById<TextView>(R.id.tab_nature)?.setOnClickListener { showEmojiCategory("nature") }
         view.findViewById<TextView>(R.id.tab_food)?.setOnClickListener { showEmojiCategory("food") }
@@ -322,10 +353,7 @@ class PersianKeyboardService : InputMethodService() {
             showEmojiCategory("recent") 
         }
 
-        view.findViewById<TextView>(R.id.btn_back_to_letters)?.setOnClickListener {
-            emojiContainer?.visibility = View.GONE
-            lettersContainer?.visibility = View.VISIBLE
-        }
+        // 🌟 دکمه بازگشت به کیبورد حذف شد، دیگه نیازی به کدش نیست
 
         view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener { showToast("تنظیمات کیبورد به زودی...") }
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { showToast("تایپ صوتی به زودی...") }
@@ -385,8 +413,10 @@ class PersianKeyboardService : InputMethodService() {
     }
 
     private fun showEmojiCategory(category: String) {
+        currentEmojiCategory = category
         val emojisToShow = when (category) {
             "recent" -> if (recentEmojis.isEmpty()) emojisSmileys else recentEmojis 
+            "favorites" -> favoriteEmojis // 🌟 لیست علاقه‌مندی‌ها
             "smileys" -> emojisSmileys
             "nature" -> emojisNature
             "food" -> emojisFood
@@ -396,11 +426,33 @@ class PersianKeyboardService : InputMethodService() {
             else -> emojisSmileys
         }
         
-        emojiAdapter = EmojiAdapter(emojisToShow) { emoji ->
-            currentInputConnection?.commitText(emoji, 1)
-            addToRecentEmojis(emoji)
-        }
+        emojiAdapter = EmojiAdapter(emojisToShow, 
+            onEmojiClick = { emoji ->
+                currentInputConnection?.commitText(emoji, 1)
+                addToRecentEmojis(emoji)
+            },
+            onEmojiLongClick = { emoji ->
+                toggleFavoriteEmoji(emoji)
+            }
+        )
         emojiRecyclerView?.adapter = emojiAdapter
+    }
+
+    // 🌟 تابع برای اضافه/حذف کردن ایموجی به علاقه‌مندی‌ها
+    private fun toggleFavoriteEmoji(emoji: String) {
+        if (favoriteEmojis.contains(emoji)) {
+            favoriteEmojis.remove(emoji)
+            showToast("از علاقه‌مندی‌ها حذف شد")
+        } else {
+            favoriteEmojis.add(0, emoji)
+            showToast("به علاقه‌مندی‌ها اضافه شد ⭐")
+        }
+        sharedPrefs.edit().putStringSet("favorite_emojis", favoriteEmojis.toSet()).apply()
+        
+        // اگر الان توی تب علاقه‌مندی‌ها هستیم، لیست رو آپدیت کن
+        if (currentEmojiCategory == "favorites") {
+            showEmojiCategory("favorites")
+        }
     }
 
     private fun addToRecentEmojis(emoji: String) {
