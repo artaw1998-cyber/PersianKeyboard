@@ -126,7 +126,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 🌟 پنل تنظیمات (جدید) 🌟 -->
+    <!-- 🌟 پنل تنظیمات (بدون دکمه بازگشت) 🌟 -->
     <LinearLayout
         android:id="@+id/settings_container"
         android:layout_width="match_parent"
@@ -146,7 +146,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
 
-        <!-- سوییچ لرزش -->
         <Switch
             android:id="@+id/switch_vibration"
             android:layout_width="match_parent"
@@ -156,7 +155,6 @@
             android:textSize="16sp"
             android:padding="8dp"/>
 
-        <!-- سوییچ صدا -->
         <Switch
             android:id="@+id/switch_sound"
             android:layout_width="match_parent"
@@ -166,16 +164,6 @@
             android:textSize="16sp"
             android:padding="8dp"/>
 
-        <TextView
-            android:id="@+id/btn_close_settings"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginTop="16dp"
-            android:text="بازگشت به کیبورد"
-            android:background="@drawable/key_bg_special"
-            android:textColor="#FFFFFF"
-            android:gravity="center"
-            android:textSize="16sp"/>
     </LinearLayout>
 
     <!-- 🌟 پنل ایموجی 🌟 -->
