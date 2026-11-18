@@ -126,7 +126,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 🌟 پنل تنظیمات (بدون دکمه بازگشت) 🌟 -->
+    <!-- 🌟 پنل تنظیمات (با انتخاب تم) 🌟 -->
     <LinearLayout
         android:id="@+id/settings_container"
         android:layout_width="match_parent"
@@ -164,6 +164,33 @@
             android:textSize="16sp"
             android:padding="8dp"/>
 
+        <!-- بخش انتخاب تم -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="رنگ‌بندی کیبورد:"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="center">
+
+            <!-- تم تیره (پیش‌فرض) -->
+            <View android:id="@+id/theme_dark" android:layout_width="40dp" android:layout_height="40dp" android:background="#263238" android:layout_margin="4dp"/>
+            <!-- تم روشن -->
+            <View android:id="@+id/theme_light" android:layout_width="40dp" android:layout_height="40dp" android:background="#ECEFF1" android:layout_margin="4dp"/>
+            <!-- تم آبی -->
+            <View android:id="@+id/theme_blue" android:layout_width="40dp" android:layout_height="40dp" android:background="#0D47A1" android:layout_margin="4dp"/>
+            <!-- تم بنفش -->
+            <View android:id="@+id/theme_purple" android:layout_width="40dp" android:layout_height="40dp" android:background="#4A148C" android:layout_margin="4dp"/>
+            <!-- تم سبز -->
+            <View android:id="@+id/theme_green" android:layout_width="40dp" android:layout_height="40dp" android:background="#1B5E20" android:layout_margin="4dp"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- 🌟 پنل ایموجی 🌟 -->
