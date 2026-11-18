@@ -7,9 +7,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.ColorDrawable
 import android.inputmethodservice.InputMethodService
+import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ReplacementSpan
@@ -21,6 +24,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
@@ -57,6 +61,8 @@ class PersianKeyboardService : InputMethodService() {
     private var symbolsContainer: LinearLayout? = null
     private var diacriticsContainer: LinearLayout? = null
     private var clipboardContainer: LinearLayout? = null
+    private var settingsContainer: LinearLayout? = null
+    
     private var clipboardRecyclerView: RecyclerView? = null
     
     private var emojiContainer: LinearLayout? = null
@@ -69,6 +75,10 @@ class PersianKeyboardService : InputMethodService() {
     private var editClipboardContainer: LinearLayout? = null
     private var editClipboardText: EditText? = null
     private var editingItem: com.example.persiankeyboard.clipboard.ClipboardEntity? = null
+
+    // 🌟 متغیرهای تنظیمات
+    private var isVibrationEnabled = true
+    private var isSoundEnabled = true
 
     private val baseDictionary = listOf(
         "من", "تو", "او", "ما", "شما", "آنها", "خودم", "خودت", "خودش", "چه", "چی", "کجا", "کی", "چرا", "چطور", "چگونه", "کدام", "آیا", "چند", "سلام", "درود", "خداحافظ", "صبح", "بخیر", "ظهر", "عصر", "شب", "روز", "خوش", "آمدی", "سلامت", "باشی", "حال", "احوال", "خوبی", "ممنون", "مرسی", "سپاس", "لطفا", "ببخشید", "معذرت", "خواهش", "بله", "خیر", "نه", "آره", "باشه", "چشم", "حتما", "شاید", "مطمئن", "واقعا", "البته", "هستم", "هستی", "هست", "هستیم", "هستید", "هستند", "نیستم", "نیستی", "نیست", "بودم", "بودی", "بود", "دارم", "داری", "دارد", "میروم", "میروی", "میرود", "رفتم", "رفتی", "رفت", "میکنم", "میکنی", "میکند", "کردم", "کردی", "کرد", "میخورم", "میخوری", "میخورد", "خوردم", "خوردی", "خورد", "میگویم", "میگویی", "میگوید", "گفتم", "گفتی", "گفت", "میخواهم", "میخواهی", "میخواهد", "خواستم", "خواستی", "خواست", "میدانم", "میدانی", "میداند", "دانستم", "دانستی", "دانست", "میبینم", "میبینی", "میبیند", "دیدم", "دیدی", "دید", "میشوم", "میشوی", "میشود", "شدم", "شدی", "شد", "برو", "بیا", "بخور", "بگو", "ببین", "بده", "بگیر", "بنویس", "بخوان", "و", "در", "به", "از", "که", "این", "را", "با", "است", "برای", "آن", "یک", "تا", "هم", "یا", "بر", "اما", "اگر", "چون", "پس", "ولی", "زیرا", "خیلی", "بسیار", "زیاد", "کم", "بزرگ", "کوچک", "خوب", "بد", "زیبا", "زشت", "جدید", "قدیمی", "سریع", "آهسته", "دقیق", "درست", "غلط", "مهم", "ساده", "پیچیده", "سخت", "آسان", "شاد", "غمگین", "خسته", "گرسنه", "تشنه", "گرم", "سرد", "نرم", "سفت", "سنگین", "سبک", "پهن", "باریک", "بلند", "کوتاه", "گران", "ارزان", "قوی", "ضعیف", "سالم", "بیمار", "ناراحت", "عصبانى", "آرام", "روشن", "تاریک", "تمیز", "کثیف", "پر", "خالی", "عزیز", "عزیزم", "جان", "دل", "دلم", "قلب", "قلبم", "عشق", "عاشق", "دوست", "دوستت", "دارم", "دوستش", "هیجان", "احساس", "مهربان", "مهربانی", "خوبی", "بدی", "بغل", "آغوش", "بوسه", "لبخند", "گریه", "خنده", "امید", "آرزو", "رویا", "واقعیت", "زندگی", "مرگ", "تولد", "جشن", "عروسی", "کار", "پول", "خرید", "فروش", "بازار", "شهر", "روستا", "کشور", "دنیا", "جهان", "ماشین", "اتوبوس", "قطار", "هواپیما", "تاکسی", "خیابان", "کوچه", "پارک", "ترافیک", "خانه", "مدرسه", "دانشگاه", "اداره", "بیمارستان", "فروشگاه", "رستوران", "هتل", "فرودگاه", "ایستگاه", "بانک", "پست", "پلیس", "کتابخانه", "موزه", "سینما", "ورزشگاه", "استخر", "مادر", "پدر", "برادر", "خواهر", "خانواده", "فرزند", "بچه", "دختر", "پسر", "زن", "مرد", "همسر", "عمو", "دایی", "خاله", "عمه", "پدربزرگ", "مادربزرگ", "رفیق", "همکار", "همکلاسی", "همسایه", "استاد", "معلم", "شاگرد", "دانشجو", "رئیس", "کارمند", "دکتر", "مهندس", "امروز", "دیروز", "فردا", "الان", "اکنون", "بعد", "قبل", "هفته", "ماه", "سال", "ساعت", "دقیقه", "ثانیه", "زود", "دیر", "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "کتاب", "دفتر", "قلم", "مداد", "کاغذ", "میز", "صندلی", "در", "پنجره", "دیوار", "اتاق", "تخت", "کمد", "فرش", "لامپ", "کلید", "قفل", "چاقو", "قاشق", "چنگال", "بشقاب", "لیوان", "فنجان", "کتری", "یخچال", "اجاق", "تلویزیون", "رادیو", "بلندگو", "هدفون", "دوربین", "عینک", "کیف", "کفش", "لباس", "پیراهن", "شلوار", "کاپشن", "کلاه", "دستکش", "جوراب", "حوله", "صابون", "شامپو", "کامپیوتر", "لپ‌تاپ", "گوشی", "موبایل", "تبلت", "اینترنت", "شبکه", "برنامه", "نرم‌افزار", "سخت‌افزار", "سایت", "وب", "ایمیل", "پیام", "پیامک", "تلگرام", "واتساپ", "اینستاگرام", "فیسبوک", "گوگل", "اندروید", "آیفون", "ویندوز", "هوش مصنوعی", "ربات", "داده", "اطلاعات", "دیتابیس", "سرور", "کاربر", "پسورد", "رمز", "امنیت", "پروژه", "کدنویسی", "برنامه‌نویسی", "طراحی", "گرافیک", "عکس", "فیلم", "ویدیو", "صدا", "موسیقی", "غذا", "آب", "چای", "قهوه", "شیر", "نان", "برنج", "گوشت", "مرغ", "ماهی", "تخم‌مرغ", "پنیر", "کره", "عسل", "سیب", "پرتقال", "موز", "انار", "هندوانه", "خیار", "گوجه", "سیب‌زمینی", "پیاز", "سیر", "فلفل", "نمک", "شکر", "زردچوبه", "دارچین", "زعفران", "صبحانه", "ناهار", "شام", "میان‌وعده", "دسر", "شیرینی", "بستنی", "شکلات", "کیک", "بیسکویت", "آجیل", "پسته", "بادام", "گردو", "فندق", "کشمش", "خرما", "پیتزا", "ساندویچ", "برگر", "پاستا", "ماکارونی", "سوپ", "سالاد", "کباب", "جوجه", "قیمه", "قورمه", "آش", "عدس", "لوبیا", "نخود", "زیتون", "خیارشور", "ترشی", "مربا", "املت", "کوکو", "کتلت", "آسمان", "زمین", "دریا", "کوه", "جنگل", "بیابان", "رودخانه", "دریاچه", "باران", "برف", "باد", "آفتاب", "ماه", "ستاره", "ابر", "رعد", "برق", "گل", "درخت", "برگ", "چمن", "خاک", "سنگ", "آتش", "هوا", "آب و هوا", "طوفان", "زلزله", "سیل", "خشکسالی", "سگ", "گربه", "اسب", "گاو", "گوسفند", "بز", "مرغ", "خروس", "جوجه", "اردک", "غاز", "کبوتر", "گنجشک", "عقاب", "شاهین", "شیر", "ببر", "پلنگ", "گرگ", "روباه", "خرس", "فیل", "زرافه", "میمون", "خرگوش", "موش", "مار", "ماهی", "کوسه", "نهنگ", "دلفین", "لاک‌پشت", "قورباغه", "پروانه", "زنبور", "مورچه", "عنکبوت", "hello", "world", "good", "morning", "night", "book", "house", "computer", "phone", "internet", "keyboard", "software", "hardware", "thank", "you", "please", "sorry", "yes", "no", "maybe", "today", "tomorrow", "yesterday", "love", "friend", "family", "mother", "father", "brother", "sister", "time", "money", "work", "school", "city", "country", "water", "food", "coffee", "tea", "apple", "orange", "happy", "sad", "great", "bad", "new", "old"
@@ -192,6 +202,10 @@ class PersianKeyboardService : InputMethodService() {
         
         recentEmojis.addAll(sharedPrefs.getStringSet("recent_emojis", emptySet()) ?: emptySet())
         favoriteEmojis.addAll(sharedPrefs.getStringSet("favorite_emojis", emptySet()) ?: emptySet())
+        
+        // 🌟 لود کردن تنظیمات
+        isVibrationEnabled = sharedPrefs.getBoolean("vibration_enabled", true)
+        isSoundEnabled = sharedPrefs.getBoolean("sound_enabled", true)
 
         val db = ClipboardDatabase.getDatabase(this)
         clipboardListener = ClipboardListener(this, db.clipboardDao())
@@ -225,6 +239,10 @@ class PersianKeyboardService : InputMethodService() {
                 symbolsContainer?.visibility = View.GONE
                 lettersContainer?.visibility = View.VISIBLE
                 return true
+            } else if (settingsContainer?.visibility == View.VISIBLE) {
+                settingsContainer?.visibility = View.GONE
+                lettersContainer?.visibility = View.VISIBLE
+                return true
             }
         }
         return super.onKeyDown(keyCode, event)
@@ -239,11 +257,29 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
+    // 🌟 توابع کمکی برای صدا و لرزش
+    private fun performKeyFeedback() {
+        if (isVibrationEnabled) {
+            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(30)
+            }
+        }
+        if (isSoundEnabled) {
+            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager.playSoundEffect(AudioManager.FX_KEY_CLICK)
+        }
+    }
+
     private fun setupKeyboardUI(view: View) {
         lettersContainer = view.findViewById(R.id.letters_container)
         symbolsContainer = view.findViewById(R.id.symbols_container)
         diacriticsContainer = view.findViewById(R.id.diacritics_container)
         clipboardContainer = view.findViewById(R.id.clipboard_container)
+        settingsContainer = view.findViewById(R.id.settings_container)
         
         clipboardRecyclerView = view.findViewById(R.id.clipboard_recycler)
         clipboardRecyclerView?.layoutManager = LinearLayoutManager(this)
@@ -254,6 +290,7 @@ class PersianKeyboardService : InputMethodService() {
         
         emojiAdapter = EmojiAdapter(emojisSmileys, 
             onEmojiClick = { emoji ->
+                performKeyFeedback()
                 currentInputConnection?.commitText(emoji, 1)
                 addToRecentEmojis(emoji)
             },
@@ -277,6 +314,23 @@ class PersianKeyboardService : InputMethodService() {
         val btnSaveEdit = view.findViewById<TextView>(R.id.btn_save_clipboard_edit)
         val btnCancelEdit = view.findViewById<TextView>(R.id.btn_cancel_clipboard_edit)
 
+        // 🌟 راه‌اندازی سوییچ‌های تنظیمات
+        val switchVibration = view.findViewById<Switch>(R.id.switch_vibration)
+        val switchSound = view.findViewById<Switch>(R.id.switch_sound)
+        
+        switchVibration.isChecked = isVibrationEnabled
+        switchSound.isChecked = isSoundEnabled
+
+        switchVibration.setOnCheckedChangeListener { _, isChecked ->
+            isVibrationEnabled = isChecked
+            sharedPrefs.edit().putBoolean("vibration_enabled", isChecked).apply()
+        }
+
+        switchSound.setOnCheckedChangeListener { _, isChecked ->
+            isSoundEnabled = isChecked
+            sharedPrefs.edit().putBoolean("sound_enabled", isChecked).apply()
+        }
+
         val langBtn = view.findViewById<TextView>(R.id.btn_lang)
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
         val shiftBtn = view.findViewById<TextView>(R.id.btn_shift)
@@ -292,6 +346,7 @@ class PersianKeyboardService : InputMethodService() {
         updateSuggestions(suggestionViews)
 
         langBtn.setOnClickListener { 
+            performKeyFeedback()
             isPersian = !isPersian 
             isCapsLock = false
             isShifted = false
@@ -300,6 +355,7 @@ class PersianKeyboardService : InputMethodService() {
         }
 
         shiftBtn.setOnClickListener {
+            performKeyFeedback()
             if (!isPersian) {
                 val currentTime = System.currentTimeMillis()
                 if (currentTime - lastShiftClickTime < 400) {
@@ -323,6 +379,7 @@ class PersianKeyboardService : InputMethodService() {
 
         listOf(R.id.btn_space, R.id.btn_space_sym).forEach { 
             view.findViewById<TextView>(it)?.setOnClickListener { 
+                performKeyFeedback()
                 currentInputConnection?.commitText(" ", 1) 
                 if (!isPersian && !isCapsLock) {
                     isShifted = true
@@ -332,6 +389,7 @@ class PersianKeyboardService : InputMethodService() {
         }
 
         view.findViewById<TextView>(R.id.btn_enter)?.setOnClickListener { 
+            performKeyFeedback()
             currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER))
             currentInputConnection?.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER)) 
             if (!isPersian && !isCapsLock) {
@@ -342,16 +400,32 @@ class PersianKeyboardService : InputMethodService() {
 
         setupNavigation(view, pageBtn, suggestionViews)
 
+        // 🌟 دکمه باز کردن تنظیمات
+        view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener {
+            lettersContainer?.visibility = View.GONE
+            symbolsContainer?.visibility = View.GONE
+            diacriticsContainer?.visibility = View.GONE
+            clipboardContainer?.visibility = View.GONE
+            emojiContainer?.visibility = View.GONE
+            settingsContainer?.visibility = View.VISIBLE
+        }
+
+        // 🌟 دکمه بستن تنظیمات
+        view.findViewById<TextView>(R.id.btn_close_settings)?.setOnClickListener {
+            settingsContainer?.visibility = View.GONE
+            lettersContainer?.visibility = View.VISIBLE
+        }
+
         view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener {
             lettersContainer?.visibility = View.GONE
             symbolsContainer?.visibility = View.GONE
             diacriticsContainer?.visibility = View.GONE
             clipboardContainer?.visibility = View.GONE
+            settingsContainer?.visibility = View.GONE
             emojiContainer?.visibility = View.VISIBLE
             showEmojiCategory("recent") 
         }
 
-        view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener { showToast("تنظیمات کیبورد به زودی...") }
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { showToast("تایپ صوتی به زودی...") }
         
         view.findViewById<TextView>(R.id.btn_clipboard_bar)?.setOnClickListener {
@@ -359,6 +433,7 @@ class PersianKeyboardService : InputMethodService() {
             symbolsContainer?.visibility = View.GONE
             diacriticsContainer?.visibility = View.GONE
             emojiContainer?.visibility = View.GONE
+            settingsContainer?.visibility = View.GONE
             clipboardContainer?.visibility = View.VISIBLE
             editClipboardContainer?.visibility = View.GONE
             clipboardRecyclerView?.visibility = View.VISIBLE
@@ -424,6 +499,7 @@ class PersianKeyboardService : InputMethodService() {
         
         emojiAdapter = EmojiAdapter(emojisToShow, 
             onEmojiClick = { emoji ->
+                performKeyFeedback()
                 currentInputConnection?.commitText(emoji, 1)
                 addToRecentEmojis(emoji)
             },
@@ -527,6 +603,7 @@ class PersianKeyboardService : InputMethodService() {
             view.findViewById<TextView>(id)?.apply {
                 this.text = text 
                 setOnClickListener { 
+                    performKeyFeedback() // 🌟 اضافه شدن صدا و لرزش
                     currentInputConnection?.commitText(text, 1) 
                     if (!isPersian && isShifted && !isCapsLock) {
                         isShifted = false
@@ -549,7 +626,10 @@ class PersianKeyboardService : InputMethodService() {
         for ((id, text) in nums) { 
             view.findViewById<TextView>(id)?.apply {
                 this.text = text
-                setOnClickListener { currentInputConnection?.commitText(text, 1) }
+                setOnClickListener { 
+                    performKeyFeedback() // 🌟 اضافه شدن صدا و لرزش
+                    currentInputConnection?.commitText(text, 1) 
+                }
             }
         }
 
@@ -574,6 +654,7 @@ class PersianKeyboardService : InputMethodService() {
 
             var lastClick = 0L
             tv.setOnClickListener {
+                performKeyFeedback()
                 val time = System.currentTimeMillis()
                 if (time - lastClick < 400) {
                     currentInputConnection?.deleteSurroundingText(1, 0)
@@ -646,7 +727,10 @@ class PersianKeyboardService : InputMethodService() {
                         spannable.setSpan(android.text.style.RelativeSizeSpan(0.6f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
                     text = spannable
-                    setOnClickListener { currentInputConnection?.commitText(item.symbol, 1) }
+                    setOnClickListener { 
+                        performKeyFeedback()
+                        currentInputConnection?.commitText(item.symbol, 1) 
+                    }
                 } else {
                     text = ""; setOnClickListener(null)
                 }
@@ -740,6 +824,7 @@ class PersianKeyboardService : InputMethodService() {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     v.isPressed = true
+                    performKeyFeedback()
                     deleteCharacter()
                     
                     runnable = object : Runnable {
@@ -761,16 +846,13 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // 🌟 تابع اصلاح شده برای پاک کردن صحیح ایموجی‌ها 🌟
     private fun deleteCharacter() {
         val ic = currentInputConnection ?: return
         val sel = ic.getSelectedText(0)
         if (sel.isNullOrEmpty()) {
-            // اگر اندروید ۷ به بالا بود، از متد مخصوص پاک کردن کدپوینت (ایموجی) استفاده کن
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 ic.deleteSurroundingTextInCodePoints(1, 0)
             } else {
-                // برای اندرویدهای قدیمی‌تر، چک کن اگر دو کاراکتر آخر یک ایموجی بودن، جفتش رو پاک کن
                 val text = ic.getTextBeforeCursor(2, 0)?.toString() ?: ""
                 if (text.length == 2 && Character.isSurrogatePair(text[0], text[1])) {
                     ic.deleteSurroundingText(2, 0)
@@ -785,43 +867,53 @@ class PersianKeyboardService : InputMethodService() {
 
     private fun setupLongPressPopups(view: View) {
         view.findViewById<TextView>(R.id.btn_alef)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("آ", "آ"), Pair("أ", "أ"), Pair("إ", "إ"), Pair("ٱ", "ٱ"), Pair("ا", "ا")))
             true
         }
         view.findViewById<TextView>(R.id.btn_te)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("ت", "ت"), Pair("-5-", kashida.repeat(5)), Pair("-10-", kashida.repeat(10)), Pair("-20-", kashida.repeat(20))))
             true
         }
         view.findViewById<TextView>(R.id.btn_ye)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("ي", "ي"), Pair("ى", "ى"), Pair("ئ", "ئ"), Pair("ی", "ی")))
             true
         }
         view.findViewById<TextView>(R.id.btn_kaf)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("ك", "ك"), Pair("ک", "ک")))
             true
         }
         view.findViewById<TextView>(R.id.btn_he)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("ة", "ة"), Pair("ه", "ه"), Pair("ۀ", "ۀ")))
             true
         }
         
         view.findViewById<TextView>(R.id.btn_sad)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("ض", "ض"), Pair("ص", "ص")))
             true
         }
         view.findViewById<TextView>(R.id.btn_e)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("غ", "غ"), Pair("ع", "ع")))
             true
         }
         view.findViewById<TextView>(R.id.btn_ta)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("ظ", "ظ"), Pair("ط", "ط")))
             true
         }
         view.findViewById<TextView>(R.id.btn_ze)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("ژ", "ژ"), Pair("ز", "ز")))
             true
         }
         view.findViewById<TextView>(R.id.btn_dal)?.setOnLongClickListener {
+            performKeyFeedback()
             showPopup(it, listOf(Pair("ذ", "ذ"), Pair("د", "د")))
             true
         }
@@ -894,9 +986,11 @@ class PersianKeyboardService : InputMethodService() {
         }
 
         view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { 
+            performKeyFeedback()
             currentInputConnection?.commitText(".", 1) 
         }
         view.findViewById<TextView>(R.id.btn_dot)?.setOnLongClickListener {
+            performKeyFeedback()
             lettersContainer?.visibility = View.GONE
             diacriticsContainer?.visibility = View.VISIBLE
             true
@@ -913,6 +1007,7 @@ class PersianKeyboardService : InputMethodService() {
         )
         for ((id, symbol) in diacriticsMap) {
             view.findViewById<TextView>(id)?.setOnClickListener {
+                performKeyFeedback()
                 currentInputConnection?.commitText(symbol, 1)
                 diacriticsContainer?.visibility = View.GONE
                 lettersContainer?.visibility = View.VISIBLE
