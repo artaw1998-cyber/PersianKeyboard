@@ -44,7 +44,6 @@ data class SymItem(val symbol: String, val meaning: String = "")
 
 class PersianKeyboardService : InputMethodService() {
 
-    // 🌟 متغیری برای دریافت متن از صفحه ضبط صدا
     companion object {
         var voiceResultListener: ((String) -> Unit)? = null
     }
@@ -436,14 +435,22 @@ class PersianKeyboardService : InputMethodService() {
             showEmojiCategory("recent") 
         }
 
-        // 🌟 دکمه میکروفون برای تایپ صوتی (آنلاین/آفلاین) 🌟
+        // 🌟 دکمه میکروفون برای تایپ صوتی (اصلاح شده با تاخیر) 🌟
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { 
             performKeyFeedback()
-            // تنظیم لیسنر برای دریافت متن از صفحه ضبط صدا
+            
             voiceResultListener = { text ->
-                currentInputConnection?.commitText(text, 1)
+                // اطمینان از اجرای دستور در ترد اصلی (UI Thread) و با کمی تاخیر
+                Handler(Looper.getMainLooper()).post {
+                    val ic = currentInputConnection
+                    if (ic != null) {
+                        ic.commitText(text, 1)
+                    } else {
+                        showToast("خطا در تایپ. لطفا دوباره تلاش کنید.")
+                    }
+                }
             }
-            // باز کردن صفحه ضبط صدا
+            
             val intent = Intent(this, VoiceTypingActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
