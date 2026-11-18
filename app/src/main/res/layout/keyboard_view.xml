@@ -155,10 +155,25 @@
                 android:textStyle="bold"/>
         </LinearLayout>
 
+        <!-- تب‌های دسته‌بندی با آیکون‌های جدید -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:background="#37474F">
+            <TextView android:id="@+id/tab_recent" style="@style/KeyStyleSpecial" android:layout_weight="1" android:text="🕒" android:textSize="18sp"/>
+            <TextView android:id="@+id/tab_smileys" style="@style/KeyStyleSpecial" android:layout_weight="1" android:text="😀" android:textSize="18sp"/>
+            <TextView android:id="@+id/tab_nature" style="@style/KeyStyleSpecial" android:layout_weight="1" android:text="🐾" android:textSize="18sp"/>
+            <TextView android:id="@+id/tab_food" style="@style/KeyStyleSpecial" android:layout_weight="1" android:text="🍔" android:textSize="18sp"/>
+            <TextView android:id="@+id/tab_travel" style="@style/KeyStyleSpecial" android:layout_weight="1" android:text="✈️" android:textSize="18sp"/>
+            <TextView android:id="@+id/tab_objects" style="@style/KeyStyleSpecial" android:layout_weight="1" android:text="💡" android:textSize="18sp"/>
+            <TextView android:id="@+id/tab_symbols" style="@style/KeyStyleSpecial" android:layout_weight="1" android:text="❤️" android:textSize="18sp"/>
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/emoji_recycler"
             android:layout_width="match_parent"
-            android:layout_height="210dp"
+            android:layout_height="180dp"
             android:padding="4dp" />
     </LinearLayout>
 
