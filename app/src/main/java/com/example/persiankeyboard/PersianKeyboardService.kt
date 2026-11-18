@@ -68,10 +68,9 @@ class PersianKeyboardService : InputMethodService() {
     private var diacriticsContainer: LinearLayout? = null
     private var clipboardContainer: LinearLayout? = null
     private var settingsContainer: LinearLayout? = null
+    private var emojiContainer: LinearLayout? = null
     
     private var clipboardRecyclerView: RecyclerView? = null
-    
-    private var emojiContainer: LinearLayout? = null
     private var emojiRecyclerView: RecyclerView? = null
     private var emojiAdapter: EmojiAdapter? = null
     private var recentEmojis = mutableListOf<String>()
@@ -84,6 +83,7 @@ class PersianKeyboardService : InputMethodService() {
 
     private var isVibrationEnabled = true
     private var isSoundEnabled = true
+    private var currentTheme = "dark" // 🌟 متغیر برای نگه داشتن تم فعلی
     
     private var toneGenerator: ToneGenerator? = null
 
@@ -212,6 +212,9 @@ class PersianKeyboardService : InputMethodService() {
         
         isVibrationEnabled = sharedPrefs.getBoolean("vibration_enabled", true)
         isSoundEnabled = sharedPrefs.getBoolean("sound_enabled", true)
+        
+        // 🌟 لود کردن تم ذخیره شده (پیش‌فرض تیره)
+        currentTheme = sharedPrefs.getString("keyboard_theme", "dark") ?: "dark"
 
         try {
             toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 40)
@@ -347,6 +350,16 @@ class PersianKeyboardService : InputMethodService() {
             sharedPrefs.edit().putBoolean("sound_enabled", isChecked).apply()
         }
 
+        // 🌟 لیسنرهای کلیک برای تغییر تم
+        view.findViewById<View>(R.id.theme_dark)?.setOnClickListener { changeTheme("dark") }
+        view.findViewById<View>(R.id.theme_light)?.setOnClickListener { changeTheme("light") }
+        view.findViewById<View>(R.id.theme_blue)?.setOnClickListener { changeTheme("blue") }
+        view.findViewById<View>(R.id.theme_purple)?.setOnClickListener { changeTheme("purple") }
+        view.findViewById<View>(R.id.theme_green)?.setOnClickListener { changeTheme("green") }
+
+        // 🌟 اعمال تم فعلی موقع باز شدن کیبورد
+        applyTheme(currentTheme)
+
         val langBtn = view.findViewById<TextView>(R.id.btn_lang)
         val pageBtn = view.findViewById<TextView>(R.id.btn_page_change)
         val shiftBtn = view.findViewById<TextView>(R.id.btn_shift)
@@ -435,12 +448,10 @@ class PersianKeyboardService : InputMethodService() {
             showEmojiCategory("recent") 
         }
 
-        // 🌟 دکمه میکروفون برای تایپ صوتی (اصلاح شده با تاخیر) 🌟
         view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { 
             performKeyFeedback()
             
             voiceResultListener = { text ->
-                // اطمینان از اجرای دستور در ترد اصلی (UI Thread) و با کمی تاخیر
                 Handler(Looper.getMainLooper()).post {
                     val ic = currentInputConnection
                     if (ic != null) {
@@ -508,6 +519,85 @@ class PersianKeyboardService : InputMethodService() {
             editingItem = null
             editClipboardContainer?.visibility = View.GONE
             clipboardRecyclerView?.visibility = View.VISIBLE
+        }
+    }
+
+    // 🌟 تابع تغییر تم
+    private fun changeTheme(theme: String) {
+        currentTheme = theme
+        sharedPrefs.edit().putString("keyboard_theme", theme).apply()
+        applyTheme(theme)
+    }
+
+    // 🌟 تابع اعمال رنگ‌ها روی کیبورد
+    private fun applyTheme(theme: String) {
+        val bgColor: Int
+        val keyColor: Int
+        val textColor: Int
+        val suggestionBgColor: Int
+
+        when (theme) {
+            "light" -> {
+                bgColor = Color.parseColor("#CFD8DC")
+                keyColor = Color.parseColor("#FFFFFF")
+                textColor = Color.parseColor("#000000")
+                suggestionBgColor = Color.parseColor("#B0BEC5")
+            }
+            "blue" -> {
+                bgColor = Color.parseColor("#0D47A1")
+                keyColor = Color.parseColor("#1565C0")
+                textColor = Color.parseColor("#FFFFFF")
+                suggestionBgColor = Color.parseColor("#1565C0")
+            }
+            "purple" -> {
+                bgColor = Color.parseColor("#4A148C")
+                keyColor = Color.parseColor("#6A1B9A")
+                textColor = Color.parseColor("#FFFFFF")
+                suggestionBgColor = Color.parseColor("#6A1B9A")
+            }
+            "green" -> {
+                bgColor = Color.parseColor("#1B5E20")
+                keyColor = Color.parseColor("#2E7D32")
+                textColor = Color.parseColor("#FFFFFF")
+                suggestionBgColor = Color.parseColor("#2E7D32")
+            }
+            else -> { // dark
+                bgColor = Color.parseColor("#263238")
+                keyColor = Color.parseColor("#37474F")
+                textColor = Color.parseColor("#FFFFFF")
+                suggestionBgColor = Color.parseColor("#1E272E")
+            }
+        }
+
+        // تغییر پس‌زمینه کانتینرها
+        lettersContainer?.setBackgroundColor(bgColor)
+        symbolsContainer?.setBackgroundColor(bgColor)
+        diacriticsContainer?.setBackgroundColor(bgColor)
+        clipboardContainer?.setBackgroundColor(bgColor)
+        emojiContainer?.setBackgroundColor(bgColor)
+        settingsContainer?.setBackgroundColor(bgColor)
+
+        // تغییر رنگ دکمه‌ها
+        updateKeysColor(lettersContainer, keyColor, textColor)
+        updateKeysColor(symbolsContainer, keyColor, textColor)
+        
+        // تغییر رنگ متن‌های پیشنهاد
+        suggestionViews.forEach { it.setTextColor(textColor) }
+    }
+
+    // 🌟 تابع بازگشتی برای رنگ کردن کلیدها
+    private fun updateKeysColor(parent: ViewGroup?, keyColor: Int, textColor: Int) {
+        if (parent == null) return
+        for (i in 0 until parent.childCount) {
+            val child = parent.getChildAt(i)
+            if (child is ViewGroup) {
+                updateKeysColor(child, keyColor, textColor)
+            } else if (child is TextView && child.isClickable) {
+                // تغییر رنگ پس‌زمینه دکمه‌ها
+                child.backgroundTintList = ColorStateList.valueOf(keyColor)
+                // تغییر رنگ متن
+                child.setTextColor(textColor)
+            }
         }
     }
 
@@ -801,7 +891,8 @@ class PersianKeyboardService : InputMethodService() {
                 if (word == lastWord && !learnedWords.contains(word)) {
                     textView.setTextColor(Color.parseColor("#FFD54F"))
                 } else {
-                    textView.setTextColor(Color.parseColor("#ECEFF1"))
+                    // 🌟 رنگ متن پیشنهاد با توجه به تم تنظیم میشه
+                    textView.setTextColor(Color.parseColor("#ECEFF1")) 
                 }
                 
                 textView.setOnClickListener {
