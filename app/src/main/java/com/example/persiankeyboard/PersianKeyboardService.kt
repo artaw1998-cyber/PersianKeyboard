@@ -1,6 +1,7 @@
 package com.example.persiankeyboard
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
@@ -43,6 +44,11 @@ data class SymItem(val symbol: String, val meaning: String = "")
 
 class PersianKeyboardService : InputMethodService() {
 
+    // 🌟 متغیری برای دریافت متن از صفحه ضبط صدا
+    companion object {
+        var voiceResultListener: ((String) -> Unit)? = null
+    }
+
     private var isPersian = true
     private var isCapsLock = false
     private var isShifted = false
@@ -80,7 +86,6 @@ class PersianKeyboardService : InputMethodService() {
     private var isVibrationEnabled = true
     private var isSoundEnabled = true
     
-    // 🌟 ابزار تولید صدای مستقل
     private var toneGenerator: ToneGenerator? = null
 
     private val baseDictionary = listOf(
@@ -209,9 +214,8 @@ class PersianKeyboardService : InputMethodService() {
         isVibrationEnabled = sharedPrefs.getBoolean("vibration_enabled", true)
         isSoundEnabled = sharedPrefs.getBoolean("sound_enabled", true)
 
-        // 🌟 راه‌اندازی ToneGenerator برای صدای تایپ
         try {
-            toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 40) // 40% volume
+            toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 40)
         } catch (e: Exception) {
             toneGenerator = null
         }
@@ -225,7 +229,6 @@ class PersianKeyboardService : InputMethodService() {
         if (::clipboardListener.isInitialized) {
             clipboardListener.stopListening()
         }
-        // 🌟 آزادسازی حافظه صدا
         toneGenerator?.release()
         toneGenerator = null
         super.onDestroy()
@@ -269,7 +272,6 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // 🌟 تابع امن شده برای جلوگیری از کرش
     private fun performKeyFeedback() {
         try {
             if (isVibrationEnabled) {
@@ -284,11 +286,9 @@ class PersianKeyboardService : InputMethodService() {
                 }
             }
             if (isSoundEnabled) {
-                // 🌟 پخش صدا با ToneGenerator
                 toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 30)
             }
         } catch (e: Exception) {
-            // اگر خطایی داد، کرش نکنه
         }
     }
 
@@ -436,7 +436,18 @@ class PersianKeyboardService : InputMethodService() {
             showEmojiCategory("recent") 
         }
 
-        view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { showToast("تایپ صوتی به زودی...") }
+        // 🌟 دکمه میکروفون برای تایپ صوتی (آنلاین/آفلاین) 🌟
+        view.findViewById<TextView>(R.id.btn_mic)?.setOnClickListener { 
+            performKeyFeedback()
+            // تنظیم لیسنر برای دریافت متن از صفحه ضبط صدا
+            voiceResultListener = { text ->
+                currentInputConnection?.commitText(text, 1)
+            }
+            // باز کردن صفحه ضبط صدا
+            val intent = Intent(this, VoiceTypingActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
         
         view.findViewById<TextView>(R.id.btn_clipboard_bar)?.setOnClickListener {
             lettersContainer?.visibility = View.GONE
