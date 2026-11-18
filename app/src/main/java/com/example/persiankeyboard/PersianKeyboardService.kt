@@ -76,7 +76,6 @@ class PersianKeyboardService : InputMethodService() {
     private var editClipboardText: EditText? = null
     private var editingItem: com.example.persiankeyboard.clipboard.ClipboardEntity? = null
 
-    // 🌟 متغیرهای تنظیمات
     private var isVibrationEnabled = true
     private var isSoundEnabled = true
 
@@ -203,7 +202,6 @@ class PersianKeyboardService : InputMethodService() {
         recentEmojis.addAll(sharedPrefs.getStringSet("recent_emojis", emptySet()) ?: emptySet())
         favoriteEmojis.addAll(sharedPrefs.getStringSet("favorite_emojis", emptySet()) ?: emptySet())
         
-        // 🌟 لود کردن تنظیمات
         isVibrationEnabled = sharedPrefs.getBoolean("vibration_enabled", true)
         isSoundEnabled = sharedPrefs.getBoolean("sound_enabled", true)
 
@@ -257,20 +255,26 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // 🌟 توابع کمکی برای صدا و لرزش
+    // 🌟 تابع امن شده برای جلوگیری از کرش
     private fun performKeyFeedback() {
-        if (isVibrationEnabled) {
-            val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
-            } else {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(30)
+        try {
+            if (isVibrationEnabled) {
+                val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                if (vibrator != null && vibrator.hasVibrator()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        vibrator.vibrate(30)
+                    }
+                }
             }
-        }
-        if (isSoundEnabled) {
-            val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            audioManager.playSoundEffect(AudioManager.FX_KEY_CLICK)
+            if (isSoundEnabled) {
+                val audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+                audioManager?.playSoundEffect(AudioManager.FX_KEY_CLICK)
+            }
+        } catch (e: Exception) {
+            // اگر خطایی داد (مثلا مجوز نبود)، کرش نکنه و بی صدا رد بشه
         }
     }
 
@@ -314,7 +318,6 @@ class PersianKeyboardService : InputMethodService() {
         val btnSaveEdit = view.findViewById<TextView>(R.id.btn_save_clipboard_edit)
         val btnCancelEdit = view.findViewById<TextView>(R.id.btn_cancel_clipboard_edit)
 
-        // 🌟 راه‌اندازی سوییچ‌های تنظیمات
         val switchVibration = view.findViewById<Switch>(R.id.switch_vibration)
         val switchSound = view.findViewById<Switch>(R.id.switch_sound)
         
@@ -400,7 +403,6 @@ class PersianKeyboardService : InputMethodService() {
 
         setupNavigation(view, pageBtn, suggestionViews)
 
-        // 🌟 دکمه باز کردن تنظیمات
         view.findViewById<TextView>(R.id.btn_settings_bar)?.setOnClickListener {
             lettersContainer?.visibility = View.GONE
             symbolsContainer?.visibility = View.GONE
@@ -410,11 +412,7 @@ class PersianKeyboardService : InputMethodService() {
             settingsContainer?.visibility = View.VISIBLE
         }
 
-        // 🌟 دکمه بستن تنظیمات
-        view.findViewById<TextView>(R.id.btn_close_settings)?.setOnClickListener {
-            settingsContainer?.visibility = View.GONE
-            lettersContainer?.visibility = View.VISIBLE
-        }
+        // 🌟 دکمه بستن تنظیمات حذف شد، چون از Back گوشی استفاده میشه
 
         view.findViewById<TextView>(R.id.btn_emoji_bar)?.setOnClickListener {
             lettersContainer?.visibility = View.GONE
@@ -603,7 +601,7 @@ class PersianKeyboardService : InputMethodService() {
             view.findViewById<TextView>(id)?.apply {
                 this.text = text 
                 setOnClickListener { 
-                    performKeyFeedback() // 🌟 اضافه شدن صدا و لرزش
+                    performKeyFeedback() 
                     currentInputConnection?.commitText(text, 1) 
                     if (!isPersian && isShifted && !isCapsLock) {
                         isShifted = false
@@ -627,7 +625,7 @@ class PersianKeyboardService : InputMethodService() {
             view.findViewById<TextView>(id)?.apply {
                 this.text = text
                 setOnClickListener { 
-                    performKeyFeedback() // 🌟 اضافه شدن صدا و لرزش
+                    performKeyFeedback() 
                     currentInputConnection?.commitText(text, 1) 
                 }
             }
