@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -48,7 +50,6 @@ class VoiceTypingActivity : Activity() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, "fa-IR") 
-            // 🌟 خط آفلاین رو برداشتیم تا سیستم خودش تصمیم بگیره
         }
 
         speechRecognizer?.setRecognitionListener(object : RecognitionListener {
@@ -78,9 +79,16 @@ class VoiceTypingActivity : Activity() {
             override fun onResults(results: Bundle?) {
                 val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (!matches.isNullOrEmpty()) {
-                    PersianKeyboardService.voiceResultListener?.invoke(matches[0])
+                    val recognizedText = matches[0]
+                    finish() // بستن صفحه ضبط صدا
+                    
+                    // 🌟 صبر می‌کنیم تا صفحه بسته بشه و فوکوس به کیبورد برگرده، بعد متن رو می‌فرستیم
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        PersianKeyboardService.voiceResultListener?.invoke(recognizedText)
+                    }, 500) // نیم ثانیه تاخیر
+                } else {
+                    finish()
                 }
-                finish()
             }
 
             override fun onPartialResults(partialResults: Bundle?) {}
