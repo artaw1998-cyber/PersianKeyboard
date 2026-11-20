@@ -85,7 +85,7 @@ class PersianKeyboardService : InputMethodService() {
     private var isVibrationEnabled = true
     private var isSoundEnabled = true
     private var currentTheme = "dark"
-    private var currentKeyTextSize = 18f // سایز پیش‌فرض حروف کلیدها
+    private var currentKeyTextSize = 18f
     
     private var toneGenerator: ToneGenerator? = null
 
@@ -392,7 +392,6 @@ class PersianKeyboardService : InputMethodService() {
         switchVibration.isChecked = isVibrationEnabled
         switchSound.isChecked = isSoundEnabled
 
-        // تنظیم مقدار اولیه SeekBar بر اساس سایز ذخیره شده (محدوده بین ۱۲ تا ۲۶)
         val initialProgress = (currentKeyTextSize - 12f).toInt().coerceIn(0, 14)
         seekBarKeySize.progress = initialProgress
         previewKeySizeText.textSize = currentKeyTextSize
@@ -409,12 +408,11 @@ class PersianKeyboardService : InputMethodService() {
 
         seekBarKeySize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val newSize = 12f + progress // سایز از ۱۲ تا ۲۶
+                val newSize = 12f + progress
                 currentKeyTextSize = newSize
                 previewKeySizeText.textSize = newSize
                 sharedPrefs.edit().putFloat("key_text_size", newSize).apply()
                 
-                // اعمال آنی سایز روی کلیدهای حروف و نمادها
                 applyKeyTextSize(lettersContainer, newSize)
                 applyKeyTextSize(symbolsContainer, newSize)
             }
@@ -422,11 +420,16 @@ class PersianKeyboardService : InputMethodService() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
+        // مدیریت دکمه‌های تم‌های جدید و قدیم
         view.findViewById<View>(R.id.theme_dark)?.setOnClickListener { changeTheme("dark") }
         view.findViewById<View>(R.id.theme_light)?.setOnClickListener { changeTheme("light") }
         view.findViewById<View>(R.id.theme_blue)?.setOnClickListener { changeTheme("blue") }
         view.findViewById<View>(R.id.theme_purple)?.setOnClickListener { changeTheme("purple") }
         view.findViewById<View>(R.id.theme_green)?.setOnClickListener { changeTheme("green") }
+        view.findViewById<View>(R.id.theme_cyberpunk)?.setOnClickListener { changeTheme("cyberpunk") }
+        view.findViewById<View>(R.id.theme_wood)?.setOnClickListener { changeTheme("wood") }
+        view.findViewById<View>(R.id.theme_cosmic)?.setOnClickListener { changeTheme("cosmic") }
+        view.findViewById<View>(R.id.theme_pastel)?.setOnClickListener { changeTheme("pastel") }
 
         applyTheme(currentTheme)
 
@@ -629,6 +632,26 @@ class PersianKeyboardService : InputMethodService() {
                 keyColor = Color.parseColor("#2E7D32")
                 textColor = Color.parseColor("#FFFFFF")
             }
+            "cyberpunk" -> {
+                bgColor = Color.parseColor("#121212")
+                keyColor = Color.parseColor("#1E1E1E")
+                textColor = Color.parseColor("#00FFFF")
+            }
+            "wood" -> {
+                bgColor = Color.parseColor("#3E2723")
+                keyColor = Color.parseColor("#4E342E")
+                textColor = Color.parseColor("#D7CCC8")
+            }
+            "cosmic" -> {
+                bgColor = Color.parseColor("#281C3D")
+                keyColor = Color.parseColor("#3B2A59")
+                textColor = Color.parseColor("#FFFFFF")
+            }
+            "pastel" -> {
+                bgColor = Color.parseColor("#F3F4F6")
+                keyColor = Color.parseColor("#FFFFFF")
+                textColor = Color.parseColor("#374151")
+            }
             else -> { // dark
                 bgColor = Color.parseColor("#263238")
                 keyColor = Color.parseColor("#37474F")
@@ -669,7 +692,6 @@ class PersianKeyboardService : InputMethodService() {
             if (child is ViewGroup) {
                 applyKeyTextSize(child, textSize)
             } else if (child is TextView && child.isClickable) {
-                // فقط سایز کلیدهای حروف/اعداد رو تغییر میدیم تا دکمه‌های خاص بهم نریزن
                 if (child.text.length <= 2) {
                     child.textSize = textSize
                 }
@@ -796,7 +818,7 @@ class PersianKeyboardService : InputMethodService() {
         for ((id, text) in buttons) { 
             view.findViewById<TextView>(id)?.apply {
                 this.text = text 
-                this.textSize = currentKeyTextSize // اعمال سایز ذخیره شده کاربر
+                this.textSize = currentKeyTextSize
                 setOnClickListener { 
                     performKeyFeedback() 
                     currentInputConnection?.commitText(text, 1) 
