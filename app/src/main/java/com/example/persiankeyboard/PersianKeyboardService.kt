@@ -26,6 +26,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.PopupWindow
+import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
@@ -84,6 +85,7 @@ class PersianKeyboardService : InputMethodService() {
     private var isVibrationEnabled = true
     private var isSoundEnabled = true
     private var currentTheme = "dark"
+    private var currentKeyTextSize = 18f // سایز پیش‌فرض حروف کلیدها
     
     private var toneGenerator: ToneGenerator? = null
 
@@ -262,6 +264,7 @@ class PersianKeyboardService : InputMethodService() {
         isSoundEnabled = sharedPrefs.getBoolean("sound_enabled", true)
         
         currentTheme = sharedPrefs.getString("keyboard_theme", "dark") ?: "dark"
+        currentKeyTextSize = sharedPrefs.getFloat("key_text_size", 18f)
 
         try {
             toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 40)
@@ -383,9 +386,16 @@ class PersianKeyboardService : InputMethodService() {
 
         val switchVibration = view.findViewById<Switch>(R.id.switch_vibration)
         val switchSound = view.findViewById<Switch>(R.id.switch_sound)
+        val seekBarKeySize = view.findViewById<SeekBar>(R.id.seekbar_key_size)
+        val previewKeySizeText = view.findViewById<TextView>(R.id.preview_key_size_text)
         
         switchVibration.isChecked = isVibrationEnabled
         switchSound.isChecked = isSoundEnabled
+
+        // تنظیم مقدار اولیه SeekBar بر اساس سایز ذخیره شده (محدوده بین ۱۲ تا ۲۶)
+        val initialProgress = (currentKeyTextSize - 12f).toInt().coerceIn(0, 14)
+        seekBarKeySize.progress = initialProgress
+        previewKeySizeText.textSize = currentKeyTextSize
 
         switchVibration.setOnCheckedChangeListener { _, isChecked ->
             isVibrationEnabled = isChecked
@@ -396,6 +406,21 @@ class PersianKeyboardService : InputMethodService() {
             isSoundEnabled = isChecked
             sharedPrefs.edit().putBoolean("sound_enabled", isChecked).apply()
         }
+
+        seekBarKeySize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val newSize = 12f + progress // سایز از ۱۲ تا ۲۶
+                currentKeyTextSize = newSize
+                previewKeySizeText.textSize = newSize
+                sharedPrefs.edit().putFloat("key_text_size", newSize).apply()
+                
+                // اعمال آنی سایز روی کلیدهای حروف و نمادها
+                applyKeyTextSize(lettersContainer, newSize)
+                applyKeyTextSize(symbolsContainer, newSize)
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
 
         view.findViewById<View>(R.id.theme_dark)?.setOnClickListener { changeTheme("dark") }
         view.findViewById<View>(R.id.theme_light)?.setOnClickListener { changeTheme("light") }
@@ -419,7 +444,6 @@ class PersianKeyboardService : InputMethodService() {
         bindSymbols(view, pageBtn)
         updateSuggestions(suggestionViews)
 
-        // تنظیم متن اولیه دکمه زبان به فا
         langBtn.text = if (isPersian) "En" else "فا"
 
         langBtn.setOnClickListener { 
@@ -428,7 +452,6 @@ class PersianKeyboardService : InputMethodService() {
             isCapsLock = false
             isShifted = false
             
-            // تغییر متن دکمه زبان به فا وقتی کیبورد انگلیسیه
             langBtn.text = if (isPersian) "En" else "فا"
 
             bindLetters(view, shiftBtn) 
@@ -639,6 +662,21 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
+    private fun applyKeyTextSize(parent: ViewGroup?, textSize: Float) {
+        if (parent == null) return
+        for (i in 0 until parent.childCount) {
+            val child = parent.getChildAt(i)
+            if (child is ViewGroup) {
+                applyKeyTextSize(child, textSize)
+            } else if (child is TextView && child.isClickable) {
+                // فقط سایز کلیدهای حروف/اعداد رو تغییر میدیم تا دکمه‌های خاص بهم نریزن
+                if (child.text.length <= 2) {
+                    child.textSize = textSize
+                }
+            }
+        }
+    }
+
     private fun showEmojiCategory(category: String) {
         currentEmojiCategory = category
         val emojisToShow = when (category) {
@@ -758,6 +796,7 @@ class PersianKeyboardService : InputMethodService() {
         for ((id, text) in buttons) { 
             view.findViewById<TextView>(id)?.apply {
                 this.text = text 
+                this.textSize = currentKeyTextSize // اعمال سایز ذخیره شده کاربر
                 setOnClickListener { 
                     performKeyFeedback() 
                     currentInputConnection?.commitText(text, 1) 
@@ -782,6 +821,7 @@ class PersianKeyboardService : InputMethodService() {
         for ((id, text) in nums) { 
             view.findViewById<TextView>(id)?.apply {
                 this.text = text
+                this.textSize = currentKeyTextSize
                 setOnClickListener { 
                     performKeyFeedback() 
                     currentInputConnection?.commitText(text, 1) 
@@ -807,6 +847,7 @@ class PersianKeyboardService : InputMethodService() {
             val spannable = SpannableString(main)
             spannable.setSpan(DoubleLetterSpan(hidden, main), 0, main.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             tv.text = spannable
+            tv.textSize = currentKeyTextSize
 
             var lastClick = 0L
             tv.setOnClickListener {
@@ -883,6 +924,7 @@ class PersianKeyboardService : InputMethodService() {
                         spannable.setSpan(android.text.style.RelativeSizeSpan(0.6f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
                     text = spannable
+                    textSize = currentKeyTextSize
                     setOnClickListener { 
                         performKeyFeedback()
                         currentInputConnection?.commitText(item.symbol, 1) 
