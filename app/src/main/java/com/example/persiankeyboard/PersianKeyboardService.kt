@@ -74,8 +74,8 @@ class PersianKeyboardService : InputMethodService() {
     private var clipboardRecyclerView: RecyclerView? = null
     private var emojiRecyclerView: RecyclerView? = null
     private var emojiAdapter: EmojiAdapter? = null
-    private var recentEmojis = mutableListOf<String>()
-    private var favoriteEmojis = mutableListOf<String>() 
+    private val recentEmojis = mutableListOf<String>()
+    private val favoriteEmojis = mutableListOf<String>() 
     private var currentEmojiCategory = "recent" 
 
     private var editClipboardContainer: LinearLayout? = null
@@ -88,7 +88,8 @@ class PersianKeyboardService : InputMethodService() {
     private var currentKeyTextSize = 18f
     
     private var toneGenerator: ToneGenerator? = null
-    private var activePopup: PopupWindow? = null
+    private var keyPreviewPopup: PopupWindow? = null
+    private var keyPreviewText: TextView? = null
 
     private val baseDictionary = listOf(
         "من", "تو", "او", "ما", "شما", "آنها", "خودم", "خودت", "خودش", "چه", "چی", "کجا", "کی", "چرا", "چطور", "چگونه", "کدام", "آیا", "چند", "سلام", "درود", "خداحافظ", "صبح", "بخیر", "ظهر", "عصر", "شب", "روز", "خوش", "آمدی", "سلامت", "باشی", "حال", "احوال", "خوبی", "ممنون", "مرسی", "سپاس", "لطفا", "ببخشید", "معذرت", "خواهش", "بله", "خیر", "نه", "آره", "باشه", "چشم", "حتما", "شاید", "مطمئن", "واقعا", "البته", "هستم", "هستی", "هست", "هستیم", "هستید", "هستند", "نیستم", "نیستی", "نیست", "بودم", "بودی", "بود", "دارم", "داری", "دارد", "میروم", "میروی", "میرود", "رفتم", "رفتی", "رفت", "میکنم", "میکنی", "میکند", "کردم", "کردی", "کرد", "میخورم", "میخوری", "میخورد", "خوردم", "خوردی", "خورد", "میگویم", "میگویی", "میگوید", "گفتم", "گفتی", "گفت", "میخواهم", "میخواهی", "میخواهد", "خواستم", "خواستی", "خواست", "میدانم", "میدانی", "میداند", "دانستم", "دانستی", "دانست", "میبینم", "میبینی", "میبیند", "دیدم", "دیدی", "دید", "میشوم", "میشوی", "میشود", "شدم", "شدی", "شد", "برو", "بیا", "بخور", "بگو", "ببین", "بده", "بگیر", "بنویس", "بخوان", "و", "در", "به", "از", "که", "این", "را", "با", "است", "برای", "آن", "یک", "تا", "هم", "یا", "بر", "اما", "اگر", "چون", "پس", "ولی", "زیرا", "خیلی", "بسیار", "زیاد", "کم", "بزرگ", "کوچک", "خوب", "بد", "زیبا", "زشت", "جدید", "قدیمی", "سریع", "آهسته", "دقیق", "درست", "غلط", "مهم", "ساده", "پیچیده", "سخت", "آسان", "شاد", "غمگین", "خسته", "گرسنه", "تشنه", "گرم", "سرد", "نرم", "سفت", "سنگین", "سبک", "پهن", "باریک", "بلند", "کوتاه", "گران", "ارزان", "قوی", "ضعیف", "سالم", "بیمار", "ناراحت", "عصبانى", "آرام", "روشن", "تاریک", "تمیز", "کثیف", "پر", "خالی", "عزیز", "عزیزم", "جان", "دل", "دلم", "قلب", "قلبم", "عشق", "عاشق", "دوست", "دوستت", "دارم", "دوستش", "هیجان", "احساس", "مهربان", "مهربانی", "خوبی", "بدی", "بغل", "آغوش", "بوسه", "لبخند", "گریه", "خنده", "امید", "آرزو", "رویا", "واقعیت", "زندگی", "مرگ", "تولد", "جشن", "عروسی", "کار", "پول", "خرید", "فروش", "بازار", "شهر", "روستا", "کشور", "دنیا", "جهان", "ماشین", "اتوبوس", "قطار", "هواپیما", "تاکسی", "خیابان", "کوچه", "پارک", "ترافیک", "خانه", "مدرسه", "دانشگاه", "اداره", "بیمارستان", "فروشگاه", "رستوران", "هتل", "فرودگاه", "ایستگاه", "بانک", "پست", "پلیس", "کتابخانه", "موزه", "سینما", "ورزشگاه", "استخر", "مادر", "پدر", "برادر", "خواهر", "خانواده", "فرزند", "بچه", "دختر", "پسر", "زن", "مرد", "همسر", "عمو", "دایی", "خاله", "عمه", "پدربزرگ", "مادربزرگ", "رفیق", "همکار", "همکلاسی", "همسایه", "استاد", "معلم", "شاگرد", "دانشجو", "رئیس", "کارمند", "دکتر", "مهندس", "امروز", "دیروز", "فردا", "الان", "اکنون", "بعد", "قبل", "هفته", "ماه", "سال", "ساعت", "دقیقه", "ثانیه", "زود", "دیر", "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "کتاب", "دفتر", "قلم", "مداد", "کاغذ", "میز", "صندلی", "در", "پنجره", "دیوار", "اتاق", "تخت", "کمد", "فرش", "لامپ", "کلید", "قفل", "چاقو", "قاشق", "چنگال", "بشقاب", "لیوان", "فنجان", "کتری", "یخچال", "اجاق", "تلویزیون", "رادیو", "بلندگو", "هدفون", "دوربین", "عینک", "کیف", "کفش", "لباس", "پیراهن", "شلوار", "کاپشن", "کلاه", "دستکش", "جوراب", "حوله", "صابون", "شامپو", "کامپیوتر", "لپ‌تاپ", "گوشی", "موبایل", "تبلت", "اینترنت", "شبکه", "برنامه", "نرم‌افزار", "سخت‌افزار", "سایت", "وب", "ایمیل", "پیام", "پیامک", "تلگرام", "واتساپ", "اینستاگرام", "فیسبوک", "گوگل", "اندروید", "آیفون", "ویندوز", "هوش مصنوعی", "ربات", "داده", "اطلاعات", "دیتابیس", "سرور", "کاربر", "پسورد", "رمز", "امنیت", "پروژه", "کدنویسی", "برنامه‌نویسی", "طراحی", "گرافیک", "عکس", "فیلم", "ویدیو", "صدا", "موسیقی", "غذا", "آب", "چای", "قهوه", "شیر", "نان", "برنج", "گوشت", "مرغ", "ماهی", "تخم‌مرغ", "پنیر", "کره", "عسل", "سیب", "پرتقال", "موز", "انار", "هندوانه", "خیار", "گوجه", "سیب‌زمینی", "پیاز", "سیر", "فلفل", "نمک", "شکر", "زردچوبه", "دارچین", "زعفران", "صبحانه", "ناهار", "شام", "میان‌وعده", "دسر", "شیرینی", "بستنی", "شکلات", "کیک", "بیسکویت", "آجیل", "پسته", "بادام", "گردو", "فندق", "کشمش", "خرما", "پیتزا", "ساندویچ", "برگر", "پاستا", "ماکارونی", "سوپ", "سالاد", "کباب", "جوجه", "قیمه", "قورمه", "آش", "عدس", "لوبیا", "نخود", "زیتون", "خیارشور", "ترشی", "مربا", "املت", "کوکو", "کتلت", "آسمان", "زمین", "دریا", "کوه", "جنگل", "بیابان", "رودخانه", "دریاچه", "باران", "برف", "باد", "آفتاب", "ماه", "ستاره", "ابر", "رعد", "برق", "گل", "درخت", "برگ", "چمن", "خاک", "سنگ", "آتش", "هوا", "آب و هوا", "طوفان", "زلزله", "سیل", "خشکسالی", "سگ", "گربه", "اسب", "گاو", "گوسفند", "بز", "مرغ", "خروس", "جوجه", "اردک", "غاز", "کبوتر", "گنجشک", "عقاب", "شاهین", "شیر", "ببر", "پلنگ", "گرگ", "روباه", "خرس", "فیل", "زرافه", "میمون", "خرگوش", "موش", "مار", "ماهی", "کوسه", "نهنگ", "دلفین", "لاک‌پشت", "قورباغه", "پروانه", "زنبور", "مورچه", "عنکبوت", "hello", "world", "good", "morning", "night", "book", "house", "computer", "phone", "internet", "keyboard", "software", "hardware", "thank", "you", "please", "sorry", "yes", "no", "maybe", "today", "tomorrow", "yesterday", "love", "friend", "family", "mother", "father", "brother", "sister", "time", "money", "work", "school", "city", "country", "water", "food", "coffee", "tea", "apple", "orange", "happy", "sad", "great", "bad", "new", "old"
@@ -819,6 +820,20 @@ class PersianKeyboardService : InputMethodService() {
             view.findViewById<TextView>(id)?.apply {
                 this.text = text 
                 this.textSize = currentKeyTextSize
+                
+                // اضافه کردن پاپ‌آپ بزرگ‌نمایی موقع لمس کلید
+                setOnTouchListener { v, event ->
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            showKeyPreview(v, text)
+                        }
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                            dismissKeyPreview()
+                        }
+                    }
+                    false // اجازه میدیم کلیک معمولی هم کار خودش رو بکنه
+                }
+
                 setOnClickListener { 
                     performKeyFeedback() 
                     currentInputConnection?.commitText(text, 1) 
@@ -844,6 +859,15 @@ class PersianKeyboardService : InputMethodService() {
             view.findViewById<TextView>(id)?.apply {
                 this.text = text
                 this.textSize = currentKeyTextSize
+                
+                setOnTouchListener { v, event ->
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> showKeyPreview(v, text)
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> dismissKeyPreview()
+                    }
+                    false
+                }
+
                 setOnClickListener { 
                     performKeyFeedback() 
                     currentInputConnection?.commitText(text, 1) 
@@ -864,12 +888,63 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
+    private fun showKeyPreview(anchorView: View, text: String) {
+        try {
+            if (keyPreviewPopup == null) {
+                val popupView = layoutInflater.inflate(R.layout.key_popup, null)
+                keyPreviewText = popupView.findViewById<TextView>(R.id.popup_container).let { container ->
+                    // ساخت یک TextView موقت برای پیش‌نمایش بزرگ بالای کلید
+                    TextView(this).apply {
+                        textSize = 32f
+                        setTextColor(Color.WHITE)
+                        gravity = Gravity.CENTER
+                        setPadding(32, 16, 32, 16)
+                        setBackgroundColor(Color.parseColor("#37474F"))
+                    }
+                }
+                
+                keyPreviewPopup = PopupWindow(
+                    keyPreviewText,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    false
+                ).apply {
+                    setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    isOutsideTouchable = false
+                }
+            }
+
+            keyPreviewText?.text = text
+            if (keyPreviewPopup?.isShowing == true) {
+                keyPreviewPopup?.dismiss()
+            }
+            // نمایش پاپ‌آپ دقیقا بالا و وسط کلید لمس شده
+            keyPreviewPopup?.showAsDropDown(anchorView, anchorView.width / 2 - 50, -anchorView.height - 120)
+        } catch (e: Exception) {
+        }
+    }
+
+    private fun dismissKeyPreview() {
+        try {
+            keyPreviewPopup?.dismiss()
+        } catch (e: Exception) {
+        }
+    }
+
     private fun setupHiddenCharsAndDoubleTap(view: View) {
         val setupKey = { tv: TextView, hidden: String, main: String, onMainClick: () -> Unit, onHiddenClick: () -> Unit ->
             val spannable = SpannableString(main)
             spannable.setSpan(DoubleLetterSpan(hidden, main), 0, main.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             tv.text = spannable
             tv.textSize = currentKeyTextSize
+
+            tv.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> showKeyPreview(v, main)
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> dismissKeyPreview()
+                }
+                false
+            }
 
             var lastClick = 0L
             tv.setOnClickListener {
@@ -1129,7 +1204,7 @@ class PersianKeyboardService : InputMethodService() {
         }
         view.findViewById<TextView>(R.id.btn_ze)?.setOnLongClickListener {
             performKeyFeedback()
-            showPtrPopup(it, listOf(Pair("ژ", "ژ"), Pair("ز", "ز")))
+            showPopup(it, listOf(Pair("ژ", "ژ"), Pair("ز", "ز")))
             true
         }
         view.findViewById<TextView>(R.id.btn_dal)?.setOnLongClickListener {
@@ -1186,10 +1261,6 @@ class PersianKeyboardService : InputMethodService() {
         container.addView(closeTv)
 
         popupWindow.showAsDropDown(anchorView, -100, -220)
-    }
-
-    private fun showPtrPopup(anchorView: View, items: List<Pair<String, String>>) {
-        showPopup(anchorView, items)
     }
 
     private fun setupNavigation(view: View, pageBtn: TextView, suggestions: List<TextView>) {
