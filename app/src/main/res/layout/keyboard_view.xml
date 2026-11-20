@@ -73,7 +73,7 @@
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal">
             <TextView android:id="@+id/btn_symbols" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="نماد" android:textSize="14sp"/>
-            <TextView android:id="@+id/btn_lang" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="Ab" android:textSize="16sp" android:textStyle="bold"/>
+            <TextView android:id="@+id/btn_lang" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="En" android:textSize="16sp" android:textStyle="bold"/>
             <TextView android:id="@+id/btn_mic" style="@style/KeyStyleSpecial" android:layout_weight="1.2" android:text="🎤" android:textSize="18sp"/>
             <TextView android:id="@+id/btn_space" style="@style/KeyStyleSpecial" android:layout_weight="4" android:text="فاصله" />
             <TextView android:id="@+id/btn_dot" style="@style/KeyStyleSpecial" android:layout_weight="1.4" android:text="." />
@@ -126,7 +126,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 🌟 پنل تنظیمات (با انتخاب تم) 🌟 -->
+    <!-- 🌟 پنل تنظیمات (شامل تنظیم سایز کلیدها و تم) 🌟 -->
     <LinearLayout
         android:id="@+id/settings_container"
         android:layout_width="match_parent"
@@ -144,7 +144,7 @@
             android:textSize="18sp"
             android:gravity="center"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="12dp"/>
 
         <Switch
             android:id="@+id/switch_vibration"
@@ -153,7 +153,7 @@
             android:text="لرزش هنگام تایپ"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
-            android:padding="8dp"/>
+            android:padding="4dp"/>
 
         <Switch
             android:id="@+id/switch_sound"
@@ -162,7 +162,35 @@
             android:text="صدای تایپ"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
-            android:padding="8dp"/>
+            android:padding="4dp"/>
+
+        <!-- بخش تنظیم سایز حروف کلیدها -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="سایز حروف کلیدها"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/preview_key_size_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ا ب ج ژ ۲۰"
+            android:textColor="#B0BEC5"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"/>
+
+        <SeekBar
+            android:id="@+id/seekbar_key_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="14"
+            android:progress="6"
+            android:layout_marginBottom="8dp"/>
 
         <!-- بخش انتخاب تم -->
         <TextView
@@ -170,26 +198,21 @@
             android:layout_height="wrap_content"
             android:text="رنگ‌بندی کیبورد:"
             android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:layout_marginTop="16dp"/>
+            android:textSize="15sp"
+            android:layout_marginTop="8dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:gravity="center">
 
-            <!-- تم تیره (پیش‌فرض) -->
-            <View android:id="@+id/theme_dark" android:layout_width="40dp" android:layout_height="40dp" android:background="#263238" android:layout_margin="4dp"/>
-            <!-- تم روشن -->
-            <View android:id="@+id/theme_light" android:layout_width="40dp" android:layout_height="40dp" android:background="#ECEFF1" android:layout_margin="4dp"/>
-            <!-- تم آبی -->
-            <View android:id="@+id/theme_blue" android:layout_width="40dp" android:layout_height="40dp" android:background="#0D47A1" android:layout_margin="4dp"/>
-            <!-- تم بنفش -->
-            <View android:id="@+id/theme_purple" android:layout_width="40dp" android:layout_height="40dp" android:background="#4A148C" android:layout_margin="4dp"/>
-            <!-- تم سبز -->
-            <View android:id="@+id/theme_green" android:layout_width="40dp" android:layout_height="40dp" android:background="#1B5E20" android:layout_margin="4dp"/>
+            <View android:id="@+id/theme_dark" android:layout_width="36dp" android:layout_height="36dp" android:background="#263238" android:layout_margin="4dp"/>
+            <View android:id="@+id/theme_light" android:layout_width="36dp" android:layout_height="36dp" android:background="#ECEFF1" android:layout_margin="4dp"/>
+            <View android:id="@+id/theme_blue" android:layout_width="36dp" android:layout_height="36dp" android:background="#0D47A1" android:layout_margin="4dp"/>
+            <View android:id="@+id/theme_purple" android:layout_width="36dp" android:layout_height="36dp" android:background="#4A148C" android:layout_margin="4dp"/>
+            <View android:id="@+id/theme_green" android:layout_width="36dp" android:layout_height="36dp" android:background="#1B5E20" android:layout_margin="4dp"/>
         </LinearLayout>
     </LinearLayout>
 
