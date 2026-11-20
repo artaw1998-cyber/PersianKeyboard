@@ -117,7 +117,6 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
     )
 
-    // 🌟 دسته ۱: لبخندها و احساسات (Smileys & Emotion) 🌟
     private val emojisSmileys = listOf(
         "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "🙂", "🙃", "🫠", "🫫", "😉", "😊", "😇",
         "🥰", "😍", "🤩", "😘", "😗", "☺️", "😚", "😙", "🥲", "😋", "😛", "😜", "🤪", "😝", "🤑",
@@ -144,7 +143,6 @@ class PersianKeyboardService : InputMethodService() {
         "🛀", "🛌", "🧑‍🤝‍🧑", "👭", "👫", "👬", "💏", "👩‍❤️‍💋‍👨", "👨‍❤️‍💋‍👨", "👩‍❤️‍💋‍👩", "💑", "👩‍❤️‍👨", "👨‍❤️‍👨", "👩‍❤️‍👩", "👪", "🗣️", "👤", "👥", "🫂", "👣", "🫆"
     )
 
-    // 🌟 دسته ۲: حیوانات و طبیعت (Animals & Nature) 🌟
     private val emojisNature = listOf(
         "🐵", "🐒", "🦍", "🦧", "🐶", "🐕", "🦮", "🐕‍🦺", "🐩", "🐺", "🦊", "🦝", "🐱", "🐈", "🐈‍⬛", "🦁", "🐯", "🐅", "🐆", "🐴", "🫎", "🫏", "🐎", "🦄", "🦓", "🦌", "🦬", "🐮", "🐂", "🐃", "🐄", "🐷", "🐖", "🐗", "🐽", "🐏", "🐑", "🐐", "🐪", "🐫", "🦙", "🦒", "🐘", "🦣", "🦏", "🦛", "🐭", "🐁", "🐀", "🐹", "🐰", "🐇", "🐿️", "🦫", "🦔", "🦇", "🐻", "🐻‍❄️", "🐨", "🐼", "🦥", "🦦", "🦨", "🦡", "🦘", "🐾",
         "🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🐧", "🕊️", "🦅", "🦆", "🦢", "🦉", "🦤", "🪶", "🦩", "🦚", "🦜", "🪽", "🐦‍⬛", "🪿", "🐦‍🔥",
@@ -154,7 +152,6 @@ class PersianKeyboardService : InputMethodService() {
         "🌱", "🪴", "🌲", "🌳", "🌴", "🌵", "🌾", "🌿", "☘️", "🍀", "🍁", "🍂", "🍃", "🪹", "🪺", "🍄", "🪾"
     )
 
-    // 🌟 دسته ۳: غذا و نوشیدنی (Food & Drink) 🌟
     private val emojisFood = listOf(
         "🍇", "🍈", "🍉", "🍊", "🍋", "🍋‍🟩", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥",
         "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🫝", "🥬", "🥦", "🧄", "🧅", "🥜", "🫘", "🌰", "🫚", "🫛", "🍄‍🟫", "🫜",
@@ -165,7 +162,6 @@ class PersianKeyboardService : InputMethodService() {
         "🥢", "🍽️", "🍴", "🥄", "🔪", "🫙", "🏺"
     )
 
-    // 🌟 دسته ۴: سفر و مکان‌ها (Travel & Places) 🌟
     private val emojisTravel = listOf(
         "🌍", "🌎", "🌏", "🌐", "🗺️", "🗾", "🧭",
         "🏔️", "⛰️", "🛘", "🌋", "🗻", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️",
@@ -209,7 +205,6 @@ class PersianKeyboardService : InputMethodService() {
         "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿"
     )
 
-    // 🌟 دسته ۵: اشیا و ابزارها (Objects) 🌟
     private val emojisObjects = listOf(
         "👓", "🕶️", "🥽", "🥼", "🦺", "👔", "👕", "👖", "🧣", "🧤", "🧥", "🧦", "👗", "👘", "🥻", "🩱", "🩲", "🩳", "👙", "👚", "🪭", "👛", "👜", "👝", "🛍️", "🎒", "🩴", "👞", "👟", "🥾", "🥿", "👠", "👡", "🩰", "👢", "🪮", "👑", "👒", "🎩", "🎓", "🧢", "🪖", "⛑️", "📿", "💄", "💍", "💎",
         "🔇", "🔈", "🔉", "🔊", "📢", "📣", "📯", "🔔", "🔕",
@@ -237,7 +232,6 @@ class PersianKeyboardService : InputMethodService() {
         "💐", "🌸", "💮", "🪷", "🏵️", "🌹", "🥀", "🌺", "🌻", "🌼", "🌷", "🪻"
     )
 
-    // 🌟 دسته ۶: قلب‌ها، نمادها و شکلک‌ها (Symbols & Hearts ❤️) 🌟
     private val emojisSymbols = listOf(
         "❤️", "🩷", "🧡", "💛", "💚", "💙", "🩵", "💜", "🤎", "🖤", "🩶", "🤍", "💔", "❤️‍🔥", "❤️‍🩹", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "☮️", "✝️", "☪️", "🕉", "☸️", "✡️", "🔯", "🕎", "☯️", "☦️", "🪯", "🛜", "📳", "📴",
         "🏧", "🚮", "🚰", "♿", "🚹", "🚺", "🚻", "🚼", "🚾", "🛂", "🛃", "🛄", "🛅",
@@ -425,11 +419,18 @@ class PersianKeyboardService : InputMethodService() {
         bindSymbols(view, pageBtn)
         updateSuggestions(suggestionViews)
 
+        // تنظیم متن اولیه دکمه زبان به فا
+        langBtn.text = if (isPersian) "En" else "فا"
+
         langBtn.setOnClickListener { 
             performKeyFeedback()
             isPersian = !isPersian 
             isCapsLock = false
             isShifted = false
+            
+            // تغییر متن دکمه زبان به فا وقتی کیبورد انگلیسیه
+            langBtn.text = if (isPersian) "En" else "فا"
+
             bindLetters(view, shiftBtn) 
             updateSuggestions(suggestionViews)
         }
