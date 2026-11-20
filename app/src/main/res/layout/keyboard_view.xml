@@ -379,7 +379,6 @@
                 android:text="تازه سازی"
                 android:background="@drawable/key_bg_special"
                 android:textColor="#FFFFFF"
-                colors:textColor="#FFFFFF"
                 android:gravity="center"
                 android:textSize="14sp"
                 android:layout_marginStart="2dp"/>
