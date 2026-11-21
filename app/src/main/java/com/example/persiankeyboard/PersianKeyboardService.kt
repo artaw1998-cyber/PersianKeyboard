@@ -114,17 +114,18 @@ class PersianKeyboardService : InputMethodService() {
 
     private val symbolPages = listOf(
         listOf(SymItem("@"), SymItem("#"), SymItem("$"), SymItem("%"), SymItem("&"), SymItem("*"), SymItem("-"), SymItem("+"), SymItem("="), SymItem("/"), SymItem("("), SymItem(")"), SymItem("["), SymItem("]"), SymItem("{"), SymItem("}"), SymItem("<"), SymItem(">"), SymItem("«"), SymItem("»"), SymItem("!"), SymItem("؟"), SymItem("،"), SymItem("؛"), SymItem(":"), SymItem(";"), SymItem("'"), SymItem("\""), SymItem("_"), SymItem("\\"), SymItem("^"), SymItem("~"), SymItem("|"), SymItem("•"), SymItem("…"), SymItem("٪"), SymItem("ریال"), SymItem("€"), SymItem("£"), SymItem("¥")),
-        listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
+        listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𐎠"), SymItem("𐎡"), SymItem("𐎢"), SymItem("𐎣")),
         listOf(SymItem("𓄆"), SymItem("𓃻"), SymItem("𖤍"), SymItem("𓃰"), SymItem("𓆉"), SymItem("𓃮"), SymItem("𓅭"), SymItem("𓆈"), SymItem("𓆙"), SymItem("𓆈"), SymItem("𓅆"), SymItem("☫"), SymItem("𓆗"), SymItem("𖤓"), SymItem("🦋⃝"), SymItem("𓇼"), SymItem("⋆.˚"), SymItem("𓆝"), SymItem("𓆡"), SymItem("𝐕"), SymItem("⃤"), SymItem("✵⃝⃟"), SymItem("⋆.˚🦋༘⋆"), SymItem("𓇢𓆸"), SymItem("ूाीू"), SymItem("☪"), SymItem("𓅇"), SymItem("✡"), SymItem("𓃬"), SymItem("𔓎"), SymItem("✮⃝ 🤍"), SymItem("𓅰"), SymItem("𓅬"), SymItem("𓅭"), SymItem("𓅮"), SymItem("𓅯"), SymItem("☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆"), SymItem("🦈"), SymItem("☣︎"), SymItem("❦")),
         listOf(SymItem("𓅂"), SymItem("✞"), SymItem("𓃓"), SymItem("𓃗"), SymItem("⋆⭒˚.⋆🪐 ⋆⭒˚.⋆"), SymItem("𓏲ּ𝄢"), SymItem("♡ ᪲᪲᪲"), SymItem("𓁇𓁋"), SymItem("𓃵"), SymItem("✌"), SymItem(".☘︎ ݁˖"), SymItem("𓆰𓆪"), SymItem("𓆩𓆪"), SymItem("☕︎"), SymItem("▶︎ •ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ"), SymItem("୧⍤⃝🌹"), SymItem("☠"), SymItem("𝄞"), SymItem("𝐕ℳ𝓊𝓈𝒾𝒸𓂃✍︎𝄞"), SymItem("♡"), SymItem("♢"), SymItem("♤"), SymItem("♧"), SymItem("♣"), SymItem("♦"), SymItem("⚀"), SymItem("⚁"), SymItem("⚂"), SymItem("⚃"), SymItem("⚄"), SymItem("⚅"), SymItem("♚"), SymItem("♙"), SymItem("♘"), SymItem("♗"), SymItem("♖"), SymItem("♕"), SymItem("♔"), SymItem("♟"), SymItem("♞")),
-        // صفحه پنجم (خط میخی): ۳۶ حرف
+        // صفحه پنجم (خط میخی): ۳۶ حرف اصلی + ۴ خانه خالی برای هماهنگی کامل با لایه ۴۰تایی استاندارد
         listOf(
             SymItem("𐎠", "a (ا)"), SymItem("𐎡", "i (ای)"), SymItem("𐎢", "u (او)"), SymItem("𐎣", "k (ک)"), SymItem("𐎤", "ko (کُ)"), SymItem("𐎥", "x (خ)"),
             SymItem("𐎦", "g (گ)"), SymItem("𐎧", "go (گُ)"), SymItem("𐎨", "ch (چ)"), SymItem("𐎩", "thra (ثرا)"), SymItem("𐎪", "j (ج)"), SymItem("𐎫", "je (جِ)"),
             SymItem("𐎬", "t (ت)"), SymItem("𐎭", "to (تُ)"), SymItem("𐎮", "th (ط)"), SymItem("𐎯", "d (د)"), SymItem("𐎰", "de (دِ)"), SymItem("𐎱", "do (دُ)"),
             SymItem("𐎲", "p (پ)"), SymItem("𐎳", "f (ف)"), SymItem("𐎴", "b (ب)"), SymItem("𐎵", "n (ن)"), SymItem("𐎶", "no (نُ)"), SymItem("𐎷", "m (م)"),
             SymItem("𐎸", "me (مِ)"), SymItem("𐎹", "mo (مُ)"), SymItem("𐎺", "y (ی)"), SymItem("𐎻", "v (و)"), SymItem("𐎼", "ve (وِ)"), SymItem("𐎽", "r (ر)"),
-            SymItem("𐎾", "ro (رُ)"), SymItem("𐎿", "L (ل)"), SymItem("𐏀", "s (س)"), SymItem("𐏁", "z (ز)"), SymItem("𐏂", "sh (ش)"), SymItem("𐏃", "h (ه)")
+            SymItem("𐎾", "ro (رُ)"), SymItem("𐎿", "L (ل)"), SymItem("𐏀", "s (س)"), SymItem("𐏁", "z (ز)"), SymItem("𐏂", "sh (ش)"), SymItem("𐏃", "h (ه)"),
+            SymItem(""), SymItem(""), SymItem(""), SymItem("")
         ),
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
     )
@@ -1003,24 +1004,12 @@ class PersianKeyboardService : InputMethodService() {
 
     private fun bindSymbols(view: View, pageBtn: TextView) {
         val pageData = symbolPages[currentSymbolPage]
-        // اگر صفحه ۵ (خط میخی) باشد، آیدی‌های ۳۶گانه ۶ ردیف ۶ تایی را ست می‌کنیم
-        val symbolIds = if (currentSymbolPage == 4) {
-            listOf(
-                R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6,
-                R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10, R.id.sym_11, R.id.sym_12,
-                R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18,
-                R.id.sym_19, R.id.sym_20, R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24,
-                R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30,
-                R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36
-            )
-        } else {
-            listOf(
-                R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10,
-                R.id.sym_11, R.id.sym_12, R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18, R.id.sym_19, R.id.sym_20,
-                R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24, R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30,
-                R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36, R.id.sym_37, R.id.sym_38, R.id.sym_39, R.id.sym_40
-            )
-        }
+        val symbolIds = listOf(
+            R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10,
+            R.id.sym_11, R.id.sym_12, R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18, R.id.sym_19, R.id.sym_20,
+            R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24, R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30,
+            R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36, R.id.sym_37, R.id.sym_38, R.id.sym_39, R.id.sym_40
+        )
 
         for (i in symbolIds.indices) {
             val tv = view.findViewById<TextView>(symbolIds[i])
@@ -1031,8 +1020,8 @@ class PersianKeyboardService : InputMethodService() {
                         val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
                         val spannable = SpannableString(fullText)
                         if (item.meaning.isNotEmpty()) {
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 1.6f else 1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 0.65f else 0.5f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 1.5f else 1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 0.6f else 0.5f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                         tv.text = spannable
                         tv.textSize = currentKeyTextSize
