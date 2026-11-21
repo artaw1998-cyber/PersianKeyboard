@@ -117,7 +117,7 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
         listOf(SymItem("𓄆"), SymItem("𓃻"), SymItem("𖤍"), SymItem("𓃰"), SymItem("𓆉"), SymItem("𓃮"), SymItem("𓅭"), SymItem("𓆈"), SymItem("𓆙"), SymItem("𓆈"), SymItem("𓅆"), SymItem("☫"), SymItem("𓆗"), SymItem("𖤓"), SymItem("🦋⃝"), SymItem("𓇼"), SymItem("⋆.˚"), SymItem("𓆝"), SymItem("𓆡"), SymItem("𝐕"), SymItem("⃤"), SymItem("✵⃝⃟"), SymItem("⋆.˚🦋༘⋆"), SymItem("𓇢𓆸"), SymItem("ूाीू"), SymItem("☪"), SymItem("𓅇"), SymItem("✡"), SymItem("𓃬"), SymItem("𔓎"), SymItem("✮⃝ 🤍"), SymItem("𓅰"), SymItem("𓅬"), SymItem("𓅭"), SymItem("𓅮"), SymItem("𓅯"), SymItem("☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆"), SymItem("🦈"), SymItem("☣︎"), SymItem("❦")),
         listOf(SymItem("𓅂"), SymItem("✞"), SymItem("𓃓"), SymItem("𓃗"), SymItem("⋆⭒˚.⋆🪐 ⋆⭒˚.⋆"), SymItem("𓏲ּ𝄢"), SymItem("♡ ᪲᪲᪲"), SymItem("𓁇𓁋"), SymItem("𓃵"), SymItem("✌"), SymItem(".☘︎ ݁˖"), SymItem("𓆰𓆪"), SymItem("𓆩𓆪"), SymItem("☕︎"), SymItem("▶︎ •ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ"), SymItem("୧⍤⃝🌹"), SymItem("☠"), SymItem("𝄞"), SymItem("𝐕ℳ𝓊𝓈𝒾𝒸𓂃✍︎𝄞"), SymItem("♡"), SymItem("♢"), SymItem("♤"), SymItem("♧"), SymItem("♣"), SymItem("♦"), SymItem("⚀"), SymItem("⚁"), SymItem("⚂"), SymItem("⚃"), SymItem("⚄"), SymItem("⚅"), SymItem("♚"), SymItem("♙"), SymItem("♘"), SymItem("♗"), SymItem("♖"), SymItem("♕"), SymItem("♔"), SymItem("♟"), SymItem("♞")),
-        // صفحه پنجم (خط میخی): دقیقاً ۳۶ حرف با معنی‌های کوتاه و کاملاً خوانا
+        // صفحه پنجم (خط میخی): ۳۶ حرف با چیدمان ۶ تایی
         listOf(
             SymItem("𐎠", "a (ا)"), SymItem("𐎡", "i (ای)"), SymItem("𐎢", "u (او)"), SymItem("𐎣", "k (ک)"), SymItem("𐎤", "ko (کُ)"), SymItem("𐎥", "x (خ)"),
             SymItem("𐎦", "g (گ)"), SymItem("𐎧", "go (گُ)"), SymItem("𐎨", "ch (چ)"), SymItem("𐎩", "thra (ثرا)"), SymItem("𐎪", "j (ج)"), SymItem("𐎫", "je (جِ)"),
@@ -1003,280 +1003,44 @@ class PersianKeyboardService : InputMethodService() {
 
     private fun bindSymbols(view: View, pageBtn: TextView) {
         val pageData = symbolPages[currentSymbolPage]
-        
-        // اگر صفحه جاری، صفحه پنجم (خط میخی با ایندکس 4) باشد، به صورت پویا چیدمان آن را ۶ ردیف ۶ تایی می‌سازیم
-        if (currentSymbolPage == 4) {
-            val symbolsContainer = view.findViewById<LinearLayout>(R.id.symbols_container)
-            symbolsContainer?.removeAllViews()
-            
-            // ایجاد ۶ ردیف و هر ردیف ۶ کلید
-            for (r in 0 until 6) {
-                val rowLayout = LinearLayout(this).apply {
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        0
-                    ).apply { weight = 1f }
-                    orientation = LinearLayout.HORIZONTAL
-                }
-                
-                for (c in 0 until 6) {
-                    val index = r * 6 + c
-                    val tv = TextView(this).apply {
-                        layoutParams = LinearLayout.LayoutParams(
-                            0,
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                        ).apply { 
-                            weight = 1f
-                            setMargins(2, 2, 2, 2)
-                        }
-                        gravity = Gravity.CENTER
-                        background = getDrawable(R.drawable.key_bg)
-                        setTextColor(Color.WHITE)
-                    }
-                    
-                    if (index < pageData.size) {
-                        val item = pageData[index]
-                        val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
-                        val spannable = SpannableString(fullText)
-                        if (item.meaning.isNotEmpty()) {
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(1.5f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(0.6f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        }
-                        tv.text = spannable
-                        tv.textSize = currentKeyTextSize
-                        tv.setOnClickListener {
-                            performKeyFeedback()
-                            currentInputConnection?.commitText(item.symbol, 1)
-                        }
-                    }
-                    rowLayout.addView(tv)
-                }
-                symbolsContainer?.addView(rowLayout)
-            }
-            
-            // اضافه کردن نوار پایین صفحه نمادها
-            val bottomNavLayout = LinearLayout(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    54
-                )
-                orientation = LinearLayout.HORIZONTAL
-            }
-            
-            val pageChangeBtn = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { weight = 1.5f }
-                text = "${currentSymbolPage + 1}/6"
-                gravity = Gravity.CENTER
-                background = getDrawable(R.drawable.key_bg_special)
-                setTextColor(Color.WHITE)
-                setOnClickListener {
-                    currentSymbolPage++
-                    if (currentSymbolPage >= symbolPages.size) currentSymbolPage = 0
-                    bindSymbols(view, pageBtn)
-                }
-            }
-            
-            val langBackBtn = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { weight = 1.2f }
-                text = "فا"
-                gravity = Gravity.CENTER
-                background = getDrawable(R.drawable.key_bg_special)
-                setTextColor(Color.WHITE)
-                setOnClickListener {
-                    symbolsContainer?.visibility = View.GONE
-                    lettersContainer?.visibility = View.VISIBLE
-                }
-            }
-            
-            val spaceSymBtn = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { weight = 5f }
-                text = "فاصله"
-                gravity = Gravity.CENTER
-                background = getDrawable(R.drawable.key_bg_special)
-                setTextColor(Color.WHITE)
-                setOnClickListener {
-                    performKeyFeedback()
-                    currentInputConnection?.commitText(" ", 1)
-                }
-            }
-            
-            val backspaceSymBtn = TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { weight = 1.5f }
-                text = "⌫"
-                gravity = Gravity.CENTER
-                background = getDrawable(R.drawable.key_bg_special)
-                setTextColor(Color.WHITE)
-                setupContinuousDeletion(this, suggestionViews)
-            }
-            
-            bottomNavLayout.addView(pageChangeBtn)
-            bottomNavLayout.addView(langBackBtn)
-            bottomNavLayout.addView(spaceSymBtn)
-            bottomNavLayout.addView(backspaceSymBtn)
-            symbolsContainer?.addView(bottomNavLayout)
-            
-        } else {
-            // برای سایر صفحات نمادها (صفحات استاندارد ۴۰ تایی)
-            val symbolsContainer = view.findViewById<LinearLayout>(R.id.symbols_container)
-            symbolsContainer?.removeAllViews()
-            
-            // بازگردانی ساختار ۴ ردیف ۱۰ تایی استاندارد برای بقیه صفحات
-            val symbolIds = listOf(
-                R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10,
-                R.id.sym_11, R.id.sym_12, R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18, R.id.sym_19, R.id.sym_20,
-                R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24, R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30,
-                R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36, R.id.sym_37, R.id.sym_38, R.id.sym_39, R.id.sym_40
-            )
-            
-            val standardView = layoutInflater.inflate(R.layout.keyboard_view, null)
-            // به صورت موقت لایه استاندارد را بارگذاری می‌کنیم یا کانتینر را بازسازی می‌کنیم
-            // برای سادگی، لایه را دوباره می‌سازیم یا از طریق کانتینر اصلی ست می‌کنیم.
-        }
-        
-        // راه حل ساده‌تر و مطمئن‌تر برای بازسازی ساختار لایه بر اساس صفحه جاری:
-        refreshSymbolsContainerLayout(view, pageBtn)
-    }
+        val symbolIds = listOf(
+            R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10,
+            R.id.sym_11, R.id.sym_12, R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18, R.id.sym_19, R.id.sym_20,
+            R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24, R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30,
+            R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36, R.id.sym_37, R.id.sym_38, R.id.sym_39, R.id.sym_40
+        )
 
-    private fun refreshSymbolsContainerLayout(view: View, pageBtn: TextView) {
-        val symbolsContainer = view.findViewById<LinearLayout>(R.id.symbols_container) ?: return
-        symbolsContainer.removeAllViews()
-        
-        val pageData = symbolPages[currentSymbolPage]
-        
-        if (currentSymbolPage == 4) {
-            // ساختار اختصاصی ۶ ردیف ۶ تایی برای خط میخی
-            for (r in 0 until 6) {
-                val rowLayout = LinearLayout(this).apply {
-                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0).apply { weight = 1f }
-                    orientation = LinearLayout.HORIZONTAL
-                }
-                for (c in 0 until 6) {
-                    val index = r * 6 + c
-                    val tv = TextView(this).apply {
-                        layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { 
-                            weight = 1f
-                            setMargins(2, 2, 2, 2)
-                        }
-                        gravity = Gravity.CENTER
-                        background = getDrawable(R.drawable.key_bg)
-                        setTextColor(Color.WHITE)
-                    }
-                    if (index < pageData.size) {
-                        val item = pageData[index]
+        for (i in symbolIds.indices) {
+            val tv = view.findViewById<TextView>(symbolIds[i])
+            if (tv != null) {
+                if (i < pageData.size) {
+                    val item = pageData[i]
+                    if (item.symbol.isNotEmpty()) {
                         val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
                         val spannable = SpannableString(fullText)
                         if (item.meaning.isNotEmpty()) {
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(1.6f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(0.65f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 1.5f else 1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 0.6f else 0.5f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                         tv.text = spannable
                         tv.textSize = currentKeyTextSize
-                        tv.setOnClickListener {
+                        tv.visibility = View.VISIBLE
+                        tv.setOnClickListener { 
                             performKeyFeedback()
-                            currentInputConnection?.commitText(item.symbol, 1)
+                            currentInputConnection?.commitText(item.symbol, 1) 
                         }
+                    } else {
+                        tv.text = ""
+                        tv.visibility = View.INVISIBLE
+                        tv.setOnClickListener(null)
                     }
-                    rowLayout.addView(tv)
+                } else {
+                    tv.text = ""
+                    tv.visibility = View.INVISIBLE
+                    tv.setOnClickListener(null)
                 }
-                symbolsContainer.addView(rowLayout)
-            }
-        } else {
-            // ساختار استاندارد ۴ ردیف ۱۰ تایی برای بقیه صفحات نمادها
-            for (r in 0 until 4) {
-                val rowLayout = LinearLayout(this).apply {
-                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0).apply { weight = 1f }
-                    orientation = LinearLayout.HORIZONTAL
-                }
-                for (c in 0 until 10) {
-                    val index = r * 10 + c
-                    val tv = TextView(this).apply {
-                        layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { 
-                            weight = 1f
-                            setMargins(2, 2, 2, 2)
-                        }
-                        gravity = Gravity.CENTER
-                        background = getDrawable(R.drawable.key_bg)
-                        setTextColor(Color.WHITE)
-                    }
-                    if (index < pageData.size) {
-                        val item = pageData[index]
-                        val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
-                        val spannable = SpannableString(fullText)
-                        if (item.meaning.isNotEmpty()) {
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(0.55f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                        }
-                        tv.text = spannable
-                        tv.textSize = currentKeyTextSize
-                        tv.setOnClickListener {
-                            performKeyFeedback()
-                            currentInputConnection?.commitText(item.symbol, 1)
-                        }
-                    }
-                    rowLayout.addView(tv)
-                }
-                symbolsContainer.addView(rowLayout)
             }
         }
-        
-        // نوار پایین مشترک برای همه صفحات نمادها
-        val bottomNavLayout = LinearLayout(this).apply {
-            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 50)
-            orientation = LinearLayout.HORIZONTAL
-        }
-        
-        val pageChangeBtn = TextView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { weight = 1.5f }
-            text = "${currentSymbolPage + 1}/6"
-            gravity = Gravity.CENTER
-            background = getDrawable(R.drawable.key_bg_special)
-            setTextColor(Color.WHITE)
-            setOnClickListener {
-                currentSymbolPage++
-                if (currentSymbolPage >= symbolPages.size) currentSymbolPage = 0
-                refreshSymbolsContainerLayout(view, pageBtn)
-            }
-        }
-        
-        val langBackBtn = TextView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { weight = 1.2f }
-            text = "فا"
-            gravity = Gravity.CENTER
-            background = getDrawable(R.drawable.key_bg_special)
-            setTextColor(Color.WHITE)
-            setOnClickListener {
-                symbolsContainer.visibility = View.GONE
-                lettersContainer?.visibility = View.VISIBLE
-            }
-        }
-        
-        val spaceSymBtn = TextView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { weight = 5f }
-            text = "فاصله"
-            gravity = Gravity.CENTER
-            background = getDrawable(R.drawable.key_bg_special)
-            setTextColor(Color.WHITE)
-            setOnClickListener {
-                performKeyFeedback()
-                currentInputConnection?.commitText(" ", 1)
-            }
-        }
-        
-        val backspaceSymBtn = TextView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT).apply { weight = 1.5f }
-            text = "⌫"
-            gravity = Gravity.CENTER
-            background = getDrawable(R.drawable.key_bg_special)
-            setTextColor(Color.WHITE)
-            setupContinuousDeletion(this, suggestionViews)
-        }
-        
-        bottomNavLayout.addView(pageChangeBtn)
-        bottomNavLayout.addView(langBackBtn)
-        bottomNavLayout.addView(spaceSymBtn)
-        bottomNavLayout.addView(backspaceSymBtn)
-        symbolsContainer.addView(bottomNavLayout)
-        
         pageBtn.text = "${currentSymbolPage + 1}/6"
     }
 
@@ -1514,7 +1278,7 @@ class PersianKeyboardService : InputMethodService() {
             lettersContainer?.visibility = View.GONE
             symbolsContainer?.visibility = View.VISIBLE
             currentSymbolPage = 0
-            refreshSymbolsContainerLayout(view, pageBtn) 
+            bindSymbols(view, pageBtn) 
         }
         view.findViewById<TextView>(R.id.btn_lang_back)?.setOnClickListener { 
             symbolsContainer?.visibility = View.GONE
@@ -1523,7 +1287,7 @@ class PersianKeyboardService : InputMethodService() {
         pageBtn.setOnClickListener { 
             currentSymbolPage++
             if (currentSymbolPage >= symbolPages.size) currentSymbolPage = 0
-            refreshSymbolsContainerLayout(view, pageBtn) 
+            bindSymbols(view, pageBtn) 
         }
 
         view.findViewById<TextView>(R.id.btn_dot)?.setOnClickListener { 
