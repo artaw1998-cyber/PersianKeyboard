@@ -117,14 +117,14 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
         listOf(SymItem("𓄆"), SymItem("𓃻"), SymItem("𖤍"), SymItem("𓃰"), SymItem("𓆉"), SymItem("𓃮"), SymItem("𓅭"), SymItem("𓆈"), SymItem("𓆙"), SymItem("𓆈"), SymItem("𓅆"), SymItem("☫"), SymItem("𓆗"), SymItem("𖤓"), SymItem("🦋⃝"), SymItem("𓇼"), SymItem("⋆.˚"), SymItem("𓆝"), SymItem("𓆡"), SymItem("𝐕"), SymItem("⃤"), SymItem("✵⃝⃟"), SymItem("⋆.˚🦋༘⋆"), SymItem("𓇢𓆸"), SymItem("ूाीू"), SymItem("☪"), SymItem("𓅇"), SymItem("✡"), SymItem("𓃬"), SymItem("𔓎"), SymItem("✮⃝ 🤍"), SymItem("𓅰"), SymItem("𓅬"), SymItem("𓅭"), SymItem("𓅮"), SymItem("𓅯"), SymItem("☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆"), SymItem("🦈"), SymItem("☣︎"), SymItem("❦")),
         listOf(SymItem("𓅂"), SymItem("✞"), SymItem("𓃓"), SymItem("𓃗"), SymItem("⋆⭒˚.⋆🪐 ⋆⭒˚.⋆"), SymItem("𓏲ּ𝄢"), SymItem("♡ ᪲᪲᪲"), SymItem("𓁇𓁋"), SymItem("𓃵"), SymItem("✌"), SymItem(".☘︎ ݁˖"), SymItem("𓆰𓆪"), SymItem("𓆩𓆪"), SymItem("☕︎"), SymItem("▶︎ •ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ"), SymItem("୧⍤⃝🌹"), SymItem("☠"), SymItem("𝄞"), SymItem("𝐕ℳ𝓊𝓈𝒾𝒸𓂃✍︎𝄞"), SymItem("♡"), SymItem("♢"), SymItem("♤"), SymItem("♧"), SymItem("♣"), SymItem("♦"), SymItem("⚀"), SymItem("⚁"), SymItem("⚂"), SymItem("⚃"), SymItem("⚄"), SymItem("⚅"), SymItem("♚"), SymItem("♙"), SymItem("♘"), SymItem("♗"), SymItem("♖"), SymItem("♕"), SymItem("♔"), SymItem("♟"), SymItem("♞")),
-        // صفحه پنجم (خط میخی): ۳۶ حرف دقیق ارسالی شما + ۴ عدد میخی اصلی در انتها برای تکمیل دقیق ۴۰ خانه
+        // صفحه پنجم (خط میخی): ۳۶ حرف دقیقاً مطابق لیست ارسالی شما (با تلفظ انگلیسی و معنی فارسی در دو خط) + ۴ عدد میخی در انتها[span_1](start_span)[span_1](end_span)
         listOf(
-            SymItem("𐎠", "-(a)"), SymItem("𐎡", "i"), SymItem("𐎢", "u"), SymItem("𐎣", "k"), SymItem("𐎤", "ko"), SymItem("𐎥", "x"),
-            SymItem("𐎦", "g"), SymItem("𐎧", "go"), SymItem("𐎨", "ch"), SymItem("𐎩", "thra"), SymItem("𐎪", "j"), SymItem("𐎫", "je"),
-            SymItem("𐎬", "t"), SymItem("𐎭", "to"), SymItem("𐎮", "th"), SymItem("𐎯", "d"), SymItem("𐎰", "de"), SymItem("𐎱", "do"),
-            SymItem("𐎲", "p"), SymItem("𐎳", "f"), SymItem("𐎴", "b"), SymItem("𐎵", "n"), SymItem("𐎶", "no"), SymItem("𐎷", "m"),
-            SymItem("𐎸", "me"), SymItem("𐎹", "mo"), SymItem("𐎺", "y"), SymItem("𐎻", "v"), SymItem("𐎼", "ve"), SymItem("𐎽", "r"),
-            SymItem("𐎾", "ro"), SymItem("𐎿", "L"), SymItem("𐏀", "s"), SymItem("𐏁", "z"), SymItem("𐏂", "sh"), SymItem("𐏃", "h"),
+            SymItem("𐎠", "-(a) | آ، اَ"), SymItem("𐎡", "i | ای"), SymItem("𐎢", "u | او"), SymItem("𐎣", "k | ک"), SymItem("𐎤", "ko | کُ"), SymItem("𐎥", "g | گ"),
+            SymItem("𐎦", "go | گُ"), SymItem("𐎧", "x | خ"), SymItem("𐎨", "ch | چ"), SymItem("𐎩", "thra | ثرا"), SymItem("𐎪", "j | ج"), SymItem("𐎫", "je | جِ"),
+            SymItem("𐎬", "t | ت"), SymItem("𐎭", "to | تُ"), SymItem("𐎮", "th | ث"), SymItem("𐎯", "d | د"), SymItem("𐎰", "de | دِ"), SymItem("𐎱", "do | دُ"),
+            SymItem("𐎲", "p | پ"), SymItem("𐎳", "f | ف"), SymItem("𐎴", "b | ب"), SymItem("𐎵", "n | ن"), SymItem("𐎶", "no | نُ"), SymItem("𐎷", "m | م"),
+            SymItem("𐎸", "me | مِ"), SymItem("𐎹", "mo | مُ"), SymItem("𐎺", "y | ی"), SymItem("𐎻", "v | و"), SymItem("𐎼", "ve | وِ"), SymItem("𐎽", "r | ر"),
+            SymItem("𐎾", "ro | رُ"), SymItem("𐎿", "L | ل"), SymItem("𐏀", "s | س"), SymItem("𐏁", "z | ز"), SymItem("𐏂", "sh | ش"), SymItem("𐏃", "h | ه"),
             SymItem("𐏑", "1"), SymItem("𐏒", "2"), SymItem("𐏓", "5"), SymItem("𐏔", "10")
         ),
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
@@ -1020,8 +1020,8 @@ class PersianKeyboardService : InputMethodService() {
                         val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
                         val spannable = SpannableString(fullText)
                         if (item.meaning.isNotEmpty()) {
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 1.3f else 1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 0.5f else 0.5f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 1.25f else 1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 0.42f else 0.5f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                         tv.text = spannable
                         tv.textSize = currentKeyTextSize
