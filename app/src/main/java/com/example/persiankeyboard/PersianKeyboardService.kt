@@ -1,4 +1,4 @@
-package com.example.persiankeyboard
+Package com.example.persiankeyboard
 
 import android.content.Context
 import android.content.Intent
@@ -117,15 +117,15 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
         listOf(SymItem("𓄆"), SymItem("𓃻"), SymItem("𖤍"), SymItem("𓃰"), SymItem("𓆉"), SymItem("𓃮"), SymItem("𓅭"), SymItem("𓆈"), SymItem("𓆙"), SymItem("𓆈"), SymItem("𓅆"), SymItem("☫"), SymItem("𓆗"), SymItem("𖤓"), SymItem("🦋⃝"), SymItem("𓇼"), SymItem("⋆.˚"), SymItem("𓆝"), SymItem("𓆡"), SymItem("𝐕"), SymItem("⃤"), SymItem("✵⃝⃟"), SymItem("⋆.˚🦋༘⋆"), SymItem("𓇢𓆸"), SymItem("ूाीू"), SymItem("☪"), SymItem("𓅇"), SymItem("✡"), SymItem("𓃬"), SymItem("𔓎"), SymItem("✮⃝ 🤍"), SymItem("𓅰"), SymItem("𓅬"), SymItem("𓅭"), SymItem("𓅮"), SymItem("𓅯"), SymItem("☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆"), SymItem("🦈"), SymItem("☣︎"), SymItem("❦")),
         listOf(SymItem("𓅂"), SymItem("✞"), SymItem("𓃓"), SymItem("𓃗"), SymItem("⋆⭒˚.⋆🪐 ⋆⭒˚.⋆"), SymItem("𓏲ּ𝄢"), SymItem("♡ ᪲᪲᪲"), SymItem("𓁇𓁋"), SymItem("𓃵"), SymItem("✌"), SymItem(".☘︎ ݁˖"), SymItem("𓆰𓆪"), SymItem("𓆩𓆪"), SymItem("☕︎"), SymItem("▶︎ •ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ"), SymItem("୧⍤⃝🌹"), SymItem("☠"), SymItem("𝄞"), SymItem("𝐕ℳ𝓊𝓈𝒾𝒸𓂃✍︎𝄞"), SymItem("♡"), SymItem("♢"), SymItem("♤"), SymItem("♧"), SymItem("♣"), SymItem("♦"), SymItem("⚀"), SymItem("⚁"), SymItem("⚂"), SymItem("⚃"), SymItem("⚄"), SymItem("⚅"), SymItem("♚"), SymItem("♙"), SymItem("♘"), SymItem("♗"), SymItem("♖"), SymItem("♕"), SymItem("♔"), SymItem("♟"), SymItem("♞")),
-        // صفحه پنجم (خط میخی): ۳۶ حرف دقیقاً مطابق لیست ارسالی شما (با تلفظ انگلیسی و معنی فارسی در دو خط) + ۴ عدد میخی در انتها[span_1](start_span)[span_1](end_span)
+        // صفحه پنجم (خط میخی): اصلاح شده مطابق با استاندارد دقیق و جدول درخواست شده شما
         listOf(
-            SymItem("𐎠", "-(a) | آ، اَ"), SymItem("𐎡", "i | ای"), SymItem("𐎢", "u | او"), SymItem("𐎣", "k | ک"), SymItem("𐎤", "ko | کُ"), SymItem("𐎥", "g | گ"),
-            SymItem("𐎦", "go | گُ"), SymItem("𐎧", "x | خ"), SymItem("𐎨", "ch | چ"), SymItem("𐎩", "thra | ثرا"), SymItem("𐎪", "j | ج"), SymItem("𐎫", "je | جِ"),
-            SymItem("𐎬", "t | ت"), SymItem("𐎭", "to | تُ"), SymItem("𐎮", "th | ث"), SymItem("𐎯", "d | د"), SymItem("𐎰", "de | دِ"), SymItem("𐎱", "do | دُ"),
-            SymItem("𐎲", "p | پ"), SymItem("𐎳", "f | ف"), SymItem("𐎴", "b | ب"), SymItem("𐎵", "n | ن"), SymItem("𐎶", "no | نُ"), SymItem("𐎷", "m | م"),
-            SymItem("𐎸", "me | مِ"), SymItem("𐎹", "mo | مُ"), SymItem("𐎺", "y | ی"), SymItem("𐎻", "v | و"), SymItem("𐎼", "ve | وِ"), SymItem("𐎽", "r | ر"),
-            SymItem("𐎾", "ro | رُ"), SymItem("𐎿", "L | ل"), SymItem("𐏀", "s | س"), SymItem("𐏁", "z | ز"), SymItem("𐏂", "sh | ش"), SymItem("𐏃", "h | ه"),
-            SymItem("𐏑", "1"), SymItem("𐏒", "2"), SymItem("𐏓", "5"), SymItem("𐏔", "10")
+            SymItem("𐎠", "a | آ، اَ"), SymItem("𐎡", "i | ای، اِ"), SymItem("𐎢", "u | او، اُ"), SymItem("𐎣", "ka | کَ"), SymItem("𐎤", "ku | کُ، کو"), SymItem("𐎥", "ga | گَ"),
+            SymItem("𐎦", "gu | گُ، گو"), SymItem("𐎧", "xa | خَ"), SymItem("𐎨", "ca | چَ"), SymItem("𐎩", "ja | جَ"), SymItem("𐎪", "ji | جی، جِ"), SymItem("𐎫", "ta | تَ، طَ"),
+            SymItem("𐎬", "tu | تُ، تو"), SymItem("𐎰", "θa | ثَ، تِ"), SymItem("𐎭", "da | دَ"), SymItem("𐎮", "di | دِ، دی"), SymItem("𐎯", "du | دُ، دو"), SymItem("𐎱", "pa | پَ"),
+            SymItem("𐎲", "ba | بَ"), SymItem("𐎳", "fa | فَ"), SymItem("𐎴", "na | نَ"), SymItem("𐎶", "ma | مَ"), SymItem("𐎷", "mi | می"), SymItem("𐎸", "mu | مُ، مو"),
+            SymItem("𐎹", "ya | یَ"), SymItem("𐎺", "va | وَ"), SymItem("𐎼", "ra | رَ"), SymItem("𐎽", "ru | رُ، رو"), SymItem("𐎾", "la | لَ"), SymItem("𐎿", "sa | سَ، صَ"),
+            SymItem("𐏀", "za | زَ، ذَ"), SymItem("𐏁", "ša | شَ"), SymItem("𐏃", "ha | حَ، هَ"), SymItem("𐏋", "xšāyaθiya | شاه"), SymItem("𐏈", "ahuramazdā | اهورامزدا"), SymItem("𐏌", "dahyāuš | کشور"),
+            SymItem("𐏏", "būmiš | زمین"), SymItem("𐏐", "divider | جداکننده"), SymItem("𐏑", "1"), SymItem("𐏒", "2")
         ),
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
     )
