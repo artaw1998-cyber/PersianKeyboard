@@ -117,7 +117,7 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
         listOf(SymItem("𓄆"), SymItem("𓃻"), SymItem("𖤍"), SymItem("𓃰"), SymItem("𓆉"), SymItem("𓃮"), SymItem("𓅭"), SymItem("𓆈"), SymItem("𓆙"), SymItem("𓆈"), SymItem("𓅆"), SymItem("☫"), SymItem("𓆗"), SymItem("𖤓"), SymItem("🦋⃝"), SymItem("𓇼"), SymItem("⋆.˚"), SymItem("𓆝"), SymItem("𓆡"), SymItem("𝐕"), SymItem("⃤"), SymItem("✵⃝⃟"), SymItem("⋆.˚🦋༘⋆"), SymItem("𓇢𓆸"), SymItem("ूाीू"), SymItem("☪"), SymItem("𓅇"), SymItem("✡"), SymItem("𓃬"), SymItem("𔓎"), SymItem("✮⃝ 🤍"), SymItem("𓅰"), SymItem("𓅬"), SymItem("𓅭"), SymItem("𓅮"), SymItem("𓅯"), SymItem("☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆"), SymItem("🦈"), SymItem("☣︎"), SymItem("❦")),
         listOf(SymItem("𓅂"), SymItem("✞"), SymItem("𓃓"), SymItem("𓃗"), SymItem("⋆⭒˚.⋆🪐 ⋆⭒˚.⋆"), SymItem("𓏲ּ𝄢"), SymItem("♡ ᪲᪲᪲"), SymItem("𓁇𓁋"), SymItem("𓃵"), SymItem("✌"), SymItem(".☘︎ ݁˖"), SymItem("𓆰𓆪"), SymItem("𓆩𓆪"), SymItem("☕︎"), SymItem("▶︎ •ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ"), SymItem("୧⍤⃝🌹"), SymItem("☠"), SymItem("𝄞"), SymItem("𝐕ℳ𝓊𝓈𝒾𝒸𓂃✍︎𝄞"), SymItem("♡"), SymItem("♢"), SymItem("♤"), SymItem("♧"), SymItem("♣"), SymItem("♦"), SymItem("⚀"), SymItem("⚁"), SymItem("⚂"), SymItem("⚃"), SymItem("⚄"), SymItem("⚅"), SymItem("♚"), SymItem("♙"), SymItem("♘"), SymItem("♗"), SymItem("♖"), SymItem("♕"), SymItem("♔"), SymItem("♟"), SymItem("♞")),
-        // صفحه پنجم (خط میخی): دقیقاً ۳۶ حرف اصلی با معنی کامل
+        // صفحه پنجم (خط میخی): ۳۶ حرف اصلی با معنی کامل
         listOf(
             SymItem("𐎠", "a (ا)"), SymItem("𐎡", "i (ای)"), SymItem("𐎢", "u (او)"), SymItem("𐎣", "k (ک)"), SymItem("𐎤", "ko (کُ)"), SymItem("𐎥", "x (خ)"),
             SymItem("𐎦", "g (گ)"), SymItem("𐎧", "go (گُ)"), SymItem("𐎨", "ch (چ)"), SymItem("𐎩", "thra (ثرا)"), SymItem("𐎪", "j (ج)"), SymItem("𐎫", "je (جِ)"),
@@ -1001,14 +1001,14 @@ class PersianKeyboardService : InputMethodService() {
         }
     }
 
-    // 🌟 رندر کاملاً اختصاصی: فقط برای صفحه خط میخی ساختار ۶ ردیف ۶ تایی داینامیک می‌سازد و بقیه صفحات دست‌نخورده می‌مانند 🌟
+    // 🌟 رندر هوشمند و اختصاصی: فقط برای صفحه خط میخی ساختار ۶ ردیف ۶ تایی داینامیک می‌سازد و بقیه صفحات دست‌نخورده می‌مانند 🌟
     private fun bindSymbols(view: View, pageBtn: TextView) {
         val pageData = symbolPages[currentSymbolPage]
         val symbolsContainer = view.findViewById<LinearLayout>(R.id.symbols_container) ?: return
         symbolsContainer.removeAllViews()
 
         if (currentSymbolPage == 4) {
-            // ساختار داینامیک ۶ ردیف ۶ تایی (۳۶ کلید) مخصوص خط میخی
+            // ساختار داینامیک ۶ ردیف ۶ تایی (۳۶ کلید) مخصوص خط میخی با کلیدهای بزرگ و خوانا
             for (r in 0 until 6) {
                 val rowLayout = LinearLayout(this).apply {
                     layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0).apply { weight = 1f }
@@ -1031,8 +1031,8 @@ class PersianKeyboardService : InputMethodService() {
                         val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
                         val spannable = SpannableString(fullText)
                         if (item.meaning.isNotEmpty()) {
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(1.6f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(0.65f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(1.8f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(0.7f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                         tv.text = spannable
                         tv.textSize = currentKeyTextSize
@@ -1046,7 +1046,7 @@ class PersianKeyboardService : InputMethodService() {
                 symbolsContainer.addView(rowLayout)
             }
         } else {
-            // ساختار استاندارد ۴ ردیف ۱۰ تایی برای بقیه صفحات
+            // ساختار استاندارد ۴ ردیف ۱۰ تایی برای بقیه صفحات نمادها
             for (r in 0 until 4) {
                 val rowLayout = LinearLayout(this).apply {
                     layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0).apply { weight = 1f }
