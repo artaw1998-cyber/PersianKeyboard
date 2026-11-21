@@ -117,15 +117,14 @@ class PersianKeyboardService : InputMethodService() {
         listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
         listOf(SymItem("𓄆"), SymItem("𓃻"), SymItem("𖤍"), SymItem("𓃰"), SymItem("𓆉"), SymItem("𓃮"), SymItem("𓅭"), SymItem("𓆈"), SymItem("𓆙"), SymItem("𓆈"), SymItem("𓅆"), SymItem("☫"), SymItem("𓆗"), SymItem("𖤓"), SymItem("🦋⃝"), SymItem("𓇼"), SymItem("⋆.˚"), SymItem("𓆝"), SymItem("𓆡"), SymItem("𝐕"), SymItem("⃤"), SymItem("✵⃝⃟"), SymItem("⋆.˚🦋༘⋆"), SymItem("𓇢𓆸"), SymItem("ूाीू"), SymItem("☪"), SymItem("𓅇"), SymItem("✡"), SymItem("𓃬"), SymItem("𔓎"), SymItem("✮⃝ 🤍"), SymItem("𓅰"), SymItem("𓅬"), SymItem("𓅭"), SymItem("𓅮"), SymItem("𓅯"), SymItem("☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆"), SymItem("🦈"), SymItem("☣︎"), SymItem("❦")),
         listOf(SymItem("𓅂"), SymItem("✞"), SymItem("𓃓"), SymItem("𓃗"), SymItem("⋆⭒˚.⋆🪐 ⋆⭒˚.⋆"), SymItem("𓏲ּ𝄢"), SymItem("♡ ᪲᪲᪲"), SymItem("𓁇𓁋"), SymItem("𓃵"), SymItem("✌"), SymItem(".☘︎ ݁˖"), SymItem("𓆰𓆪"), SymItem("𓆩𓆪"), SymItem("☕︎"), SymItem("▶︎ •ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ"), SymItem("୧⍤⃝🌹"), SymItem("☠"), SymItem("𝄞"), SymItem("𝐕ℳ𝓊𝓈𝒾𝒸𓂃✍︎𝄞"), SymItem("♡"), SymItem("♢"), SymItem("♤"), SymItem("♧"), SymItem("♣"), SymItem("♦"), SymItem("⚀"), SymItem("⚁"), SymItem("⚂"), SymItem("⚃"), SymItem("⚄"), SymItem("⚅"), SymItem("♚"), SymItem("♙"), SymItem("♘"), SymItem("♗"), SymItem("♖"), SymItem("♕"), SymItem("♔"), SymItem("♟"), SymItem("♞")),
-        // 🌟 صفحه پنجم: دقیقاً ۳۶ حرف میخی + ۶ عدد (مجموعاً ۴۰ خانه کامل و منظم مطابق عکسی که فرستادی)[span_2](start_span)[span_2](end_span)
+        // 🌟 صفحه پنجم: دقیقاً ۳۶ حرف اصلی خط میخی بدون اعداد (با فونت بزرگ‌تر، خواناتر و دارای معنی فارسی و انگلیسی)
         listOf(
             SymItem("𐎠", "a (ا)"), SymItem("𐎡", "i (ای)"), SymItem("𐎢", "u (او)"), SymItem("𐎣", "k (ک)"), SymItem("𐎤", "ko (کُ)"), SymItem("𐎥", "x (خ)"),
             SymItem("𐎦", "g (گ)"), SymItem("𐎧", "go (گُ)"), SymItem("𐎨", "ch (چ)"), SymItem("𐎩", "thra (ثرا)"), SymItem("𐎪", "j (ج)"), SymItem("𐎫", "je (جِ)"),
             SymItem("𐎬", "t (ت)"), SymItem("𐎭", "to (تُ)"), SymItem("𐎮", "th (ط)"), SymItem("𐎯", "d (د)"), SymItem("𐎰", "de (دِ)"), SymItem("𐎱", "do (دُ)"),
             SymItem("𐎲", "p (پ)"), SymItem("𐎳", "f (ف)"), SymItem("𐎴", "b (ب)"), SymItem("𐎵", "n (ن)"), SymItem("𐎶", "no (نُ)"), SymItem("𐎷", "m (م)"),
             SymItem("𐎸", "me (مِ)"), SymItem("𐎹", "mo (مُ)"), SymItem("𐎺", "y (ی)"), SymItem("𐎻", "v (و)"), SymItem("𐎼", "ve (وِ)"), SymItem("𐎽", "r (ر)"),
-            SymItem("𐎾", "ro (رُ)"), SymItem("𐎿", "L (ل)"), SymItem("𐏀", "s (س)"), SymItem("𐏁", "z (ز)"), SymItem("𐏂", "sh (ش)"), SymItem("𐏃", "h (ه)"),
-            SymItem("𐎿", "ا (1)"), SymItem("𐏐", "۲ (2)"), SymItem("𐏑", "۵ (5)"), SymItem("𐏒", "۱۰ (10)"), SymItem("𐏓", "۲۰ (20)"), SymItem("𐏔", "۱۰۰ (100)")
+            SymItem("𐎾", "ro (رُ)"), SymItem("𐎿", "L (ل)"), SymItem("𐏀", "s (س)"), SymItem("𐏁", "z (ز)"), SymItem("𐏂", "sh (ش)"), SymItem("𐏃", "h (ه)")
         ),
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
     )
@@ -1019,8 +1018,8 @@ class PersianKeyboardService : InputMethodService() {
                         val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
                         val spannable = SpannableString(fullText)
                         if (item.meaning.isNotEmpty()) {
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(0.55f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(1.4f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(0.6f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                         text = spannable
                         textSize = currentKeyTextSize
