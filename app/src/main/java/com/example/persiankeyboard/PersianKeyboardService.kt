@@ -1,4 +1,4 @@
-Package com.example.persiankeyboard
+package com.example.persiankeyboard
 
 import android.content.Context
 import android.content.Intent
