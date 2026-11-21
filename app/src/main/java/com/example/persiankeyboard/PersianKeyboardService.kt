@@ -1003,12 +1003,24 @@ class PersianKeyboardService : InputMethodService() {
 
     private fun bindSymbols(view: View, pageBtn: TextView) {
         val pageData = symbolPages[currentSymbolPage]
-        val symbolIds = listOf(
-            R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10,
-            R.id.sym_11, R.id.sym_12, R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18, R.id.sym_19, R.id.sym_20,
-            R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24, R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30,
-            R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36, R.id.sym_37, R.id.sym_38, R.id.sym_39, R.id.sym_40
-        )
+        // اگر صفحه ۵ (خط میخی) باشد، آیدی‌های ۳۶گانه ۶ ردیف ۶ تایی را ست می‌کنیم
+        val symbolIds = if (currentSymbolPage == 4) {
+            listOf(
+                R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6,
+                R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10, R.id.sym_11, R.id.sym_12,
+                R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18,
+                R.id.sym_19, R.id.sym_20, R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24,
+                R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30,
+                R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36
+            )
+        } else {
+            listOf(
+                R.id.sym_1, R.id.sym_2, R.id.sym_3, R.id.sym_4, R.id.sym_5, R.id.sym_6, R.id.sym_7, R.id.sym_8, R.id.sym_9, R.id.sym_10,
+                R.id.sym_11, R.id.sym_12, R.id.sym_13, R.id.sym_14, R.id.sym_15, R.id.sym_16, R.id.sym_17, R.id.sym_18, R.id.sym_19, R.id.sym_20,
+                R.id.sym_21, R.id.sym_22, R.id.sym_23, R.id.sym_24, R.id.sym_25, R.id.sym_26, R.id.sym_27, R.id.sym_28, R.id.sym_29, R.id.sym_30,
+                R.id.sym_31, R.id.sym_32, R.id.sym_33, R.id.sym_34, R.id.sym_35, R.id.sym_36, R.id.sym_37, R.id.sym_38, R.id.sym_39, R.id.sym_40
+            )
+        }
 
         for (i in symbolIds.indices) {
             val tv = view.findViewById<TextView>(symbolIds[i])
@@ -1019,8 +1031,8 @@ class PersianKeyboardService : InputMethodService() {
                         val fullText = if (item.meaning.isNotEmpty()) "${item.symbol}\n${item.meaning}" else item.symbol
                         val spannable = SpannableString(fullText)
                         if (item.meaning.isNotEmpty()) {
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 1.5f else 1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 0.6f else 0.5f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 1.6f else 1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 0.65f else 0.5f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                         }
                         tv.text = spannable
                         tv.textSize = currentKeyTextSize
