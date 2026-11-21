@@ -114,17 +114,17 @@ class PersianKeyboardService : InputMethodService() {
 
     private val symbolPages = listOf(
         listOf(SymItem("@"), SymItem("#"), SymItem("$"), SymItem("%"), SymItem("&"), SymItem("*"), SymItem("-"), SymItem("+"), SymItem("="), SymItem("/"), SymItem("("), SymItem(")"), SymItem("["), SymItem("]"), SymItem("{"), SymItem("}"), SymItem("<"), SymItem(">"), SymItem("«"), SymItem("»"), SymItem("!"), SymItem("؟"), SymItem("،"), SymItem("؛"), SymItem(":"), SymItem(";"), SymItem("'"), SymItem("\""), SymItem("_"), SymItem("\\"), SymItem("^"), SymItem("~"), SymItem("|"), SymItem("•"), SymItem("…"), SymItem("٪"), SymItem("ریال"), SymItem("€"), SymItem("£"), SymItem("¥")),
-        listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("𓀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
+        listOf(SymItem("ꕥ"), SymItem("𓉱"), SymItem("☼"), SymItem("𓁈"), SymItem("𓀛"), SymItem("𓄂"), SymItem("𓆃"), SymItem("☼"), SymItem("𓉱"), SymItem("🃜"), SymItem("𒄆"), SymItem("𓁹"), SymItem("✞"), SymItem("𒀱"), SymItem("✞"), SymItem("𓁹"), SymItem("𒄆"), SymItem("🃚"), SymItem("🃖"), SymItem("🃁"), SymItem("🂭"), SymItem("🂺"), SymItem("𓁈"), SymItem("𓃠"), SymItem("𓆃"), SymItem("☥"), SymItem("𓅓"), SymItem("𓆣"), SymItem("𓂀"), SymItem("𓋹"), SymItem("l"), SymItem("𓃮"), SymItem("☼"), SymItem("𓆰"), SymItem("♕"), SymItem("𓆪"), SymItem("🀂"), SymItem("𓀬"), SymItem("𓁅"), SymItem("𓃂")),
         listOf(SymItem("𓄆"), SymItem("𓃻"), SymItem("𖤍"), SymItem("𓃰"), SymItem("𓆉"), SymItem("𓃮"), SymItem("𓅭"), SymItem("𓆈"), SymItem("𓆙"), SymItem("𓆈"), SymItem("𓅆"), SymItem("☫"), SymItem("𓆗"), SymItem("𖤓"), SymItem("🦋⃝"), SymItem("𓇼"), SymItem("⋆.˚"), SymItem("𓆝"), SymItem("𓆡"), SymItem("𝐕"), SymItem("⃤"), SymItem("✵⃝⃟"), SymItem("⋆.˚🦋༘⋆"), SymItem("𓇢𓆸"), SymItem("ूाीू"), SymItem("☪"), SymItem("𓅇"), SymItem("✡"), SymItem("𓃬"), SymItem("𔓎"), SymItem("✮⃝ 🤍"), SymItem("𓅰"), SymItem("𓅬"), SymItem("𓅭"), SymItem("𓅮"), SymItem("𓅯"), SymItem("☆.𓋼𓍊 𓆏 𓍊𓋼𓍊.☆"), SymItem("🦈"), SymItem("☣︎"), SymItem("❦")),
         listOf(SymItem("𓅂"), SymItem("✞"), SymItem("𓃓"), SymItem("𓃗"), SymItem("⋆⭒˚.⋆🪐 ⋆⭒˚.⋆"), SymItem("𓏲ּ𝄢"), SymItem("♡ ᪲᪲᪲"), SymItem("𓁇𓁋"), SymItem("𓃵"), SymItem("✌"), SymItem(".☘︎ ݁˖"), SymItem("𓆰𓆪"), SymItem("𓆩𓆪"), SymItem("☕︎"), SymItem("▶︎ •ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ•ِِ"), SymItem("୧⍤⃝🌹"), SymItem("☠"), SymItem("𝄞"), SymItem("𝐕ℳ𝓊𝓈𝒾𝒸𓂃✍︎𝄞"), SymItem("♡"), SymItem("♢"), SymItem("♤"), SymItem("♧"), SymItem("♣"), SymItem("♦"), SymItem("⚀"), SymItem("⚁"), SymItem("⚂"), SymItem("⚃"), SymItem("⚄"), SymItem("⚅"), SymItem("♚"), SymItem("♙"), SymItem("♘"), SymItem("♗"), SymItem("♖"), SymItem("♕"), SymItem("♔"), SymItem("♟"), SymItem("♞")),
-        // صفحه پنجم (خط میخی): ۴۰ کلید دقیق به همراه اعداد ۱ و ۲ و اصلاح کاراکتر شاه
+        // صفحه پنجم (خط میخی): اصلاح کاراکتر شاه به صورت کدگذاری شده امن و استاندارد
         listOf(
             SymItem("𐎠", "آ، اَ | a"), SymItem("𐎡", "ای، اِ | i"), SymItem("𐎢", "او، اُ | u"), SymItem("𐎣", "کَ | ka"), SymItem("𐎤", "کُ، کو | ku"), SymItem("𐎥", "گَ | ga"),
             SymItem("𐎦", "گُ، گو | gu"), SymItem("𐎧", "خَ | xa"), SymItem("𐎨", "چَ | ca"), SymItem("𐎩", "جَ | ja"), SymItem("𐎪", "جی، جِ | ji"), SymItem("𐎫", "تَ، طَ | ta"),
             SymItem("𐎬", "تُ، تو | tu"), SymItem("𐎰", "ثَ، تِ | θa"), SymItem("𐎭", "دَ | da"), SymItem("𐎮", "دِ، دی | di"), SymItem("𐎯", "دُ، دو | du"), SymItem("𐎱", "پَ | pa"),
             SymItem("𐎲", "بَ | ba"), SymItem("𐎳", "فَ | fa"), SymItem("𐎴", "نَ | na"), SymItem("𐎶", "مَ | ma"), SymItem("𐎷", "می | mi"), SymItem("𐎸", "مُ، مو | mu"),
             SymItem("𐎹", "یَ | ya"), SymItem("𐎺", "وَ | va"), SymItem("𐎼", "رَ | ra"), SymItem("𐎽", "رُ، رو | ru"), SymItem("𐎾", "لَ | la"), SymItem("𐎿", "سَ، صَ | sa"),
-            SymItem("𐏀", "زَ، ذَ | za"), SymItem("𐏁", "شَ | ša"), SymItem("𐏃", "حَ، هَ | ha"), SymItem("𐏋", "شاه"), SymItem("𐏈", "اهورامزدا"), SymItem("𐏌", "کشور"),
+            SymItem("𐏀", "زَ، ذَ | za"), SymItem("𐏁", "شَ | ša"), SymItem("𐏃", "حَ، هَ | ha"), SymItem("\uD802\uDD0B", "شاه"), SymItem("𐏈", "اهورامزدا"), SymItem("𐏌", "کشور"),
             SymItem("𐏏", "زمین"), SymItem("𐏐", "جداکننده"), SymItem("𐏑", "1"), SymItem("𐏒", "2")
         ),
         listOf(SymItem("➊"), SymItem("➋"), SymItem("➌"), SymItem("➍"), SymItem("➎"), SymItem("➏"), SymItem("➐"), SymItem("➑"), SymItem("➒"), SymItem("➓"), SymItem("♝"), SymItem("♜"), SymItem("♛"), SymItem("✄"), SymItem("♠︎"), SymItem("♥︎"), SymItem("♦︎"), SymItem("♣︎"), SymItem("❤︎"), SymItem("⛓︎"), SymItem("❦"), SymItem("❧"), SymItem("☙"), SymItem("❥"), SymItem("♡"), SymItem("♥"), SymItem("❣"), SymItem("☚"), SymItem("☛"), SymItem("☜"), SymItem("☞"), SymItem("☬"), SymItem("☮"), SymItem("☪"), SymItem("☥"), SymItem("☤"), SymItem("𖣘"), SymItem("✵"), SymItem("࿈"), SymItem("༒"))
@@ -353,15 +353,9 @@ class PersianKeyboardService : InputMethodService() {
                     if (toneGenerator == null) {
                         toneGenerator = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
                     }
-                    toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
+                    toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 40)
                 } catch (e: Exception) {
-                    // Try re-instantiating on failure
-                    try {
-                        toneGenerator = ToneGenerator(AudioManager.STREAM_STREAM_TYPE_ALIAS, 100)
-                        toneGenerator?.startTone(ToneGenerator.TONE_PROP_BEEP, 50)
-                    } catch (ex: Exception) {
-                        toneGenerator = null
-                    }
+                    toneGenerator = null
                 }
             }
         } catch (e: Exception) {
@@ -1038,7 +1032,7 @@ class PersianKeyboardService : InputMethodService() {
                                 spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 1.25f else 1.3f), 0, item.symbol.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                                 spannable.setSpan(android.text.style.RelativeSizeSpan(if (currentSymbolPage == 4) 0.42f else 0.5f), item.symbol.length, fullText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                             } catch (e: Exception) {
-                                // Fallback safe
+                                // Safe fallback
                             }
                         }
                         tv.text = spannable
